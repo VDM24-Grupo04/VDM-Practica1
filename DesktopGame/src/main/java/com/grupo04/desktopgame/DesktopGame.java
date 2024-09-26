@@ -16,6 +16,7 @@ public class DesktopGame {
         // Creacion del motor
         DesktopEngine engine = new DesktopEngine(window);
         engine.onResume();
+
         // Creacion de la escena
 
     }
