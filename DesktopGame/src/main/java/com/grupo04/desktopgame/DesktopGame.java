@@ -20,6 +20,4 @@ public class DesktopGame {
         // Creacion de la escena
 
     }
-
-
 }

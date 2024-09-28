@@ -1,4 +1,4 @@
-package com.grupo04.androidengine;
+package com.example.androidengine;
 
 import org.junit.Test;
 
