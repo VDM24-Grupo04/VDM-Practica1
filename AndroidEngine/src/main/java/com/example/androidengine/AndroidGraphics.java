@@ -1,6 +1,7 @@
 package com.example.androidengine;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -18,8 +19,8 @@ public class AndroidGraphics extends Graphics {
         this.window = window;
         this.holder = holder;
         this.paint = new Paint();
-        // Se establece por si acaso un color inicial
-        this.paint.setColor(0xFFFFFFFF);
+        // Se establece un color inicial por si acaso
+        // this.paint.setColor(0xFFFFFFFF);
         this.canvas = null;
     }
 
@@ -29,9 +30,8 @@ public class AndroidGraphics extends Graphics {
         while (!this.holder.getSurface().isValid()) ;
         // Se permite editar el canvas
         this.canvas = this.holder.lockCanvas();
-        // Se pinta la escena actual
-        // currentScene.render();
-        this.test();
+        // Se pinta la escena actual si existe
+        currentScene.render();
 
         this.holder.unlockCanvasAndPost(canvas);
     }
@@ -41,8 +41,19 @@ public class AndroidGraphics extends Graphics {
         return this.window.getWidth();
     }
 
-    private void test() {
-        this.paint.setColor(0xFFFFFFFF);
-        canvas.drawCircle(50, 50, 20, this.paint);
+    @Override
+    public int getWindowHeight() {
+        return this.window.getHeight();
+    }
+
+    @Override
+    public void setColor(int red, int green, int blue, int alpha) {
+        int color = Color.argb(alpha, red, green, blue);
+        this.paint.setColor(color);
+    }
+
+    @Override
+    public void fillCircle(int x, int y, int radius) {
+        canvas.drawCircle(x, y, radius, this.paint);
     }
 }

@@ -1,24 +1,54 @@
 package com.grupo04.engine;
 
+import java.util.Stack;
+
 // La interfaz runnable se trata de una interfaz que cuenta con un solo metodo a implementar (run)
 // Cuando se pasa una instancia de esta clase a un nuevo hilo, el hilo ejecuta el metodo run
 public abstract class Engine implements Runnable {
     private static final int MAX_NUM_FIXED_UDPATES = 150;
     private static final double FIXED_DELTA_TIME = 1000.0 / 60.0;
 
+    // Se necesita un hilo para correr el renderizado a la par que la ejecucion de android
     private Thread mainLoopThread;
     private volatile boolean isRunning;
 
+    // Modulos
     private Graphics graphics;
+
+    // Escenas
+    private Stack<Scene> scenes;
 
     protected Engine() {
         this.mainLoopThread = null;
         this.isRunning = false;
         this.graphics = null;
+        scenes = new Stack<Scene>();
     }
 
     protected void init(Graphics graphics) {
         this.graphics = graphics;
+    }
+
+    public void popScene() {
+        if (!scenes.empty()) {
+            scenes.pop();
+        }
+    }
+
+    public void pushScene(Scene newScene) {
+        scenes.push(newScene);
+    }
+
+    public void changeScene(Scene newScene) {
+        if (!scenes.empty()) {
+            // Si la escena que se quiere insertar no es la misma que la activa...
+            if (scenes.peek() != newScene) {
+                // Se saca la escena activa
+                scenes.pop();
+                // Se inserta la nueva escena
+                scenes.push(newScene);
+            }
+        }
     }
 
     @Override
@@ -72,7 +102,7 @@ public abstract class Engine implements Runnable {
             // Informar sobre los FPS a los que corre el juego
             if (currentTime - previousReport > 1000000000l) {
                 long fps = frames * 1000000000l / (currentTime - previousReport);
-                System.out.println("" + fps + " fps");
+                System.out.println(fps + " fps");
                 frames = 0;
                 previousReport = currentTime;
             }
@@ -83,19 +113,29 @@ public abstract class Engine implements Runnable {
     }
 
     private void handleInput() {
-
+        if (!scenes.empty()) {
+            scenes.peek().handleInput();
+        }
     }
 
     private void fixedUpdate() {
-
+        if (!scenes.empty()) {
+            scenes.peek().fixedUpdate(FIXED_DELTA_TIME);
+        }
     }
 
     private void update(double deltaTime) {
-
+        if (!scenes.empty()) {
+            scenes.peek().update(deltaTime);
+        }
     }
 
     private void render() {
-        this.graphics.render(null);
+        if (!scenes.empty()) {
+            // Si se quedan escenas sin renderizar y se ejecuta el renderizado de un frame,
+            // se produce un flickering
+            this.graphics.render(scenes.peek());
+        }
     }
 
     public void onResume() {
@@ -123,5 +163,9 @@ public abstract class Engine implements Runnable {
                 }
             }
         }
+    }
+
+    public Graphics getGraphics() {
+        return graphics;
     }
 }

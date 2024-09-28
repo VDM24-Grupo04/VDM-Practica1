@@ -5,6 +5,12 @@ public abstract class Graphics {
 
     public abstract int getWindowWidth();
 
+    public abstract int getWindowHeight();
+
+    public abstract void setColor(int red, int green, int blue, int alpha);
+
+    public abstract void fillCircle(int x, int y, int radius);
+
     public boolean isWindowInitialized() {
         return this.getWindowWidth() != 0;
     }

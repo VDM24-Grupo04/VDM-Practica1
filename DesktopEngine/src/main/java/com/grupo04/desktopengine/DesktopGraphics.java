@@ -27,9 +27,8 @@ public class DesktopGraphics extends Graphics {
             do {
                 this.graphics2D = (Graphics2D) this.bufferStrategy.getDrawGraphics();
                 try {
-                    // Se pinta la escena actual
-                    //currentScene.render();
-                    this.test();
+                    // Se pinta la escena actual si existe
+                    currentScene.render();
                 } finally {
                     // Elimina el contexto grafico y libera recursos del sistema realacionado
                     this.graphics2D.dispose();
@@ -44,9 +43,19 @@ public class DesktopGraphics extends Graphics {
         return this.window.getWidth();
     }
 
-    private void test() {
-        this.graphics2D.setColor(Color.BLACK);
-        this.graphics2D.fillOval(50, 50, 20, 20);
-        this.graphics2D.setPaintMode();
+    @Override
+    public int getWindowHeight() {
+        return this.window.getHeight();
+    }
+
+    @Override
+    public void setColor(int red, int green, int blue, int alpha) {
+        Color color = new Color(red, green, blue, alpha);
+        this.graphics2D.setColor(color);
+    }
+
+    @Override
+    public void fillCircle(int x, int y, int radius) {
+        this.graphics2D.fillOval(x, y, radius, radius);
     }
 }

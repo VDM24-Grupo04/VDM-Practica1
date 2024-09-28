@@ -10,4 +10,5 @@ java {
 dependencies {
     implementation project(':DesktopEngine')
     implementation project(':Engine')
+    implementation project(':GameLogic')
 }

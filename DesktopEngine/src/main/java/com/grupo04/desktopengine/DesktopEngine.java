@@ -16,21 +16,6 @@ public class DesktopEngine extends Engine {
     public DesktopEngine(JFrame window) {
         super();
 
-        graphics2D = null;
-        bufferStrategy = null;
-
-        // Para poder hacer resize de la ventana
-        window.addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent evt) {
-                //Component c = (Component)evt.getSource();
-                System.out.println("componentResized: " + evt.getSource());
-                graphics2D.dispose();
-
-                bufferStrategy.show();
-                graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
-            }
-        });
-
         // Intentamos crear el buffer strategy con 2 buffers.
         int attempts = 100;
         while (attempts-- > 0) {
@@ -49,6 +34,18 @@ public class DesktopEngine extends Engine {
 
         this.bufferStrategy = window.getBufferStrategy();
         this.graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
+
+        // Para poder hacer resize de la ventana
+        window.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent evt) {
+                //Component c = (Component)evt.getSource();
+                System.out.println("componentResized: " + evt.getSource());
+                graphics2D.dispose();
+
+                bufferStrategy.show();
+                graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
+            }
+        });
 
         DesktopGraphics desktopGraphics = new DesktopGraphics(window, this.graphics2D, this.bufferStrategy);
         this.init(desktopGraphics);

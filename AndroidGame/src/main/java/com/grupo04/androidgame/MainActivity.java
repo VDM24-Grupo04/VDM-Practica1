@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.androidengine.AndroidEngine;
+import com.grupo04.gamelogic.TestScene;
 
 public class MainActivity extends AppCompatActivity {
     private SurfaceView window;
@@ -27,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
         this.androidEngine = new AndroidEngine(this.window);
 
         // Creacion de la escena
-        
+        TestScene testScene = new TestScene(this.androidEngine);
+        this.androidEngine.pushScene(testScene);
 
     }
 

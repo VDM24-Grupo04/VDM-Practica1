@@ -1,6 +1,7 @@
 package com.grupo04.desktopgame;
 
 import com.grupo04.desktopengine.DesktopEngine;
+import com.grupo04.gamelogic.TestScene;
 
 import javax.swing.JFrame;
 
@@ -15,9 +16,11 @@ public class DesktopGame {
 
         // Creacion del motor
         DesktopEngine engine = new DesktopEngine(window);
-        engine.onResume();
 
         // Creacion de la escena
+        TestScene testScene = new TestScene(engine);
+        engine.pushScene(testScene);
 
+        engine.onResume();
     }
 }
