@@ -1,4 +1,4 @@
-package com.example.androidengine;
+package com.grupo04.androidengine;
 
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;

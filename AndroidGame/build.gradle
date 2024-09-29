@@ -35,8 +35,8 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation project(':Engine')
-    implementation project(':AndroidEngine')
     implementation project(':GameLogic')
+    implementation project(':AndroidEngine')
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

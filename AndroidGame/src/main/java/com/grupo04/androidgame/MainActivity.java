@@ -9,7 +9,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.androidengine.AndroidEngine;
+import com.grupo04.androidengine.AndroidEngine;
 import com.grupo04.gamelogic.TestScene;
 
 public class MainActivity extends AppCompatActivity {
