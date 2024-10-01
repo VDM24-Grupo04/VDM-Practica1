@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.grupo04.engine.Graphics;
+import com.grupo04.engine.Image;
 import com.grupo04.engine.Scene;
 
 public class AndroidGraphics extends Graphics {
@@ -63,4 +64,12 @@ public class AndroidGraphics extends Graphics {
     public void fillRectangle(int x, int y, int w, int h) {
         canvas.drawRect(new Rect(x, y, w, h), paint);
     }
+
+    public Image newImage(String name) {
+        AndroidImage img = new AndroidImage(name, window.getContext());
+        return img;
+    }
+
+    public Canvas getCanvas() { return canvas; }
+    public Paint getPaint() { return paint; }
 }

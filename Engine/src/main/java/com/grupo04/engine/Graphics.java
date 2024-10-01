@@ -15,4 +15,6 @@ public abstract class Graphics {
     public boolean isWindowInitialized() {
         return this.getWindowWidth() != 0;
     }
+
+    public Image newImage(String name) { return null; }
 }

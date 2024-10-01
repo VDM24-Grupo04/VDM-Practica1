@@ -1,6 +1,7 @@
 package com.grupo04.desktopengine;
 
 import com.grupo04.engine.Graphics;
+import com.grupo04.engine.Image;
 import com.grupo04.engine.Scene;
 
 import javax.swing.JFrame;
@@ -63,4 +64,11 @@ public class DesktopGraphics extends Graphics {
     public void fillRectangle(int x, int y, int w, int h) {
         this.graphics2D.fillRect(x, y, w, h);
     }
+
+    @Override
+    public Image newImage(String name) {
+        DesktopImage img = new DesktopImage(name);
+        return img;
+    }
+    public Graphics2D getGraphics2D() { return graphics2D; }
 }
