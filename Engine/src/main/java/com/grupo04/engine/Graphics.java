@@ -10,6 +10,7 @@ public abstract class Graphics {
     public abstract void setColor(int red, int green, int blue, int alpha);
 
     public abstract void fillCircle(int x, int y, int radius);
+    public abstract void fillRectangle(int x, int y, int w, int h);
 
     public boolean isWindowInitialized() {
         return this.getWindowWidth() != 0;

@@ -31,6 +31,10 @@ public class TestScene extends Scene {
     @Override
     public void render() {
         Graphics graphics = engine.getGraphics();
+
+        graphics.setColor(0,0,255,255);
+        graphics.fillRectangle(0,0, graphics.getWindowHeight(), graphics.getWindowHeight());
+
         graphics.setColor(255, 0, 0, 255);
         graphics.fillCircle(graphics.getWindowWidth() / 2, graphics.getWindowHeight() / 2, 50);
         if (!attempt) {

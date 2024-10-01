@@ -3,6 +3,7 @@ package com.grupo04.androidengine;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -16,6 +17,7 @@ public class AndroidGraphics extends Graphics {
     private Canvas canvas;
 
     public AndroidGraphics(SurfaceView window, SurfaceHolder holder) {
+        super();
         this.window = window;
         this.holder = holder;
         this.paint = new Paint();
@@ -55,5 +57,10 @@ public class AndroidGraphics extends Graphics {
     @Override
     public void fillCircle(int x, int y, int radius) {
         canvas.drawCircle(x, y, radius, this.paint);
+    }
+
+    @Override
+    public void fillRectangle(int x, int y, int w, int h) {
+        canvas.drawRect(new Rect(x, y, w, h), paint);
     }
 }

@@ -15,6 +15,7 @@ public class DesktopGraphics extends Graphics {
     private BufferStrategy bufferStrategy;
 
     public DesktopGraphics(JFrame window, Graphics2D graphics2D, BufferStrategy bufferStrategy) {
+        super();
         this.window = window;
         this.graphics2D = graphics2D;
         this.bufferStrategy = bufferStrategy;
@@ -57,5 +58,9 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void fillCircle(int x, int y, int radius) {
         this.graphics2D.fillOval(x, y, radius, radius);
+    }
+    @Override
+    public void fillRectangle(int x, int y, int w, int h) {
+        this.graphics2D.fillRect(x, y, w, h);
     }
 }
