@@ -35,14 +35,12 @@ public class TestScene extends Scene {
         Graphics graphics = engine.getGraphics();
 
         graphics.setColor(0,0,255,255);
-        graphics.fillRectangle(0,0, graphics.getWindowHeight(), graphics.getWindowHeight());
+        graphics.fillRectangle(0,0, graphics.getWindowWidth(), graphics.getWindowHeight());
 
-        img.setX(graphics.getWindowWidth() / 2 - img.getWidth() / 2);
-        img.setY(graphics.getWindowHeight() / 2 - img.getHeight() / 2);
-        img.render(graphics);
+        img.render(0, 0 , graphics.getWindowWidth(), graphics.getWindowHeight());
 
         graphics.setColor(255, 0, 0, 255);
-        graphics.fillCircle(graphics.getWindowWidth() / 2, graphics.getWindowHeight() / 2, 50);
+        graphics.fillCircle(graphics.getWindowWidth() / 2 - 25, graphics.getWindowHeight() / 2 - 25, 50);
         if (!attempt) {
             this.engine.pushScene(new TestScene2(this.engine));
             this.attempt = true;

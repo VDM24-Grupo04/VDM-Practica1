@@ -12,9 +12,10 @@ import javax.imageio.ImageIO;
 
 public class DesktopImage extends Image {
     private BufferedImage img;
-
-    DesktopImage(String fileName) {
-        super(0, 0);
+    DesktopGraphics graphics;
+    DesktopImage(String fileName, DesktopGraphics graphics) {
+        super();
+        this.graphics = graphics;
         try {
             img = ImageIO.read(new File("./assets/" + fileName));
         } catch (IOException ex) {
@@ -23,9 +24,14 @@ public class DesktopImage extends Image {
     }
 
     @Override
-    public void render(Graphics graphics) {
-        ((DesktopGraphics)graphics).getGraphics2D().drawImage(img, x, y, null);
+    public void render(int x, int y) {
+        graphics.getGraphics2D().drawImage(img, x, y, null);
     }
+    @Override
+    public void render(int x, int y, int w, int h) {
+        graphics.getGraphics2D().drawImage(img, x, y, w, h, null);
+    }
+
     @Override
     public int getWidth() {
         return img.getWidth();

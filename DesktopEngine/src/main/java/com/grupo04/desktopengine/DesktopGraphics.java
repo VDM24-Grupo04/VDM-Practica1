@@ -67,8 +67,7 @@ public class DesktopGraphics extends Graphics {
 
     @Override
     public Image newImage(String name) {
-        DesktopImage img = new DesktopImage(name);
-        return img;
+        return new DesktopImage(name, this);
     }
     public Graphics2D getGraphics2D() { return graphics2D; }
 }

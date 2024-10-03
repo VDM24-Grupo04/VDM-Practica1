@@ -14,22 +14,29 @@ import java.io.InputStream;
 
 public class AndroidImage extends Image {
     Bitmap img;
-    AndroidImage(String fileName, Context context) {
-        super(0, 0);
+    Canvas canvas;
+    Paint paint;
+
+    AndroidImage(String fileName, Context context, Canvas canvas, Paint paint) {
+        super();
+        this.canvas = canvas;
+        this.paint = paint;
+
         try {
             InputStream is = context.getAssets().open(fileName);
             img = BitmapFactory.decodeStream(is);
-        } catch (IOException ex) {
-            // handle exception...
-        }
+        } catch (IOException ex) { }
     }
 
     @Override
-    public void render(Graphics graphics) {
-        Canvas canvas = ((AndroidGraphics)graphics).getCanvas();
-        Paint paint = ((AndroidGraphics)graphics).getPaint();
+    public void render(int x, int y) {
         canvas.drawBitmap(img, x, y, paint);
     }
+    @Override
+    public void render(int x, int y, int w, int h) {
+//        canvas.drawBitmap(img, x, y, paint);
+    }
+
     @Override
     public int getWidth() {
         return img.getWidth();

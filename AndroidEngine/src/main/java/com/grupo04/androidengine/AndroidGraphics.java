@@ -66,10 +66,6 @@ public class AndroidGraphics extends Graphics {
     }
 
     public Image newImage(String name) {
-        AndroidImage img = new AndroidImage(name, window.getContext());
-        return img;
+        return new AndroidImage(name, window.getContext(), canvas, paint);
     }
-
-    public Canvas getCanvas() { return canvas; }
-    public Paint getPaint() { return paint; }
 }
