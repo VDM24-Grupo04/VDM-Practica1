@@ -69,5 +69,12 @@ public class DesktopGraphics extends Graphics {
     public Image newImage(String name) {
         return new DesktopImage(name, this);
     }
-    public Graphics2D getGraphics2D() { return graphics2D; }
+    @Override
+    public void renderImage(Image img, int x, int y) {
+        graphics2D.drawImage(((DesktopImage)img).getImg(), x, y, null);
+    }
+    @Override
+    public void renderImage(Image img, int x, int y, int w, int h) {
+        graphics2D.drawImage(((DesktopImage)img).getImg(),  x, y, w, h, null);
+    }
 }

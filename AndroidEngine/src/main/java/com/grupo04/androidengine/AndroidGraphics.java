@@ -66,6 +66,14 @@ public class AndroidGraphics extends Graphics {
     }
 
     public Image newImage(String name) {
-        return new AndroidImage(name, window.getContext(), canvas, paint);
+        return new AndroidImage(name, window.getContext().getAssets(), this);
+    }
+    @Override
+    public void renderImage(Image img, int x, int y) {
+        canvas.drawBitmap(((AndroidImage)img).getImg(), x, y, paint);
+    }
+    @Override
+    public void renderImage(Image img, int x, int y, int w, int h) {
+//        canvas.drawBitmap(img, x, y, paint);
     }
 }

@@ -37,7 +37,7 @@ public class TestScene extends Scene {
         graphics.setColor(0,0,255,255);
         graphics.fillRectangle(0,0, graphics.getWindowWidth(), graphics.getWindowHeight());
 
-        img.render(0, 0 , graphics.getWindowWidth(), graphics.getWindowHeight());
+        img.render(0, 0 );
 
         graphics.setColor(255, 0, 0, 255);
         graphics.fillCircle(graphics.getWindowWidth() / 2 - 25, graphics.getWindowHeight() / 2 - 25, 50);

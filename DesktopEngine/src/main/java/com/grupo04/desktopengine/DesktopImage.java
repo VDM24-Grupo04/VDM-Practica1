@@ -12,7 +12,8 @@ import javax.imageio.ImageIO;
 
 public class DesktopImage extends Image {
     private BufferedImage img;
-    DesktopGraphics graphics;
+    private DesktopGraphics graphics;
+
     DesktopImage(String fileName, DesktopGraphics graphics) {
         super();
         this.graphics = graphics;
@@ -25,13 +26,14 @@ public class DesktopImage extends Image {
 
     @Override
     public void render(int x, int y) {
-        graphics.getGraphics2D().drawImage(img, x, y, null);
+        graphics.renderImage(this, x, y);
     }
     @Override
     public void render(int x, int y, int w, int h) {
-        graphics.getGraphics2D().drawImage(img, x, y, w, h, null);
+        graphics.renderImage(this, x, y, w, h);
     }
 
+    public BufferedImage getImg() { return img; }
     @Override
     public int getWidth() {
         return img.getWidth();

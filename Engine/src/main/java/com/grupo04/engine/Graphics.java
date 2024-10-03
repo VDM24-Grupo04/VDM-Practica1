@@ -17,4 +17,6 @@ public abstract class Graphics {
     }
 
     public Image newImage(String name) { return null; }
+    public void renderImage(Image img, int x, int y) { }
+    public void renderImage(Image img, int x, int y, int w, int h) { }
 }
