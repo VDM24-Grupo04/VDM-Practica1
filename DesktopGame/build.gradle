@@ -11,4 +11,5 @@ dependencies {
     implementation project(':DesktopEngine')
     implementation project(':Engine')
     implementation project(':GameLogic')
+    implementation project(':GameLogic')
 }

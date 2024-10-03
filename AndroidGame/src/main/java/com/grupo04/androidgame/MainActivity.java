@@ -1,5 +1,6 @@
 package com.grupo04.androidgame;
 
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.SurfaceView;
 
@@ -11,10 +12,14 @@ import com.grupo04.gamelogic.TestScene;
 public class MainActivity extends AppCompatActivity {
     private SurfaceView window;
     private AndroidEngine androidEngine;
+    private AssetManager assetManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Pasarselo al motor
+        this.assetManager = this.getAssets();
 
         // Creamos el SurfaceView que "contendrá" nuestra escena
         this.window = new SurfaceView(this);
