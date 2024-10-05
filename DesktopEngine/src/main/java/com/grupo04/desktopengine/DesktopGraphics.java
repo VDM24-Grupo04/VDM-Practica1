@@ -3,9 +3,11 @@ package com.grupo04.desktopengine;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Image;
 import com.grupo04.engine.Scene;
+import com.grupo04.engine.Vector;
 
 import javax.swing.JFrame;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
@@ -80,6 +82,10 @@ public class DesktopGraphics extends Graphics {
         Color colorInt = new Color(color.red, color.green, color.blue, color.alpha);
         this.graphics2D.setColor(colorInt);
         this.graphics2D.fillRect(0, 0, this.getWindowWidth(), this.getWindowHeight());
+        // Establece que si ya hay algo dibujado en graphics2D y se vuelve a dibujar en el,
+        // se pinta por encima de lo que habia
+        // Es el modo por defecto. Hay otros modos como setXORMode()...
+        this.graphics2D.setPaintMode();
     }
 
     @Override
@@ -89,15 +95,74 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public void fillCircle(int x, int y, int radius) {
-        int[] screenPosition = this.convertToScreenPosition(x, y);
-        this.graphics2D.fillOval(screenPosition[0], screenPosition[1], radius, radius);
+    public void drawCircle(Vector position, float radius, float strokeWidth) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(radius, radius));
+        this.graphics2D.setStroke(new BasicStroke(strokeWidth));
+        this.graphics2D.drawOval((int) screenPosition.x, (int) screenPosition.y,
+                (int) screenDim.x, (int) screenDim.y);
+        this.graphics2D.setPaintMode();
     }
 
     @Override
-    public void fillRectangle(int x, int y, int w, int h) {
-        int[] screenPosition = this.convertToScreenPosition(x, y);
-        this.graphics2D.fillRect(screenPosition[0], screenPosition[1], w, h);
+    public void fillCircle(Vector position, float radius) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(radius, radius));
+        this.graphics2D.fillOval((int) screenPosition.x, (int) screenPosition.y,
+                (int) screenDim.x, (int) screenDim.y);
+        this.graphics2D.setPaintMode();
+    }
+
+    @Override
+    public void drawRectangle(Vector position, float w, float h, float strokeWidth) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
+        this.graphics2D.setStroke(new BasicStroke(strokeWidth));
+        this.graphics2D.drawRect((int) screenPosition.x, (int) screenPosition.y,
+                (int) screenDim.x, (int) screenDim.y);
+        this.graphics2D.setPaintMode();
+    }
+
+    @Override
+    public void fillRectangle(Vector position, float w, float h) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
+        this.graphics2D.fillRect((int) screenPosition.x, (int) screenPosition.y,
+                (int) screenDim.x, (int) screenDim.y);
+        this.graphics2D.setPaintMode();
+    }
+
+    @Override
+    public void drawRoundRectangle(Vector position, float w, float h, float arc, float strokeWidth) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
+        this.graphics2D.setStroke(new BasicStroke(strokeWidth));
+        this.graphics2D.drawRoundRect((int) screenPosition.x, (int) screenPosition.y,
+                (int) screenDim.x, (int) screenDim.y, (int) arc, (int) arc);
+        this.graphics2D.setPaintMode();
+    }
+
+    @Override
+    public void fillRoundRectangle(Vector position, float w, float h, float arc) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
+        this.graphics2D.drawRoundRect((int) screenPosition.x, (int) screenPosition.y,
+                (int) screenDim.x, (int) screenDim.y, (int) arc, (int) arc);
+        this.graphics2D.setPaintMode();
+    }
+
+    @Override
+    public void drawLine(Vector initPos, Vector endPos, float strokeWidth) {
+        Vector initScreenPos = this.worldToScreenPoint(initPos);
+        Vector endScreenPos = this.worldToScreenPoint(endPos);
+        this.graphics2D.setStroke(new BasicStroke(strokeWidth));
+        this.graphics2D.drawLine((int) initScreenPos.x, (int) initScreenPos.y, (int) endScreenPos.x, (int) endScreenPos.y);
+        this.graphics2D.setPaintMode();
+    }
+
+    @Override
+    public void drawHexagon(Vector position, Vector sideSize, float strokeWidth) {
+
     }
 
     @Override
@@ -106,16 +171,18 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public void renderImage(Image img, int x, int y) {
-        int[] screenPosition = this.convertToScreenPosition(x, y);
+    public void drawImage(Image img, Vector position) {
+        Vector screenPosition = this.worldToScreenPoint(position);
         graphics2D.drawImage(((DesktopImage) img).getImg(),
-                screenPosition[0], screenPosition[1], null);
+                (int) screenPosition.x, (int) screenPosition.y, null);
+        this.graphics2D.setPaintMode();
     }
 
     @Override
-    public void renderImage(Image img, int x, int y, int w, int h) {
-        int[] screenPosition = this.convertToScreenPosition(x, y);
+    public void drawImage(Image img, Vector position, int w, int h) {
+        Vector screenPosition = this.worldToScreenPoint(position);
         graphics2D.drawImage(((DesktopImage) img).getImg(),
-                screenPosition[0], screenPosition[1], w, h, null);
+                (int) screenPosition.x, (int) screenPosition.y, w, h, null);
+        this.graphics2D.setPaintMode();
     }
 }

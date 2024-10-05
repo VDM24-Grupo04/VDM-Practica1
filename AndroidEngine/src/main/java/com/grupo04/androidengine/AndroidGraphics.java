@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Image;
 import com.grupo04.engine.Scene;
+import com.grupo04.engine.Vector;
 
 public class AndroidGraphics extends Graphics {
     private SurfaceView window;
@@ -85,15 +86,68 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
-    public void fillCircle(int x, int y, int radius) {
-        int[] screenPosition = this.convertToScreenPosition(x, y);
-        this.canvas.drawCircle(screenPosition[0], screenPosition[1], radius, this.paint);
+    public void drawCircle(Vector position, float radius, float strokeWidth) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(radius, radius));
+        this.paint.setStyle(Paint.Style.STROKE);
+        this.paint.setStrokeWidth(strokeWidth);
+        this.canvas.drawOval(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, this.paint);
     }
 
     @Override
-    public void fillRectangle(int x, int y, int w, int h) {
-        int[] screenPosition = this.convertToScreenPosition(x, y);
-        this.canvas.drawRect(new Rect(screenPosition[0], screenPosition[1], w, h), this.paint);
+    public void fillCircle(Vector position, float radius) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(radius, radius));
+        this.paint.setStyle(Paint.Style.FILL);
+        this.canvas.drawOval(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, this.paint);
+    }
+
+    @Override
+    public void drawRectangle(Vector position, float w, float h, float strokeWidth) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
+        this.paint.setStyle(Paint.Style.STROKE);
+        this.paint.setStrokeWidth(strokeWidth);
+        this.canvas.drawRect(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, this.paint);
+    }
+
+    @Override
+    public void fillRectangle(Vector position, float w, float h) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
+        this.paint.setStyle(Paint.Style.FILL);
+        this.canvas.drawRect(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, this.paint);
+    }
+
+    @Override
+    public void drawRoundRectangle(Vector position, float w, float h, float arc, float strokeWidth) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
+        this.paint.setStyle(Paint.Style.STROKE);
+        this.paint.setStrokeWidth(strokeWidth);
+        this.canvas.drawRoundRect(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, arc, arc, this.paint);
+    }
+
+    @Override
+    public void fillRoundRectangle(Vector position, float w, float h, float arc) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
+        this.paint.setStyle(Paint.Style.FILL);
+        this.canvas.drawRoundRect(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, arc, arc, this.paint);
+    }
+
+    @Override
+    public void drawLine(Vector initPos, Vector endPos, float strokeWidth) {
+        // No importa el estilo
+        Vector initScreenPos = this.worldToScreenPoint(initPos);
+        Vector endScreenPos = this.worldToScreenPoint(endPos);
+        this.paint.setStrokeWidth(strokeWidth);
+        this.canvas.drawLine(initScreenPos.x, initScreenPos.y, endScreenPos.x, endScreenPos.y, this.paint);
+    }
+
+    @Override
+    public void drawHexagon(Vector position, Vector sideSize, float strokeWidth) {
+
     }
 
     @Override
@@ -102,14 +156,14 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
-    public void renderImage(Image img, int x, int y) {
-        int[] screenPosition = this.convertToScreenPosition(x, y);
+    public void drawImage(Image img, Vector position) {
+        Vector screenPosition = this.worldToScreenPoint(position);
         this.canvas.drawBitmap(((AndroidImage) img).getImg(),
-                screenPosition[0], screenPosition[1], this.paint);
+                screenPosition.x, screenPosition.y, this.paint);
     }
 
     @Override
-    public void renderImage(Image img, int x, int y, int w, int h) {
+    public void drawImage(Image img, Vector position, int w, int h) {
         // this.canvas.drawBitmap(img, x, y, paint);
     }
 }

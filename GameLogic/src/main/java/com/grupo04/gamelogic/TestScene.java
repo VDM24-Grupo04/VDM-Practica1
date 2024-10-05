@@ -5,6 +5,7 @@ import com.grupo04.engine.Engine;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Image;
 import com.grupo04.engine.Scene;
+import com.grupo04.engine.Vector;
 
 public class TestScene extends Scene {
     private boolean attempt;
@@ -21,10 +22,15 @@ public class TestScene extends Scene {
     public void render(Graphics graphics) {
         super.render(graphics);
 
-        graphics.renderImage(img, 0, 0);
+        //graphics.drawImage(img, new Vector());
 
         graphics.setColor(new Color(255, 0, 0));
-        graphics.fillCircle(graphics.getWorldWidth() / 2, graphics.getWorldHeight() / 2, 50);
+        graphics.fillCircle(new Vector(graphics.getWorldWidth() / 2, graphics.getWorldHeight() / 2),
+                50);
+
+        float radius = 100;
+        graphics.setColor(new Color(0, 255, 0));
+        graphics.drawLine(new Vector(200 - radius / 2, 70), new Vector(200, 70), 100);
         /*
         if (!attempt) {
             this.engine.pushScene(new TestScene2(this.engine));
