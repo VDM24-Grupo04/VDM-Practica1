@@ -1,11 +1,8 @@
 package com.grupo04.engine;
 
-public abstract class Image {
-    public Image() {}
-    public int getWidth() { return 0; }
-    public int getHeight() { return 0; }
+public interface Image {
+    public int getWidth();
 
-    public void render(int x, int y) { }
-    public void render(int x, int y, int w, int h) { }
+    public int getHeight();
 }
 

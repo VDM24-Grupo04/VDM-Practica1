@@ -13,7 +13,7 @@ import com.grupo04.engine.Image;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class AndroidImage extends Image {
+public class AndroidImage implements Image {
     Bitmap img;
     AndroidGraphics graphics;
 
@@ -24,23 +24,21 @@ public class AndroidImage extends Image {
         try {
             InputStream is = assetManager.open(fileName);
             img = BitmapFactory.decodeStream(is);
-        } catch (IOException ex) { }
+        } catch (IOException ex) {
+        }
     }
 
-    @Override
-    public void render(int x, int y) {
-        graphics.renderImage(this, x, y);
-    }
-    @Override
-    public void render(int x, int y, int w, int h) {
-        graphics.renderImage(this, x, y, w, h);
+    public Bitmap getImg() {
+        return img;
     }
 
-    public Bitmap getImg() { return img; }
     @Override
     public int getWidth() {
         return img.getWidth();
     }
+
     @Override
-    public int getHeight() { return img.getHeight(); }
+    public int getHeight() {
+        return img.getHeight();
+    }
 }

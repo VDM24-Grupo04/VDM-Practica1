@@ -36,6 +36,7 @@ public class DesktopEngine extends Engine {
         this.graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
 
         // Para poder hacer resize de la ventana
+        /*
         window.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 //Component c = (Component)evt.getSource();
@@ -46,8 +47,9 @@ public class DesktopEngine extends Engine {
                 graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
             }
         });
+        */
 
-        DesktopGraphics desktopGraphics = new DesktopGraphics(window, this.graphics2D, this.bufferStrategy);
-        this.init(desktopGraphics);
+        DesktopGraphics desktopGraphics = new DesktopGraphics(400, 600, window, this.graphics2D, this.bufferStrategy);
+        this.initModules(desktopGraphics);
     }
 }

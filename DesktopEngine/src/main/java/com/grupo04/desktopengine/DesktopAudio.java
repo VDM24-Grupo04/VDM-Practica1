@@ -3,12 +3,13 @@ package com.grupo04.desktopengine;
 import com.grupo04.engine.Audio;
 
 public class DesktopAudio extends Audio {
-
     // Pool de DesktopSounds
-    DesktopSound[] sounds = new DesktopSound[5];
+    private DesktopSound[] sounds = new DesktopSound[5];
 
     @Override
-    public DesktopSound newSound(String fileName) { return new DesktopSound(fileName); }
+    public DesktopSound newSound(String fileName) {
+        return new DesktopSound(fileName);
+    }
 
     @Override
     public boolean playSound(String soundName) {

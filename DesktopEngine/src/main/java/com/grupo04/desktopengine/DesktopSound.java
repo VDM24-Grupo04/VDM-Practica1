@@ -3,15 +3,16 @@ package com.grupo04.desktopengine;
 import com.grupo04.engine.Sound;
 
 import java.io.File;
+
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.Clip;
 
 public class DesktopSound extends Sound {
-    protected String soundName              = "";
-    protected File audioFile                = null;
-    protected AudioInputStream audioStream  = null;
-    protected Clip clip                     = null;
+    protected String soundName = "";
+    protected File audioFile = null;
+    protected AudioInputStream audioStream = null;
+    protected Clip clip = null;
 
     DesktopSound(String fileName) {
         try {
@@ -26,8 +27,12 @@ public class DesktopSound extends Sound {
     }
 
     @Override
-    public void play() { if (this.clip != null) this.clip.start(); }
+    public void play() {
+        if (this.clip != null) this.clip.start();
+    }
 
     @Override
-    public void stop() { if (this.clip != null) this.clip.stop(); }
+    public void stop() {
+        if (this.clip != null) this.clip.stop();
+    }
 }

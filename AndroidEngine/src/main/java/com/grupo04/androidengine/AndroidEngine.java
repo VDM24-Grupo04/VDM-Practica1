@@ -1,18 +1,15 @@
 package com.grupo04.androidengine;
 
-import android.view.SurfaceHolder;
+import android.content.res.AssetManager;
 import android.view.SurfaceView;
 
 import com.grupo04.engine.Engine;
 
 public class AndroidEngine extends Engine {
-    private SurfaceHolder holder;
-
-    public AndroidEngine(SurfaceView window) {
+    public AndroidEngine(SurfaceView window, AssetManager assetManager) {
         super();
-        this.holder = window.getHolder();
 
-        AndroidGraphics androidGraphics = new AndroidGraphics(window, holder);
-        this.init(androidGraphics);
+        AndroidGraphics androidGraphics = new AndroidGraphics(400, 600, window, assetManager);
+        this.initModules(androidGraphics);
     }
 }

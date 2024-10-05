@@ -9,11 +9,11 @@ import android.media.SoundPool;
 import java.io.IOException;
 
 public class AndroidSound extends Sound {
-    String soundName                        = "";
+    String soundName = "";
     AssetFileDescriptor assetFileDescriptor = null;
-    SoundPool soundPool                     = null;
-    int soundId                             = -1;
-    int priority                            = 0;
+    SoundPool soundPool = null;
+    int soundId = -1;
+    int priority = 0;
 
     AndroidSound(String fileName, int priority) {
 //        soundPool = new SoundPool.Builder().setMaxStreams(5).build();
