@@ -153,9 +153,6 @@ public class AndroidGraphics extends Graphics {
         Path hexagon = new Path();
         Vector initPoint = new Vector();
 
-        // Centro del hexagono
-        Vector screenCenter = this.worldToScreenPoint(center);
-
         // Rotacion del hexagano en radianes y en sentido antihorario
         double rotInRadians = rotInDegrees * Math.PI / 180;
 
@@ -168,8 +165,8 @@ public class AndroidGraphics extends Graphics {
             pointRot += rotInRadians;
 
             Vector point = new Vector();
-            point.x = (float) (screenCenter.x + radius * Math.cos(pointRot));
-            point.y = (float) (screenCenter.y + radius * Math.sin(pointRot));
+            point.x = (float) (center.x + radius * Math.cos(pointRot));
+            point.y = (float) (center.y + radius * Math.sin(pointRot));
 
             point = worldToScreenPoint(point);
 

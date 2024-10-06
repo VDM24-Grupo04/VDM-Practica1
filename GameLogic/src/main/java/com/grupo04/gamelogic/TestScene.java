@@ -2,6 +2,7 @@ package com.grupo04.gamelogic;
 
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
+import com.grupo04.engine.Font;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Image;
 import com.grupo04.engine.Scene;
@@ -9,13 +10,16 @@ import com.grupo04.engine.Vector;
 
 public class TestScene extends Scene {
     private boolean attempt;
-
-    Image img;
+    private Image img;
+    private Font font;
+    private Font boldFont;
 
     public TestScene(Engine engine) {
         super(engine, new Color(0, 0, 255));
         img = engine.getGraphics().newImage("regirock.jpg");
         this.attempt = false;
+        font = engine.getGraphics().newFont("kimberley.ttf", 200, false);
+        boldFont = engine.getGraphics().newFont("kimberley.ttf", 200, true);
     }
 
     @Override
@@ -25,11 +29,16 @@ public class TestScene extends Scene {
         //graphics.drawImage(img, new Vector());
 
         graphics.setColor(new Color(255, 0, 0));
-        // graphics.fillCircle(new Vector(graphics.getWorldWidth() / 2, graphics.getWorldHeight() / 2), 50);
+        //graphics.fillCircle(new Vector(graphics.getWorldWidth() / 2, graphics.getWorldHeight() / 2), 50);
 
-        float radius = 100;
-        graphics.setColor(new Color(0, 255, 0));
-        graphics.drawHexagon(new Vector(200, 200), 200, 10);
+        // float radius = 100;
+        //graphics.setColor(new Color(0, 255, 0));
+        //graphics.drawHexagon(new Vector(graphics.getWorldWidth() / 2, 200), 100, 10);
+
+        graphics.setFont(this.boldFont);
+        graphics.drawText("Hola", new Vector(200, 200));
+        graphics.setFont(this.font);
+        graphics.drawText("Hola", new Vector(200, 250));
 
         /*
         if (!attempt) {
