@@ -52,7 +52,11 @@ public abstract class Graphics {
 
     public abstract void drawLine(Vector initPos, Vector endPos, float strokeWidth);
 
-    public abstract void drawHexagon(Vector position, Vector sideSize, float strokeWidth);
+    public abstract void drawHexagon(Vector center, float radius, float rotInDegrees, float strokeWidth);
+
+    public void drawHexagon(Vector center, float radius, float strokeWidth) {
+        drawHexagon(center, radius, 0, strokeWidth);
+    }
 
     public boolean isWindowInitialized() {
         return this.getWindowWidth() != 0;
@@ -63,4 +67,10 @@ public abstract class Graphics {
     public abstract void drawImage(Image img, Vector position);
 
     public abstract void drawImage(Image img, Vector position, int w, int h);
+
+    public abstract Font newFont(String name, float size, boolean isBold);
+
+    public abstract void setFont(Font font);
+
+    public abstract void drawText(String text, Vector position);
 }

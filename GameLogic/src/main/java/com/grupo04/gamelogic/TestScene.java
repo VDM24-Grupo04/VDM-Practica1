@@ -25,12 +25,12 @@ public class TestScene extends Scene {
         //graphics.drawImage(img, new Vector());
 
         graphics.setColor(new Color(255, 0, 0));
-        graphics.fillCircle(new Vector(graphics.getWorldWidth() / 2, graphics.getWorldHeight() / 2),
-                50);
+        // graphics.fillCircle(new Vector(graphics.getWorldWidth() / 2, graphics.getWorldHeight() / 2), 50);
 
         float radius = 100;
         graphics.setColor(new Color(0, 255, 0));
-        graphics.drawLine(new Vector(200 - radius / 2, 70), new Vector(200, 70), 100);
+        graphics.drawHexagon(new Vector(200, 200), 200, 10);
+
         /*
         if (!attempt) {
             this.engine.pushScene(new TestScene2(this.engine));

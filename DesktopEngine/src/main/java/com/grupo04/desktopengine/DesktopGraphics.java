@@ -1,5 +1,6 @@
 package com.grupo04.desktopengine;
 
+import com.grupo04.engine.Font;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Image;
 import com.grupo04.engine.Scene;
@@ -10,6 +11,7 @@ import javax.swing.JFrame;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.image.BufferStrategy;
 
 public class DesktopGraphics extends Graphics {
@@ -161,19 +163,47 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public void drawHexagon(Vector position, Vector sideSize, float strokeWidth) {
+    public void drawHexagon(Vector center, float radius, float rotInDegrees, float strokeWidth) {
+        // Numero de lados del poligono
+        int nSides = 6;
+        Polygon hexagon = new Polygon();
 
+        // Centro del hexagono
+        Vector screenCenter = this.worldToScreenPoint(center);
+
+        // Rotacion del hexagano en radianes y en sentido antihorario
+        double rotInRadians = rotInDegrees * Math.PI / 180;
+
+        for (int i = 0; i < nSides; i++) {
+            // PI son 180 grados
+            // Para dibujar un hexagano hay que dividir una circunferencia en 6 lados
+            // Por lo tanto, 360 grados / 6 = 2 * PI / 6
+            double pointRot = i * 2 * Math.PI / nSides;
+            // Rotar el hexagono respecto a su posicion inicial
+            pointRot += rotInRadians;
+
+            Vector point = new Vector();
+            point.x = (float) (screenCenter.x + radius * Math.cos(pointRot));
+            point.y = (float) (screenCenter.y + radius * Math.sin(pointRot));
+
+            point = worldToScreenPoint(point);
+            hexagon.addPoint((int) point.x, (int) point.y);
+        }
+
+        this.graphics2D.setStroke(new BasicStroke(strokeWidth));
+        this.graphics2D.drawPolygon(hexagon);
+        this.graphics2D.setPaintMode();
     }
 
     @Override
     public Image newImage(String name) {
-        return new DesktopImage(name, this);
+        return new DesktopImage(name);
     }
 
     @Override
     public void drawImage(Image img, Vector position) {
         Vector screenPosition = this.worldToScreenPoint(position);
-        graphics2D.drawImage(((DesktopImage) img).getImg(),
+        this.graphics2D.drawImage(((DesktopImage) img).getImg(),
                 (int) screenPosition.x, (int) screenPosition.y, null);
         this.graphics2D.setPaintMode();
     }
@@ -181,8 +211,25 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void drawImage(Image img, Vector position, int w, int h) {
         Vector screenPosition = this.worldToScreenPoint(position);
-        graphics2D.drawImage(((DesktopImage) img).getImg(),
+        this.graphics2D.drawImage(((DesktopImage) img).getImg(),
                 (int) screenPosition.x, (int) screenPosition.y, w, h, null);
         this.graphics2D.setPaintMode();
+    }
+
+    @Override
+    public Font newFont(String name, float size, boolean isBold) {
+        return new DesktopFont(name, size, isBold);
+    }
+
+    @Override
+    public void setFont(Font font) {
+        DesktopFont desktopFont = (DesktopFont) font;
+        this.graphics2D.setFont(desktopFont.getFont());
+    }
+
+    @Override
+    public void drawText(String text, Vector position) {
+        Vector screenPosition = this.worldToScreenPoint(position);
+        this.graphics2D.drawString(text, screenPosition.x, screenPosition.y);
     }
 }

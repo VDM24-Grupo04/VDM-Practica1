@@ -10,29 +10,27 @@ import javax.imageio.ImageIO;
 
 public class DesktopImage implements Image {
     private BufferedImage img;
-    private DesktopGraphics graphics;
 
-    DesktopImage(String fileName, DesktopGraphics graphics) {
-        this.graphics = graphics;
+    DesktopImage(String fileName) {
         try {
-            img = ImageIO.read(new File("./assets/" + fileName));
+            this.img = ImageIO.read(new File("./assets/" + fileName));
         } catch (IOException ex) {
-            // handle exception...
+            // Tratar excepcion...
         }
     }
 
     public BufferedImage getImg() {
-        return img;
+        return this.img;
     }
 
     @Override
     public int getWidth() {
-        return img.getWidth();
+        return this.img.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return img.getHeight();
+        return this.img.getHeight();
     }
 }
 

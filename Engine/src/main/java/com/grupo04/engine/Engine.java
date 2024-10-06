@@ -104,7 +104,7 @@ public abstract class Engine implements Runnable {
             // Informar sobre los FPS a los que corre el juego
             if (currentTime - previousReport > 1000000000l) {
                 long fps = frames * 1000000000l / (currentTime - previousReport);
-                System.out.println(fps + " fps");
+                //System.out.println(fps + " fps");
                 frames = 0;
                 previousReport = currentTime;
             }
@@ -169,7 +169,8 @@ public abstract class Engine implements Runnable {
                     this.mainLoopThread.join();
                     this.mainLoopThread = null;
                     break;
-                } catch (InterruptedException ie) {
+                } catch (InterruptedException ex) {
+                    System.err.println("Error en el hilo de renderizado: " + ex.getMessage());
                 }
             }
         }
