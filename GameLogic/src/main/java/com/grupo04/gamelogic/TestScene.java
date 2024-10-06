@@ -26,10 +26,11 @@ public class TestScene extends Scene {
     public void render(Graphics graphics) {
         super.render(graphics);
 
-        //graphics.drawImage(img, new Vector());
+        graphics.drawImage(img, new Vector(graphics.getWorldWidth() / 2 - 100, graphics.getWorldHeight() / 2 - 100), 200, 200);
 
         graphics.setColor(new Color(255, 0, 0));
         //graphics.fillCircle(new Vector(graphics.getWorldWidth() / 2, graphics.getWorldHeight() / 2), 50);
+
 
         // float radius = 100;
         //graphics.setColor(new Color(0, 255, 0));

@@ -208,8 +208,10 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void drawImage(Image img, Vector position, int w, int h) {
         Vector screenPosition = this.worldToScreenPoint(position);
-        this.graphics2D.drawImage(((DesktopImage) img).getImg(),
-                (int) screenPosition.x, (int) screenPosition.y, w, h, null);
+        Vector screenDim = this.worldToScreenPoint((new Vector(w, h)));
+
+        graphics2D.drawImage(((DesktopImage)img).getImg(),
+                (int) screenPosition.x, (int) screenPosition.y, (int) screenDim.x, (int)screenDim.y, null);
         this.graphics2D.setPaintMode();
     }
 

@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -193,13 +194,19 @@ public class AndroidGraphics extends Graphics {
     @Override
     public void drawImage(Image img, Vector position) {
         Vector screenPosition = this.worldToScreenPoint(position);
-        this.canvas.drawBitmap(((AndroidImage) img).getImg(),
+        this.canvas.drawBitmap(((AndroidImage)img).getImg(),
                 screenPosition.x, screenPosition.y, this.paint);
     }
 
     @Override
     public void drawImage(Image img, Vector position, int w, int h) {
-        // this.canvas.drawBitmap(img, x, y, paint);
+        Vector screenPosition = this.worldToScreenPoint(position);
+        Vector screenDim = this.worldToScreenPoint((new Vector(w, h)));
+
+        Rect src = new Rect(0, 0, ((AndroidImage)img).getWidth(), ((AndroidImage)img).getHeight());
+        Rect dest = new Rect((int)screenPosition.x, (int)screenPosition.y,
+                (int)screenPosition.x + (int)screenDim.x,(int)screenPosition.y + (int)screenDim.y);
+        this.canvas.drawBitmap(((AndroidImage)img).getImg(), src, dest, this.paint);
     }
 
     @Override
