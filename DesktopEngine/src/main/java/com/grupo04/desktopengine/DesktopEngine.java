@@ -3,8 +3,6 @@ package com.grupo04.desktopengine;
 import com.grupo04.engine.Engine;
 
 import java.awt.Graphics2D;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
@@ -12,9 +10,11 @@ import javax.swing.JFrame;
 public class DesktopEngine extends Engine {
     private Graphics2D graphics2D;
     private BufferStrategy bufferStrategy;
+    private JFrame window;
 
     public DesktopEngine(JFrame window) {
         super();
+        this.window = window;
 
         // Intentamos crear el buffer strategy con 2 buffers.
         int attempts = 100;
@@ -51,6 +51,9 @@ public class DesktopEngine extends Engine {
 
         DesktopGraphics desktopGraphics = new DesktopGraphics(400, 600, window, this.graphics2D, this.bufferStrategy);
         DesktopAudio desktopAudio = new DesktopAudio(5);
-        this.initModules(desktopGraphics, desktopAudio);
+        DesktopInput desktopInput = new DesktopInput(window);
+        this.initModules(desktopGraphics, desktopAudio, desktopInput);
     }
+
+
 }

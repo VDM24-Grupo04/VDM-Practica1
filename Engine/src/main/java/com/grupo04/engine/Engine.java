@@ -15,6 +15,7 @@ public abstract class Engine implements Runnable {
     // Modulos
     private Graphics graphics;
     private Audio audio;
+    private Input input;
 
     // Escenas
     private Stack<Scene> scenes;
@@ -27,9 +28,10 @@ public abstract class Engine implements Runnable {
         scenes = new Stack<Scene>();
     }
 
-    protected void initModules(Graphics graphics, Audio audio) {
+    protected void initModules(Graphics graphics, Audio audio, Input input) {
         this.graphics = graphics;
         this.audio = audio;
+        this.input = input;
     }
 
     public void popScene() {
@@ -182,4 +184,6 @@ public abstract class Engine implements Runnable {
     public Graphics getGraphics() {
         return graphics;
     }
+    public Audio getAudio() { return audio; }
+    public Input getInput() { return input; }
 }
