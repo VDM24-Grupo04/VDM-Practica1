@@ -2,38 +2,43 @@ package com.grupo04.desktopengine;
 
 import com.grupo04.engine.Audio;
 
+import java.util.HashMap;
+
 public class DesktopAudio extends Audio {
-    // Pool de DesktopSounds
-    private DesktopSound[] sounds = new DesktopSound[5];
+    int maxStreams = 0;
+    HashMap<String, DesktopSound> soundPool;
 
-    @Override
-    public DesktopSound newSound(String fileName) {
-        return new DesktopSound(fileName);
+    public DesktopAudio(int maxStreams) {
+        this.maxStreams = maxStreams;
+        this.soundPool = new HashMap<>();
     }
 
     @Override
-    public boolean playSound(String soundName) {
-        return performSoundAction(soundName, true);
-    }
-
-    @Override
-    public boolean stopSound(String soundName) {
-        return performSoundAction(soundName, false);
-    }
-
-    private boolean performSoundAction(String soundName, boolean play) {
-        int i = 0;
-        while (i < sounds.length) {
-            DesktopSound sound = sounds[i];
-            if (sound.soundName.equals(soundName)) {
-                if (play)
-                    sound.play();
-                else
-                    sound.stop();
-                return true;
-            }
-            ++i;
+    public DesktopSound newSound(String fileName, int priority) {
+        if (this.soundPool == null) {
+            throw new IllegalStateException("DesktopAudio sounds not initializated");
         }
-        return false;
+
+        if (soundPool.size() >= this.maxStreams) {
+            throw new IllegalStateException("Maximum number of streams exceeded.");
+        }
+
+        DesktopSound newSound = new DesktopSound(fileName, priority);
+        soundPool.put(fileName, newSound);
+        ++this.maxStreams;
+        return newSound;
+    }
+
+    @Override
+    public boolean playSound(String soundName) { return performAudioAction(soundName, true); }
+
+    @Override
+    public boolean stopSound(String soundName) { return performAudioAction(soundName, false); }
+
+    private boolean performAudioAction(String soundName, boolean play) {
+        if (this.soundPool == null) return false;
+        DesktopSound sound = soundPool.get(soundName);
+        if (play) return sound.play();
+        else return sound.stop();
     }
 }

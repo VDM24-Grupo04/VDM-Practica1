@@ -50,6 +50,7 @@ public class DesktopEngine extends Engine {
         */
 
         DesktopGraphics desktopGraphics = new DesktopGraphics(400, 600, window, this.graphics2D, this.bufferStrategy);
-        this.initModules(desktopGraphics);
+        DesktopAudio desktopAudio = new DesktopAudio(5);
+        this.initModules(desktopGraphics, desktopAudio);
     }
 }
