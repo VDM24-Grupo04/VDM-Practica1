@@ -1,5 +1,6 @@
 package com.grupo04.engine;
 
+import java.util.List;
 import java.util.Stack;
 
 // La interfaz runnable se trata de una interfaz que cuenta con un solo metodo a implementar (run)
@@ -122,9 +123,12 @@ public abstract class Engine implements Runnable {
     }
 
     private void handleInput() {
+        List<TouchEvent> sceneTouchEvents = input.getTouchEvents();
+        if(!sceneTouchEvents.isEmpty()) System.out.println(sceneTouchEvents);
         if (!scenes.empty()) {
-            scenes.peek().handleInput();
+            scenes.peek().handleInput(sceneTouchEvents);
         }
+        input.clearEvents();
     }
 
     private void fixedUpdate() {
