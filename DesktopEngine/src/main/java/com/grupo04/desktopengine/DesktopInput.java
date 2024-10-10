@@ -2,6 +2,8 @@ package com.grupo04.desktopengine;
 
 import com.grupo04.engine.Input;
 import com.grupo04.engine.TouchEvent;
+import com.grupo04.engine.Vector;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -17,13 +19,13 @@ public class DesktopInput extends Input {
             // Se sobreescribe el evento de pulsar el raton
             @Override
             public void mousePressed(MouseEvent e) {
-                touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.PRESS, e.getX(), e.getY()));
+                touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.PRESS, new Vector(e.getX(), e.getY())));
             }
 
             // Se sobreescribe el evento de soltar el raton
             @Override
             public void mouseReleased(MouseEvent e) {
-                touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.RELEASE, e.getX(), e.getY()));
+                touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.RELEASE, new Vector(e.getX(), e.getY())));
             }
         });
 
@@ -32,7 +34,7 @@ public class DesktopInput extends Input {
             // Se sobreescribe el evento de arrastrar el raton
             @Override
             public void mouseDragged(MouseEvent e) {
-                touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.DRAG, e.getX(), e.getY()));
+                touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.DRAG, new Vector(e.getX(), e.getY())));
             }
         });
     }

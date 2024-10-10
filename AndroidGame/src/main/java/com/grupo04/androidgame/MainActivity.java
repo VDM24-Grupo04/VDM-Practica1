@@ -7,7 +7,7 @@ import android.view.SurfaceView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.grupo04.androidengine.AndroidEngine;
-import com.grupo04.gamelogic.TestScene;
+import com.grupo04.gamelogic.scenes.TestScene;
 
 public class MainActivity extends AppCompatActivity {
     private AndroidEngine androidEngine;

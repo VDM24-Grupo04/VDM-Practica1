@@ -1,7 +1,7 @@
 package com.grupo04.desktopgame;
 
 import com.grupo04.desktopengine.DesktopEngine;
-import com.grupo04.gamelogic.TestScene;
+import com.grupo04.gamelogic.scenes.TestScene;
 
 import javax.swing.JFrame;
 

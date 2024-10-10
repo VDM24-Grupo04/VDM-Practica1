@@ -1,4 +1,4 @@
-package com.grupo04.gamelogic;
+package com.grupo04.gamelogic.scenes;
 
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;

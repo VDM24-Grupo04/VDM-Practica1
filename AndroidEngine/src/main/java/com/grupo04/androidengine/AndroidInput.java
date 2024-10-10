@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.grupo04.engine.Input;
 import com.grupo04.engine.TouchEvent;
+import com.grupo04.engine.Vector;
 
 public class AndroidInput extends Input {
     SurfaceView window;
@@ -26,13 +27,13 @@ public class AndroidInput extends Input {
 
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.PRESS, x, y));
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.PRESS, new Vector(x, y)));
                         break;
                     case MotionEvent.ACTION_UP:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.RELEASE, x, y));
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.RELEASE, new Vector(x, y)));
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.DRAG, x, y));
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.DRAG, new Vector(x, y)));
                         break;
                 }
 
