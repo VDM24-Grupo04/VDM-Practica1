@@ -29,9 +29,7 @@ public abstract class GameObject {
         scene = null;
     }
 
-    public void initGameObject() {
-
-    }
+    public abstract void init();
 
     public void setAlive(boolean alive) {
         this.alive = alive;

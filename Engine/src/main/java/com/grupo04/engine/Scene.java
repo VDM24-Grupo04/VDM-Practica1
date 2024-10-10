@@ -88,9 +88,9 @@ public abstract class Scene {
     }
 
     // Coger las diferentes refrenciar
-    public void initGameObjects() {
+    public void init() {
         for (GameObject gameObject : gameObjects) {
-            gameObject.initGameObject();
+            gameObject.init();
         }
     }
 

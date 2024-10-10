@@ -8,7 +8,7 @@ import java.util.Stack;
 public abstract class Engine implements Runnable {
     private static final int MAX_NUM_FIXED_UDPATES = 150;
     private static final double FIXED_DELTA_TIME = 1000.0 / 60.0;
-    
+
     private int worldWidth;
     private float worldHeight;
 
@@ -47,6 +47,7 @@ public abstract class Engine implements Runnable {
 
     public void pushScene(Scene newScene) {
         scenes.push(newScene);
+        newScene.init();
     }
 
     public void changeScene(Scene newScene) {
@@ -58,6 +59,7 @@ public abstract class Engine implements Runnable {
                 scenes.pop();
                 // Se inserta la nueva escena
                 scenes.push(newScene);
+                newScene.init();
             }
         }
     }
@@ -127,7 +129,7 @@ public abstract class Engine implements Runnable {
 
     private void handleInput() {
         List<TouchEvent> sceneTouchEvents = input.getTouchEvents();
-        if(!sceneTouchEvents.isEmpty()) System.out.println(sceneTouchEvents);
+        if (!sceneTouchEvents.isEmpty()) System.out.println(sceneTouchEvents);
         if (!scenes.empty()) {
             scenes.peek().handleInput(sceneTouchEvents);
         }
