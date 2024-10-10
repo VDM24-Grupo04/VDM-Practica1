@@ -40,8 +40,7 @@ public abstract class Engine implements Runnable {
 
     public void popScene() {
         if (!scenes.empty()) {
-            scenes.peek().dereference();
-            scenes.pop();
+            scenes.peek().setAlive(false);
         }
     }
 
@@ -54,9 +53,7 @@ public abstract class Engine implements Runnable {
         if (!scenes.empty()) {
             // Si la escena que se quiere insertar no es la misma que la activa...
             if (scenes.peek() != newScene) {
-                scenes.peek().dereference();
-                // Se saca la escena activa
-                scenes.pop();
+                scenes.peek().setAlive(false);
                 // Se inserta la nueva escena
                 scenes.push(newScene);
                 newScene.init();
@@ -151,6 +148,23 @@ public abstract class Engine implements Runnable {
     private void refresh() {
         if (!scenes.empty()) {
             scenes.peek().refresh();
+
+            Stack<Scene> aliveScenes = new Stack<Scene>();
+            while (!scenes.empty()) {
+                Scene scene = scenes.peek();
+                if (!scene.isAlive()) {
+                    scene.dereference();
+                } else {
+                    aliveScenes.push(scene);
+                }
+                scenes.pop();
+            }
+
+            while (!aliveScenes.empty()) {
+                Scene scene = aliveScenes.peek();
+                scenes.push(scene);
+                aliveScenes.pop();
+            }
         }
     }
 

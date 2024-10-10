@@ -11,11 +11,14 @@ public class TestScene2 extends Scene {
     }
 
     @Override
+    public void update(double deltaTime) {
+        this.engine.popScene();
+    }
+
+    @Override
     public void render(Graphics graphics) {
         super.render(graphics);
 
-        // graphics.setColor(new Color(0, 0, 255));
-        // graphics.fillCircle(graphics.getWindowWidth() / 2, graphics.getWindowHeight() / 2, 50);
         this.engine.popScene();
     }
 }

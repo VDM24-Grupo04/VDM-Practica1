@@ -5,12 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 
 public abstract class Scene {
+    private boolean alive;
     private HashSet<GameObject> gameObjects;
     private HashMap<String, GameObject> handlers;
     protected Engine engine;
     protected Color bgColor;
 
     protected Scene(Engine engine, int worldWidth, int worldHeigth, Color bgColor) {
+        this.alive = true;
         this.gameObjects = new HashSet<GameObject>();
         this.handlers = new HashMap<String, GameObject>();
         this.engine = engine;
@@ -49,20 +51,20 @@ public abstract class Scene {
     }
 
     public void refresh() {
-        HashSet<GameObject> deletedGameObjects = new HashSet<GameObject>();
+        HashSet<GameObject> deadGameObjects = new HashSet<GameObject>();
         for (GameObject gameObject : gameObjects) {
             if (!gameObject.isAlive()) {
-                deletedGameObjects.add(gameObject);
+                deadGameObjects.add(gameObject);
             }
         }
-        for (GameObject deletedGameObject : deletedGameObjects) {
+        for (GameObject deletedGameObject : deadGameObjects) {
             gameObjects.remove(deletedGameObject);
             // Elimina el objeto que corresponde con la clave y además,
             // devuelve true o false si existe o no, respectivamente
             handlers.remove(deletedGameObject.getId());
             deletedGameObject.dereference();
         }
-        deletedGameObjects.clear();
+        deadGameObjects.clear();
     }
 
     public void fixedUpdate(double fixedDeltaTime) {
@@ -87,7 +89,15 @@ public abstract class Scene {
         handlers.clear();
     }
 
-    // Coger las diferentes refrenciar
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public boolean isAlive() {
+        return this.alive;
+    }
+
+    // Coger las diferentes referencias
     public void init() {
         for (GameObject gameObject : gameObjects) {
             gameObject.init();
