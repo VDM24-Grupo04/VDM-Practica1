@@ -1,20 +1,8 @@
 package com.grupo04.engine;
 
 public abstract class Graphics {
-    private float worldWidth;
-    private float worldHeight;
-
-    protected Graphics(float worldWidth, float worldHeight) {
-        this.worldWidth = worldWidth;
-        this.worldHeight = worldHeight;
-    }
-
-    protected Vector worldToScreenPoint(Vector position) {
-        float screenX = position.x * this.getWindowWidth() / this.worldWidth;
-        float screenY = position.y * this.getWindowHeight() / this.worldHeight;
-
-        return new Vector(screenX, screenY);
-    }
+    private int worldWidth;
+    private int worldHeight;
 
     protected abstract void prepareFrame();
 
@@ -25,6 +13,11 @@ public abstract class Graphics {
     public abstract int getWindowWidth();
 
     public abstract int getWindowHeight();
+
+    public void setWorldSize(int worldWidth, int worldHeight) {
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+    }
 
     public float getWorldWidth() {
         return this.worldWidth;

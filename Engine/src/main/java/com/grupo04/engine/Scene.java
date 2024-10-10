@@ -2,6 +2,7 @@ package com.grupo04.engine;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public abstract class Scene {
     private HashSet<GameObject> gameObjects;
@@ -9,10 +10,11 @@ public abstract class Scene {
     protected Engine engine;
     protected Color bgColor;
 
-    protected Scene(Engine engine, Color bgColor) {
+    protected Scene(Engine engine, int worldWidth, int worldHeigth, Color bgColor) {
         this.gameObjects = new HashSet<GameObject>();
         this.handlers = new HashMap<String, GameObject>();
         this.engine = engine;
+        this.engine.setWorldSize(worldWidth, worldHeigth);
         this.bgColor = bgColor;
     }
 
@@ -34,9 +36,9 @@ public abstract class Scene {
         return handlers.get(handler);
     }
 
-    public void handleInput() {
+    public void handleInput(List<TouchEvent> touchEvent) {
         for (GameObject gameObject : gameObjects) {
-            gameObject.handleInput();
+            gameObject.handleInput(touchEvent);
         }
     }
 
@@ -91,12 +93,6 @@ public abstract class Scene {
             gameObject.initGameObject();
         }
     }
-
-    /*
-    public abstract void reset() {
-
-    }
-    */
 
     public Engine getEngine() {
         return this.engine;

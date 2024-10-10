@@ -10,11 +10,9 @@ import javax.swing.JFrame;
 public class DesktopEngine extends Engine {
     private Graphics2D graphics2D;
     private BufferStrategy bufferStrategy;
-    private JFrame window;
 
     public DesktopEngine(JFrame window) {
         super();
-        this.window = window;
 
         // Intentamos crear el buffer strategy con 2 buffers.
         int attempts = 100;
@@ -49,11 +47,9 @@ public class DesktopEngine extends Engine {
         });
         */
 
-        DesktopGraphics desktopGraphics = new DesktopGraphics(400, 600, window, this.graphics2D, this.bufferStrategy);
+        DesktopGraphics desktopGraphics = new DesktopGraphics(window, this.graphics2D, this.bufferStrategy);
         DesktopAudio desktopAudio = new DesktopAudio(5);
         DesktopInput desktopInput = new DesktopInput(window);
         this.initModules(desktopGraphics, desktopAudio, desktopInput);
     }
-
-
 }

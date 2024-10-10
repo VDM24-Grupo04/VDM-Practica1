@@ -8,6 +8,9 @@ import java.util.Stack;
 public abstract class Engine implements Runnable {
     private static final int MAX_NUM_FIXED_UDPATES = 150;
     private static final double FIXED_DELTA_TIME = 1000.0 / 60.0;
+    
+    private int worldWidth;
+    private float worldHeight;
 
     // Se necesita un hilo para correr el renderizado a la par que la ejecucion de android
     private Thread mainLoopThread;
@@ -188,6 +191,18 @@ public abstract class Engine implements Runnable {
     public Graphics getGraphics() {
         return graphics;
     }
-    public Audio getAudio() { return audio; }
-    public Input getInput() { return input; }
+
+    public Audio getAudio() {
+        return audio;
+    }
+
+    public Input getInput() {
+        return input;
+    }
+
+    public void setWorldSize(int worldWidth, int worldHeight) {
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+        this.graphics.setWorldSize(worldWidth, worldHeight);
+    }
 }

@@ -19,8 +19,7 @@ public class DesktopGraphics extends Graphics {
     private Graphics2D graphics2D;
     private BufferStrategy bufferStrategy;
 
-    public DesktopGraphics(int worldWidth, int worldHeight, JFrame window, Graphics2D graphics2D, BufferStrategy bufferStrategy) {
-        super(worldWidth, worldHeight);
+    public DesktopGraphics(JFrame window, Graphics2D graphics2D, BufferStrategy bufferStrategy) {
         this.window = window;
         this.graphics2D = graphics2D;
         this.bufferStrategy = bufferStrategy;
@@ -98,67 +97,54 @@ public class DesktopGraphics extends Graphics {
 
     @Override
     public void drawCircle(Vector position, float radius, float strokeWidth) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(radius, radius));
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
-        this.graphics2D.drawOval((int) screenPosition.x, (int) screenPosition.y,
-                (int) screenDim.x, (int) screenDim.y);
+        this.graphics2D.drawOval((int) position.x, (int) position.y,
+                (int) radius, (int) radius);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void fillCircle(Vector position, float radius) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(radius, radius));
-        this.graphics2D.fillOval((int) screenPosition.x, (int) screenPosition.y,
-                (int) screenDim.x, (int) screenDim.y);
+        this.graphics2D.fillOval((int) position.x, (int) position.y,
+                (int) radius, (int) radius);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void drawRectangle(Vector position, float w, float h, float strokeWidth) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
-        this.graphics2D.drawRect((int) screenPosition.x, (int) screenPosition.y,
-                (int) screenDim.x, (int) screenDim.y);
+        this.graphics2D.drawRect((int) position.x, (int) position.y,
+                (int) w, (int) h);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void fillRectangle(Vector position, float w, float h) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
-        this.graphics2D.fillRect((int) screenPosition.x, (int) screenPosition.y,
-                (int) screenDim.x, (int) screenDim.y);
+        this.graphics2D.fillRect((int) position.x, (int) position.y,
+                (int) w, (int) h);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void drawRoundRectangle(Vector position, float w, float h, float arc, float strokeWidth) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
-        this.graphics2D.drawRoundRect((int) screenPosition.x, (int) screenPosition.y,
-                (int) screenDim.x, (int) screenDim.y, (int) arc, (int) arc);
+        this.graphics2D.drawRoundRect((int) position.x, (int) position.y,
+                (int) w, (int) h, (int) arc, (int) arc);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void fillRoundRectangle(Vector position, float w, float h, float arc) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
-        this.graphics2D.drawRoundRect((int) screenPosition.x, (int) screenPosition.y,
-                (int) screenDim.x, (int) screenDim.y, (int) arc, (int) arc);
+        this.graphics2D.drawRoundRect((int) position.x, (int) position.y,
+                (int) w, (int) h, (int) arc, (int) arc);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void drawLine(Vector initPos, Vector endPos, float strokeWidth) {
-        Vector initScreenPos = this.worldToScreenPoint(initPos);
-        Vector endScreenPos = this.worldToScreenPoint(endPos);
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
-        this.graphics2D.drawLine((int) initScreenPos.x, (int) initScreenPos.y, (int) endScreenPos.x, (int) endScreenPos.y);
+        this.graphics2D.drawLine((int) initPos.x, (int) initPos.y,
+                (int) endPos.x, (int) endPos.y);
         this.graphics2D.setPaintMode();
     }
 
@@ -179,12 +165,10 @@ public class DesktopGraphics extends Graphics {
             // Rotar el hexagono respecto a su posicion inicial
             pointRot += rotInRadians;
 
-            Vector point = new Vector();
-            point.x = (float) (center.x + radius * Math.cos(pointRot));
-            point.y = (float) (center.y + radius * Math.sin(pointRot));
+            int x = (int) (center.x + radius * Math.cos(pointRot));
+            int y = (int) (center.y + radius * Math.sin(pointRot));
 
-            point = worldToScreenPoint(point);
-            hexagon.addPoint((int) point.x, (int) point.y);
+            hexagon.addPoint((int) x, (int) y);
         }
 
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
@@ -199,19 +183,15 @@ public class DesktopGraphics extends Graphics {
 
     @Override
     public void drawImage(Image img, Vector position) {
-        Vector screenPosition = this.worldToScreenPoint(position);
         this.graphics2D.drawImage(((DesktopImage) img).getImg(),
-                (int) screenPosition.x, (int) screenPosition.y, null);
+                (int) position.x, (int) position.y, null);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void drawImage(Image img, Vector position, int w, int h) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint((new Vector(w, h)));
-
         graphics2D.drawImage(((DesktopImage)img).getImg(),
-                (int) screenPosition.x, (int) screenPosition.y, (int) screenDim.x, (int)screenDim.y, null);
+                (int) position.x, (int) position.y, w, h, null);
         this.graphics2D.setPaintMode();
     }
 
@@ -228,7 +208,6 @@ public class DesktopGraphics extends Graphics {
 
     @Override
     public void drawText(String text, Vector position) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        this.graphics2D.drawString(text, screenPosition.x, screenPosition.y);
+        this.graphics2D.drawString(text, position.x, position.y);
     }
 }

@@ -1,5 +1,7 @@
 package com.grupo04.engine;
 
+import java.util.List;
+
 public abstract class GameObject {
     private String id;
     private boolean alive;
@@ -11,7 +13,7 @@ public abstract class GameObject {
         this.scene = null;
     }
 
-    public void handleInput() {
+    public void handleInput(List<TouchEvent> touchEvent) {
     }
 
     public void render(Graphics graphics) {

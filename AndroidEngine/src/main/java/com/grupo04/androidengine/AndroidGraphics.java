@@ -22,8 +22,7 @@ public class AndroidGraphics extends Graphics {
     private Canvas canvas;
     private AssetManager assetManager;
 
-    public AndroidGraphics(int worldWidth, int worldHeight, SurfaceView window, AssetManager assetManager) {
-        super(worldWidth, worldHeight);
+    public AndroidGraphics(SurfaceView window, AssetManager assetManager) {
         this.window = window;
         this.holder = window.getHolder();
         this.paint = new Paint();
@@ -89,62 +88,48 @@ public class AndroidGraphics extends Graphics {
 
     @Override
     public void drawCircle(Vector position, float radius, float strokeWidth) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(radius, radius));
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(strokeWidth);
-        this.canvas.drawOval(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, this.paint);
+        this.canvas.drawCircle(position.x, position.y, radius, this.paint);
     }
 
     @Override
     public void fillCircle(Vector position, float radius) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(radius, radius));
         this.paint.setStyle(Paint.Style.FILL);
-        this.canvas.drawOval(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, this.paint);
+        this.canvas.drawCircle(position.x, position.y, radius, this.paint);
     }
 
     @Override
     public void drawRectangle(Vector position, float w, float h, float strokeWidth) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(strokeWidth);
-        this.canvas.drawRect(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, this.paint);
+        this.canvas.drawRect(position.x, position.y, w, h, this.paint);
     }
 
     @Override
     public void fillRectangle(Vector position, float w, float h) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
         this.paint.setStyle(Paint.Style.FILL);
-        this.canvas.drawRect(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, this.paint);
+        this.canvas.drawRect(position.x, position.y, w, h, this.paint);
     }
 
     @Override
     public void drawRoundRectangle(Vector position, float w, float h, float arc, float strokeWidth) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(strokeWidth);
-        this.canvas.drawRoundRect(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, arc, arc, this.paint);
+        this.canvas.drawRoundRect(position.x, position.y, w, h, arc, arc, this.paint);
     }
 
     @Override
     public void fillRoundRectangle(Vector position, float w, float h, float arc) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint(new Vector(w, h));
         this.paint.setStyle(Paint.Style.FILL);
-        this.canvas.drawRoundRect(screenPosition.x, screenPosition.y, screenDim.x, screenDim.y, arc, arc, this.paint);
+        this.canvas.drawRoundRect(position.x, position.y, w, h, arc, arc, this.paint);
     }
 
     @Override
     public void drawLine(Vector initPos, Vector endPos, float strokeWidth) {
         // No importa el estilo
-        Vector initScreenPos = this.worldToScreenPoint(initPos);
-        Vector endScreenPos = this.worldToScreenPoint(endPos);
         this.paint.setStrokeWidth(strokeWidth);
-        this.canvas.drawLine(initScreenPos.x, initScreenPos.y, endScreenPos.x, endScreenPos.y, this.paint);
+        this.canvas.drawLine(initPos.x, initPos.y, endPos.x, endPos.y, this.paint);
     }
 
     @Override
@@ -169,8 +154,6 @@ public class AndroidGraphics extends Graphics {
             point.x = (float) (center.x + radius * Math.cos(pointRot));
             point.y = (float) (center.y + radius * Math.sin(pointRot));
 
-            point = worldToScreenPoint(point);
-
             if (i == 0) {
                 initPoint.x = point.x;
                 initPoint.y = point.y;
@@ -193,19 +176,15 @@ public class AndroidGraphics extends Graphics {
 
     @Override
     public void drawImage(Image img, Vector position) {
-        Vector screenPosition = this.worldToScreenPoint(position);
         this.canvas.drawBitmap(((AndroidImage)img).getImg(),
-                screenPosition.x, screenPosition.y, this.paint);
+                position.x, position.y, this.paint);
     }
 
     @Override
     public void drawImage(Image img, Vector position, int w, int h) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        Vector screenDim = this.worldToScreenPoint((new Vector(w, h)));
-
         Rect src = new Rect(0, 0, ((AndroidImage)img).getWidth(), ((AndroidImage)img).getHeight());
-        Rect dest = new Rect((int)screenPosition.x, (int)screenPosition.y,
-                (int)screenPosition.x + (int)screenDim.x,(int)screenPosition.y + (int)screenDim.y);
+        Rect dest = new Rect((int)position.x, (int)position.y,
+                (int)position.x + w,(int)position.y + h);
         this.canvas.drawBitmap(((AndroidImage)img).getImg(), src, dest, this.paint);
     }
 
@@ -234,7 +213,6 @@ public class AndroidGraphics extends Graphics {
 
     @Override
     public void drawText(String text, Vector position) {
-        Vector screenPosition = this.worldToScreenPoint(position);
-        this.canvas.drawText(text, screenPosition.x, screenPosition.y, this.paint);
+        this.canvas.drawText(text, position.x, position.y, this.paint);
     }
 }

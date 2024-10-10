@@ -15,7 +15,7 @@ public class TestScene extends Scene {
     private Font boldFont;
 
     public TestScene(Engine engine) {
-        super(engine, new Color(0, 0, 255));
+        super(engine, 400, 600, new Color(0, 0, 255));
         img = engine.getGraphics().newImage("regirock.jpg");
         this.attempt = false;
         font = engine.getGraphics().newFont("kimberley.ttf", 200, false);

@@ -7,7 +7,7 @@ import com.grupo04.engine.Scene;
 
 public class TestScene2 extends Scene {
     public TestScene2(Engine engine) {
-        super(engine, new Color(0, 0, 255));
+        super(engine, 400, 600, new Color(0, 0, 255));
     }
 
     @Override
