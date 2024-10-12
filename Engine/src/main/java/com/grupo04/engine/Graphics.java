@@ -66,4 +66,8 @@ public abstract class Graphics {
     public abstract void setFont(Font font);
 
     public abstract void drawText(String text, Vector position);
+
+    public abstract int getTextWidth(String text);
+
+    public abstract int getTextHeight(String text);
 }

@@ -10,8 +10,13 @@ import javax.swing.JFrame;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.font.LineMetrics;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
 
 public class DesktopGraphics extends Graphics {
@@ -98,14 +103,14 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void drawCircle(Vector position, float radius, float strokeWidth) {
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
-        this.graphics2D.drawOval((int) position.x, (int) position.y,
+        this.graphics2D.drawOval((int) (position.x - radius / 2), (int) (position.y - radius / 2),
                 (int) radius, (int) radius);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void fillCircle(Vector position, float radius) {
-        this.graphics2D.fillOval((int) position.x, (int) position.y,
+        this.graphics2D.fillOval((int) (position.x - radius / 2), (int) (position.y - radius / 2),
                 (int) radius, (int) radius);
         this.graphics2D.setPaintMode();
     }
@@ -113,14 +118,14 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void drawRectangle(Vector position, float w, float h, float strokeWidth) {
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
-        this.graphics2D.drawRect((int) position.x, (int) position.y,
+        this.graphics2D.drawRect((int) (position.x - w / 2), (int) (position.y - h / 2),
                 (int) w, (int) h);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void fillRectangle(Vector position, float w, float h) {
-        this.graphics2D.fillRect((int) position.x, (int) position.y,
+        this.graphics2D.fillRect((int) (position.x - w / 2), (int) (position.y - h / 2),
                 (int) w, (int) h);
         this.graphics2D.setPaintMode();
     }
@@ -128,14 +133,14 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void drawRoundRectangle(Vector position, float w, float h, float arc, float strokeWidth) {
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
-        this.graphics2D.drawRoundRect((int) position.x, (int) position.y,
+        this.graphics2D.drawRoundRect((int) (position.x - w / 2), (int) (position.y - h / 2),
                 (int) w, (int) h, (int) arc, (int) arc);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void fillRoundRectangle(Vector position, float w, float h, float arc) {
-        this.graphics2D.drawRoundRect((int) position.x, (int) position.y,
+        this.graphics2D.drawRoundRect((int) (position.x - w / 2), (int) (position.y - h / 2),
                 (int) w, (int) h, (int) arc, (int) arc);
         this.graphics2D.setPaintMode();
     }
@@ -183,15 +188,19 @@ public class DesktopGraphics extends Graphics {
 
     @Override
     public void drawImage(Image img, Vector position) {
-        this.graphics2D.drawImage(((DesktopImage) img).getImg(),
-                (int) position.x, (int) position.y, null);
+        DesktopImage desktopImage = (DesktopImage) img;
+        this.graphics2D.drawImage(desktopImage.getImg(),
+                (int) (position.x - desktopImage.getWidth() / 2f),
+                (int) (position.y - desktopImage.getHeight() / 2f), null);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void drawImage(Image img, Vector position, int w, int h) {
-        graphics2D.drawImage(((DesktopImage)img).getImg(),
-                (int) position.x, (int) position.y, w, h, null);
+        DesktopImage desktopImage = (DesktopImage) img;
+        graphics2D.drawImage(desktopImage.getImg(),
+                (int) (position.x - w / 2f),
+                (int) (position.y - h / 2f), w, h, null);
         this.graphics2D.setPaintMode();
     }
 
@@ -206,8 +215,34 @@ public class DesktopGraphics extends Graphics {
         this.graphics2D.setFont(desktopFont.getFont());
     }
 
+    // Los textos no se dibujan como el resto de objetos desde una esquina del cuadro que los delimita,
+    // sino que se pintan desde el principio de una linea (baseline), como cuando se escribe en papel
+    // Obtener el ancho del texto es sencillo, pero obtener el alto del texto no ya que se solo se puede
+    // obtener las metricas de la tipografia:
+    // - Ascent -> altura desde la baseline hasta el caracter mas alto de la tipografia
+    // - Descent -> altrua dessde la baseline hasta el caracter mas bajo de la tipografia
+    // - Leading -> separacion entre el texto si hubiera varias lineas
+    // - Height -> ascent + descent + leading
     @Override
     public void drawText(String text, Vector position) {
-        this.graphics2D.drawString(text, position.x, position.y);
+        FontMetrics fontMetrics = this.graphics2D.getFontMetrics();
+
+        float h = fontMetrics.getHeight();
+        float ascent = fontMetrics.getAscent();
+
+        float x = position.x - getTextWidth(text) / 2f;
+        float y = position.y - h / 2 + ascent;
+        this.graphics2D.drawString(text, x, y);
+    }
+
+    public int getTextWidth(String text) {
+        FontMetrics fontMetrics = this.graphics2D.getFontMetrics();
+        return fontMetrics.stringWidth(text);
+    }
+
+    public int getTextHeight(String text) {
+        FontRenderContext fontRenderContext = this.graphics2D.getFontRenderContext();
+        GlyphVector glyphVector = this.graphics2D.getFont().createGlyphVector(fontRenderContext, text);
+        return glyphVector.getPixelBounds(null, 0, 0).height;
     }
 }

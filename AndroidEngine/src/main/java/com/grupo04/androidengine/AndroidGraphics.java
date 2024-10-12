@@ -103,26 +103,32 @@ public class AndroidGraphics extends Graphics {
     public void drawRectangle(Vector position, float w, float h, float strokeWidth) {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(strokeWidth);
-        this.canvas.drawRect(position.x, position.y, w, h, this.paint);
+        this.canvas.drawRect(position.x - w / 2, position.y - h / 2,
+                position.x + w - w / 2, position.y + h - h / 2, this.paint);
     }
 
     @Override
     public void fillRectangle(Vector position, float w, float h) {
         this.paint.setStyle(Paint.Style.FILL);
-        this.canvas.drawRect(position.x, position.y, w, h, this.paint);
+        this.canvas.drawRect(position.x - w / 2, position.y - h / 2,
+                position.x + w - w / 2, position.y + h - h / 2, this.paint);
     }
 
     @Override
     public void drawRoundRectangle(Vector position, float w, float h, float arc, float strokeWidth) {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(strokeWidth);
-        this.canvas.drawRoundRect(position.x, position.y, w, h, arc, arc, this.paint);
+        this.canvas.drawRoundRect(position.x - w / 2, position.y - h / 2,
+                position.x + w - w / 2, position.y + h - h / 2,
+                arc, arc, this.paint);
     }
 
     @Override
     public void fillRoundRectangle(Vector position, float w, float h, float arc) {
         this.paint.setStyle(Paint.Style.FILL);
-        this.canvas.drawRoundRect(position.x, position.y, w, h, arc, arc, this.paint);
+        this.canvas.drawRoundRect(position.x - w / 2, position.y - h / 2,
+                position.x + w - w / 2, position.y + h - h / 2,
+                arc, arc, this.paint);
     }
 
     @Override
@@ -176,16 +182,23 @@ public class AndroidGraphics extends Graphics {
 
     @Override
     public void drawImage(Image img, Vector position) {
-        this.canvas.drawBitmap(((AndroidImage)img).getImg(),
-                position.x, position.y, this.paint);
+        AndroidImage androidImg = (AndroidImage) img;
+        float w = (float) androidImg.getWidth();
+        float h = (float) androidImg.getHeight();
+        this.canvas.drawBitmap(androidImg.getImg(),
+                position.x - w / 2,
+                position.y - h / 2, this.paint);
     }
 
     @Override
     public void drawImage(Image img, Vector position, int w, int h) {
-        Rect src = new Rect(0, 0, ((AndroidImage)img).getWidth(), ((AndroidImage)img).getHeight());
-        Rect dest = new Rect((int)position.x, (int)position.y,
-                (int)position.x + w,(int)position.y + h);
-        this.canvas.drawBitmap(((AndroidImage)img).getImg(), src, dest, this.paint);
+        AndroidImage androidImg = (AndroidImage) img;
+
+        Rect src = new Rect(0, 0, androidImg.getWidth(), androidImg.getHeight());
+        Rect dest = new Rect((int) (position.x - w / 2f), (int) (position.y - h / 2f),
+                (int) (position.x + w - w / 2f),
+                (int) (position.y + h - h / 2f));
+        this.canvas.drawBitmap(androidImg.getImg(), src, dest, this.paint);
     }
 
     @Override
@@ -195,12 +208,13 @@ public class AndroidGraphics extends Graphics {
         this.paint.setTypeface(androidFont.getFont());
         // Se establece el tamano de letra
         this.paint.setTextSize(font.getSize());
+        this.paint.setStyle(Paint.Style.FILL);
         if (font.isBold()) {
             // Si se ha establecido que esta en negrita, se aplica un efecto sintetico que lo simula
             this.paint.setFlags(Paint.FAKE_BOLD_TEXT_FLAG);
         } else {
             // Si no se ha establecido que esta en negrita, se desactiva
-            // Se necesita desactivarlo porque si antes se hubiera pintado texto en negrita
+            // Hay que desactivarlo porque si antes se hubiera pintado texto en negrita
             // y no se desactivara, este nuevo texto seguiria en negrita
             this.paint.setFlags(0);
         }
@@ -211,8 +225,30 @@ public class AndroidGraphics extends Graphics {
         return new AndroidFont(name, size, isBold, this.assetManager);
     }
 
+    // Al contrario que en desktop, en android si se puede conseguir el alto del texto actual que se va a pintar.
     @Override
     public void drawText(String text, Vector position) {
-        this.canvas.drawText(text, position.x, position.y, this.paint);
+        Rect rect = new Rect();
+        this.paint.getTextBounds(text, 0, text.length(), rect);
+        this.paint.setTextAlign(Paint.Align.CENTER);
+        // Nota: no estoy seguro si esta del todo bien porque el texto
+        // se pinta desde la baseline y no se esta teniendo eso en cuenta...
+        float y = position.y - rect.centerY();
+        //float y = position.y - this.paint.descent() - rect.centerY();
+        this.canvas.drawText(text, position.x, y, this.paint);
+    }
+
+    @Override
+    public int getTextWidth(String text) {
+        Rect rect = new Rect();
+        this.paint.getTextBounds(text, 0, text.length(), rect);
+        return rect.width();
+    }
+
+    @Override
+    public int getTextHeight(String text) {
+        Rect rect = new Rect();
+        this.paint.getTextBounds(text, 0, text.length(), rect);
+        return rect.height();
     }
 }

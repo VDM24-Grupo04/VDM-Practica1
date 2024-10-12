@@ -80,6 +80,13 @@ public abstract class Scene {
         }
     }
 
+    // El recolector de basura elimina un objeto cuando no hay mas punteros hacia ese objeto.
+    // Una escena tiene gameobjects y cada gameobject tiene un puntero a la escena. De modo que
+    // cuando se saque una escena de la pila, esta nunca se va a eliminar porque hay un "ciclo"
+    // de referencias.
+    // Este metodo funciona como una especie de delete y pone todas las referencias del objeto a null.
+    // Si la escena o el gameobject hijos tienen mas referencias a otros objetos, debe hacerse override
+    // de este metodo y poner esas referencias tambien a null
     public void dereference() {
         for (GameObject gameObject : gameObjects) {
             gameObject.dereference();

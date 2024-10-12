@@ -9,13 +9,15 @@ import com.grupo04.engine.Vector;
 import java.util.List;
 
 public class CurrentBubble extends GameObject {
-    private boolean shot = false, dragging = false;
+    private boolean shot = false;
+    private boolean dragging = false;
     Vector pos, dir;
     int r;
     Color color;
 
     @Override
-    public void init() { }
+    public void init() {
+    }
 
     public CurrentBubble(Vector pos, int r, Color color) {
         super();
