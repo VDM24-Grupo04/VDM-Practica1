@@ -4,13 +4,14 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 
+import com.grupo04.engine.Engine;
 import com.grupo04.engine.Input;
 import com.grupo04.engine.TouchEvent;
 import com.grupo04.engine.Vector;
 
 public class AndroidInput extends Input {
     SurfaceView window;
-    AndroidInput(SurfaceView window) {
+    AndroidInput(SurfaceView window, Engine engine) {
         super();
         this.window = window;
 
@@ -24,16 +25,22 @@ public class AndroidInput extends Input {
                 int action = event.getActionMasked();
                 float x = event.getX();
                 float y = event.getY();
+                int i = event.getActionIndex();
+                Vector pos = new Vector(x, y);
+                //Vector pos = engine.worldToScreenPoint(new Vector(x, y));
 
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.PRESS, new Vector(x, y)));
+                    case MotionEvent.ACTION_POINTER_DOWN:
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.PRESS, pos, i));
                         break;
                     case MotionEvent.ACTION_UP:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.RELEASE, new Vector(x, y)));
+                    case MotionEvent.ACTION_POINTER_UP:
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.RELEASE, pos, i));
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.DRAG, new Vector(x, y)));
+//                    case MotionEvent.ACTION_HOVER_MOVE:
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.DRAG, pos, i));
                         break;
                 }
 

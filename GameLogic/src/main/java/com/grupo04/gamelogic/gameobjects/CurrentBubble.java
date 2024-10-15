@@ -41,19 +41,30 @@ public class CurrentBubble extends GameObject {
         if (this.shot) {
             this.pos = this.pos.plus(this.dir);
         }
+        else {
+            if (dragging) {
+                System.out.println("Jaja");
+            }
+        }
 
-        System.out.println(dragging);
     }
 
     @Override
     public void handleInput(List<TouchEvent> touchEvent) {
         super.handleInput(touchEvent);
+
+        dragging = false;
         for (TouchEvent event : touchEvent) {
+            System.out.println(event.getPos().x + " " + event.getPos().y);
+
             if (!dragging) {
                 float dist = event.getPos().distance(this.pos);
                 if (event.getType() == TouchEvent.TouchEventType.PRESS && dist < r) {
                     dragging = true;
                 }
+            }
+            else {
+
             }
         }
     }

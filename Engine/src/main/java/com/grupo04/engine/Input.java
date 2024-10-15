@@ -16,7 +16,10 @@ public class Input {
     }
 
     // Obtiene los TouchEvents que le va a mandar a la escena
-    public List<TouchEvent> getTouchEvents() {
+    // Tienen que ser synchronized porque se puede estar modificando la lista
+    // en el hilo que recoge el input y a la vez en el bucle principal. Con synchronized
+    // se asegura que la lista no pueda ser modificada por 2 hilos al mismo tiempo
+    public synchronized List<TouchEvent> getTouchEvents() {
         // Se reinicia la lista de elementos que enviar a la escena
         sceneTouchEvents.clear();
 
@@ -24,17 +27,13 @@ public class Input {
         if (!touchEvents.isEmpty()) {
             // addAll clona en aux los elementos de touchEvents
             sceneTouchEvents.addAll(touchEvents);
+
+            // Limpia los eventos porque ya se los ha pasado a la escena
+            this.touchEvents.clear();
         }
 
         // Devuelve los TouchEvents de la escena
         return sceneTouchEvents;
-    }
-
-    // Tienen que ser synchronized porque se puede estar modificando la lista
-    // en el hilo que recoge el input y a la vez en el bucle principal. Con synchronized
-    // se asegura que la lista no pueda ser modificada por 2 hilos al mismo tiempo
-    public synchronized void clearEvents() {
-        touchEvents.clear();
     }
 
     public synchronized void addEvent(TouchEvent e) {

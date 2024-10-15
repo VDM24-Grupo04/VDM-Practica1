@@ -126,11 +126,10 @@ public abstract class Engine implements Runnable {
 
     private void handleInput() {
         List<TouchEvent> sceneTouchEvents = input.getTouchEvents();
-        if (!sceneTouchEvents.isEmpty()) System.out.println(sceneTouchEvents);
+//        if (!sceneTouchEvents.isEmpty()) System.out.println(sceneTouchEvents);
         if (!scenes.empty()) {
             scenes.peek().handleInput(sceneTouchEvents);
         }
-        input.clearEvents();
     }
 
     private void fixedUpdate() {
@@ -220,5 +219,13 @@ public abstract class Engine implements Runnable {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
         this.graphics.setWorldSize(worldWidth, worldHeight);
+    }
+
+    public Vector worldToScreenPoint(Vector position) {
+        float screenX = position.x * this.graphics.getWindowWidth() / this.worldWidth;
+        float screenY = position.y * this.graphics.getWindowHeight() / this.worldHeight;
+        System.out.println(this.graphics.getWindowWidth() + " " + this.worldWidth +
+                " " + this.graphics.getWindowHeight() + " " + this.worldHeight);
+        return new Vector(screenX, screenY);
     }
 }

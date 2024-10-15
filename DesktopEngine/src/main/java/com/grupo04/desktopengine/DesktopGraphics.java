@@ -110,8 +110,8 @@ public class DesktopGraphics extends Graphics {
 
     @Override
     public void fillCircle(Vector position, float radius) {
-        this.graphics2D.fillOval((int) (position.x - radius / 2), (int) (position.y - radius / 2),
-                (int) radius, (int) radius);
+        this.graphics2D.fillOval((int) (position.x), (int) (position.y),
+                (int) radius * 2, (int) radius * 2);
         this.graphics2D.setPaintMode();
     }
 

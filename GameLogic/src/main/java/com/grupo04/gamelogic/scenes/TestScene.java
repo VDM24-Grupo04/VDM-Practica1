@@ -25,7 +25,7 @@ public class TestScene extends Scene {
     @Override
     public void init() {
         super.init();
-        //addGameObject(new CurrentBubble(new Vector(100, 100), 20, new Color(255, 0, 0)));
+        addGameObject(new CurrentBubble(new Vector(100, 100), 20, new Color(255, 0, 0)));
     }
 
     @Override

@@ -11,7 +11,7 @@ public class AndroidEngine extends Engine {
 
         AndroidGraphics androidGraphics = new AndroidGraphics(window, assetManager);
         AndroidAudio androidAudio = new AndroidAudio(assetManager, 5);
-        AndroidInput androidInput = new AndroidInput(window);
+        AndroidInput androidInput = new AndroidInput(window, this);
         this.initModules(androidGraphics, androidAudio, androidInput);
     }
 }

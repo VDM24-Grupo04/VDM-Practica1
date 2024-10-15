@@ -1,5 +1,6 @@
 package com.grupo04.desktopengine;
 
+import com.grupo04.engine.Engine;
 import com.grupo04.engine.Input;
 import com.grupo04.engine.TouchEvent;
 import com.grupo04.engine.Vector;
@@ -10,7 +11,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 
 public class DesktopInput extends Input {
-    DesktopInput(JFrame window) {
+    DesktopInput(JFrame window, Engine engine) {
         super();
 
         // Se anade al JFrame un listener de raton
@@ -19,13 +20,19 @@ public class DesktopInput extends Input {
             // Se sobreescribe el evento de pulsar el raton
             @Override
             public void mousePressed(MouseEvent e) {
-                touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.PRESS, new Vector(e.getX(), e.getY())));
+                Vector pos = new Vector(e.getX(), e.getY());
+                //Vector pos = engine.worldToScreenPoint(new Vector(e.getX(), e.getY()));
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.PRESS, pos, 0);
+                touchEvents.add(evt);
             }
 
             // Se sobreescribe el evento de soltar el raton
             @Override
             public void mouseReleased(MouseEvent e) {
-                touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.RELEASE, new Vector(e.getX(), e.getY())));
+                Vector pos = new Vector(e.getX(), e.getY());
+                //Vector pos = engine.worldToScreenPoint(new Vector(e.getX(), e.getY()));
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.RELEASE, pos, 0);
+                touchEvents.add(evt);
             }
         });
 
@@ -34,7 +41,10 @@ public class DesktopInput extends Input {
             // Se sobreescribe el evento de arrastrar el raton
             @Override
             public void mouseDragged(MouseEvent e) {
-                touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.DRAG, new Vector(e.getX(), e.getY())));
+                Vector pos = new Vector(e.getX(), e.getY());
+                //Vector pos = engine.worldToScreenPoint(new Vector(e.getX(), e.getY()));
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.DRAG, pos, 0);
+                touchEvents.add(evt);
             }
         });
     }

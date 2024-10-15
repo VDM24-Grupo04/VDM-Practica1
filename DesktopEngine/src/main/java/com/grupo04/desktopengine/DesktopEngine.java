@@ -49,7 +49,7 @@ public class DesktopEngine extends Engine {
 
         DesktopGraphics desktopGraphics = new DesktopGraphics(window, this.graphics2D, this.bufferStrategy);
         DesktopAudio desktopAudio = new DesktopAudio(5);
-        DesktopInput desktopInput = new DesktopInput(window);
+        DesktopInput desktopInput = new DesktopInput(window, this);
         this.initModules(desktopGraphics, desktopAudio, desktopInput);
     }
 }
