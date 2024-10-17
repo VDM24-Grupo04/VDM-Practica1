@@ -103,14 +103,14 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void drawCircle(Vector position, float radius, float strokeWidth) {
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
-        this.graphics2D.drawOval((int) (position.x - radius / 2), (int) (position.y - radius / 2),
-                (int) radius, (int) radius);
+        this.graphics2D.drawOval((int) (position.x), (int) (position.y),
+                (int) radius * 2, (int) radius * 2);
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void fillCircle(Vector position, float radius) {
-        this.graphics2D.fillOval((int) (position.x), (int) (position.y),
+        this.graphics2D.fillOval((int) (position.x - radius), (int) (position.y - radius),
                 (int) radius * 2, (int) radius * 2);
         this.graphics2D.setPaintMode();
     }

@@ -9,6 +9,9 @@ import com.grupo04.engine.Vector;
 import java.util.List;
 
 public class CurrentBubble extends GameObject {
+    final float spd = 300;
+    final float lineLength = 100;
+    final Color lineColor = new Color(0, 0, 0, 255);
     private boolean shot = false;
     private boolean dragging = false;
     Vector pos, dir;
@@ -32,6 +35,11 @@ public class CurrentBubble extends GameObject {
         super.render(graphics);
         graphics.setColor(color);
         graphics.fillCircle(pos, r);
+
+        graphics.setColor(lineColor);
+        if (dragging) {
+            graphics.drawLine(pos, pos.plus(dir.getNormalized().times(lineLength)), 1);
+        }
     }
 
     @Override
@@ -39,32 +47,35 @@ public class CurrentBubble extends GameObject {
         super.update(deltaTime);
 
         if (this.shot) {
-            this.pos = this.pos.plus(this.dir);
-        }
-        else {
-            if (dragging) {
-                System.out.println("Jaja");
-            }
+            this.dir.normalize();
+            this.pos = this.pos.plus(this.dir.times(spd * (float) deltaTime));
         }
 
     }
 
     @Override
-    public void handleInput(List<TouchEvent> touchEvent) {
-        super.handleInput(touchEvent);
+    public void handleInput(List<TouchEvent> touchEvents) {
+        super.handleInput(touchEvents);
 
-        dragging = false;
-        for (TouchEvent event : touchEvent) {
-            System.out.println(event.getPos().x + " " + event.getPos().y);
+        if (!shot) {
+            for (TouchEvent event : touchEvents) {
+//            System.out.println(event.getPos().x + " " + event.getPos().y);
 
-            if (!dragging) {
-                float dist = event.getPos().distance(this.pos);
-                if (event.getType() == TouchEvent.TouchEventType.PRESS && dist < r) {
+                if (!dragging && event.getType() == TouchEvent.TouchEventType.PRESS) {
                     dragging = true;
                 }
-            }
-            else {
+                if (dragging) {
+                    if (event.getType() == TouchEvent.TouchEventType.RELEASE) {
+                        dragging = false;
+                        if (event.getPos().y < pos.y) {
+                            shot = true;
+                        }
+                    }
+                    else if (event.getType() == TouchEvent.TouchEventType.DRAG || event.getType() == TouchEvent.TouchEventType.PRESS) {
+                        dir = event.getPos().minus(pos);
+                    }
 
+                }
             }
         }
     }

@@ -37,7 +37,7 @@ public class Vector {
     }
 
     public Vector div(float scalar) {
-        return new Vector(this.x / scalar, this.y * scalar);
+        return new Vector(this.x / scalar, this.y / scalar);
     }
 
     public boolean equals(Vector other) {
