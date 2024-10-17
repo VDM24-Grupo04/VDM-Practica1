@@ -15,10 +15,6 @@ public class DesktopAudio extends Audio {
 
     @Override
     public DesktopSound newSound(String fileName, int priority) {
-        if (this.soundPool == null) {
-            throw new IllegalStateException("DesktopAudio sounds not initializated");
-        }
-
         if (soundPool.size() >= this.maxStreams) {
             throw new IllegalStateException("Maximum number of streams exceeded.");
         }
@@ -30,15 +26,34 @@ public class DesktopAudio extends Audio {
     }
 
     @Override
-    public boolean playSound(String soundName) { return performAudioAction(soundName, true); }
+    public boolean playSound(String soundName) { return performAudioAction(soundName, 0); }
 
     @Override
-    public boolean stopSound(String soundName) { return performAudioAction(soundName, false); }
+    public boolean stopSound(String soundName) { return performAudioAction(soundName, 1); }
 
-    private boolean performAudioAction(String soundName, boolean play) {
-        if (this.soundPool == null) return false;
+    @Override
+    public boolean resumeSound(String soundName) { return performAudioAction(soundName, 2); }
+
+    private boolean performAudioAction(String soundName, int option) {
+        if (this.soundPool == null) {
+            System.err.println("SoundPool not initialized.");
+            return false;
+        }
+
         DesktopSound sound = soundPool.get(soundName);
-        if (play) return sound.play();
-        else return sound.stop();
+        if (sound == null) {
+            System.err.printf("Cannot find %s in soundPool.%n", soundName);
+            return false;
+        }
+
+        switch (option) {
+            case 0: return sound.play();
+            case 1: return sound.stop();
+            case 2: return sound.resume();
+            default:
+                System.err.println("No action was taken.");
+                break;
+        }
+        return true;
     }
 }

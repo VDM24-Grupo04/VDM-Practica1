@@ -204,12 +204,10 @@ public abstract class Engine implements Runnable {
     }
 
     public Graphics getGraphics() {
-        return graphics;
+        return this.graphics;
     }
 
-    public Audio getAudio() {
-        return audio;
-    }
+    public Audio getAudio() { return this.audio; }
 
     public Input getInput() {
         return input;

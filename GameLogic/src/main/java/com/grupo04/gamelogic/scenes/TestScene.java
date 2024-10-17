@@ -6,6 +6,7 @@ import com.grupo04.engine.Font;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Image;
 import com.grupo04.engine.Scene;
+import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.gameobjects.CurrentBubble;
 
@@ -14,12 +15,15 @@ public class TestScene extends Scene {
     private Image img;
     private Font font;
     private Font boldFont;
+    private Sound sound;
 
     public TestScene(Engine engine) {
         super(engine, 400, 600, new Color(0, 0, 255));
         img = engine.getGraphics().newImage("regirock.jpg");
         font = engine.getGraphics().newFont("kimberley.ttf", 300, false);
         //boldFont = engine.getGraphics().newFont("qties.ttf", 100, true);
+        sound = engine.getAudio().newSound("badblood.wav", 0);
+        sound.play();
     }
 
     @Override
