@@ -7,6 +7,7 @@ import android.view.SurfaceView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.grupo04.androidengine.AndroidEngine;
+import com.grupo04.gamelogic.scenes.GameScene;
 import com.grupo04.gamelogic.scenes.TestScene;
 import com.grupo04.gamelogic.scenes.TestScene2;
 import com.grupo04.gamelogic.scenes.TestScene3;
@@ -29,9 +30,11 @@ public class MainActivity extends AppCompatActivity {
         this.androidEngine = new AndroidEngine(window, assetManager);
 
         // Creacion de la escena
-        TestScene testScene = new TestScene(this.androidEngine);
+//        TestScene testScene = new TestScene(this.androidEngine);
 //        TestScene2 testScene = new TestScene2(this.androidEngine);
 //        TestScene3 testScene = new TestScene3(this.androidEngine);
+        GameScene testScene = new GameScene(this.androidEngine);
+
         this.androidEngine.pushScene(testScene);
 
     }

@@ -13,17 +13,13 @@ public abstract class GameObject {
         this.scene = null;
     }
 
-    public void handleInput(List<TouchEvent> touchEvent) {
-    }
+    public void handleInput(List<TouchEvent> touchEvent) { }
 
-    public void render(Graphics graphics) {
-    }
+    public void render(Graphics graphics) { }
 
-    public void update(double deltaTime) {
-    }
+    public void update(double deltaTime) { }
 
-    public void fixedUpdate(double fixedDeltaTime) {
-    }
+    public void fixedUpdate(double fixedDeltaTime) { }
 
     // Ver dereference de la clase Scene
     // Si un objeto1 tiene una referencia a un objeto2, dicha referencia debe ser debil

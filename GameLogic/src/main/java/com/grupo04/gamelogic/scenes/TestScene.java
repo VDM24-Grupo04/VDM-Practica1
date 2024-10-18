@@ -25,10 +25,7 @@ public class TestScene extends Scene {
 
     @Override
     public void init() {
-        super.init();
-        int r = 20;
-        addGameObject(new CurrentBubble(new Vector((engine.getGraphics().getWindowWidth() - r)/ 2 ,
-                engine.getGraphics().getWindowHeight() * 0.85f), r, new Color(255, 0, 0)));
+
     }
 
     @Override
