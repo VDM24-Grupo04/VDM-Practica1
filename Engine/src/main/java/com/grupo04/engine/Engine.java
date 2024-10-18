@@ -210,7 +210,7 @@ public abstract class Engine implements Runnable {
     public Audio getAudio() { return this.audio; }
 
     public Input getInput() {
-        return input;
+        return this.input;
     }
 
     public void setWorldSize(int worldWidth, int worldHeight) {

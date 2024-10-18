@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.grupo04.androidengine.AndroidEngine;
 import com.grupo04.gamelogic.scenes.TestScene;
+import com.grupo04.gamelogic.scenes.TestScene2;
+import com.grupo04.gamelogic.scenes.TestScene3;
 
 public class MainActivity extends AppCompatActivity {
     private AndroidEngine androidEngine;
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Creacion de la escena
         TestScene testScene = new TestScene(this.androidEngine);
+//        TestScene2 testScene = new TestScene2(this.androidEngine);
+//        TestScene3 testScene = new TestScene3(this.androidEngine);
         this.androidEngine.pushScene(testScene);
 
     }

@@ -9,36 +9,27 @@ import android.media.SoundPool;
 import java.io.IOException;
 
 public class AndroidSound extends Sound {
-    String soundName                = "";
     AssetFileDescriptor audioFile   = null;
     int soundId                     = 0; // returned by the load function (0 if failed)
     int streamId                    = 0; // returned by the play function (0 if failed)
-    int priority                    = 0; // 0 - lowest priority
-    float leftVolume                = 1; // [0, 1]
-    float rightVolume               = 1; // [0, 1]
-    int loop                        = 0; // 0 - no loop, 1 - loop forever
-    float rate                      = 1f;// 1.0 - normal playback, [0.5, 2.0]
 
     // Referencias
     AssetManager assetManager       = null;
     SoundPool soundPool             = null;
 
     AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority) {
-        this(assetManager, soundPool, fileName, priority, 1, 1, 0, 1.0f);
+        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, 0, 1.0f);
     }
 
     AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, int loop, float rate) {
-        this(assetManager, soundPool, fileName, priority, 1, 1, loop, rate);
+        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, loop, rate);
     }
 
     AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
+        super(fileName, priority, leftVolume, rightVolume, loop, rate);
+
         this.assetManager = assetManager;
         this.soundPool = soundPool;
-        this.priority = priority;
-        this.leftVolume = leftVolume;
-        this.rightVolume = rightVolume;
-        this.loop = loop;
-        this.rate = rate;
 
         try {
             this.audioFile = assetManager.openFd(fileName);
@@ -49,18 +40,9 @@ public class AndroidSound extends Sound {
     }
 
     @Override
-    public boolean play() { return performSoundAction(0); }
-
-    @Override
-    public boolean stop() { return performSoundAction(1); }
-
-    @Override
-    public boolean resume() { return performSoundAction(2); }
-
-    @Override
     public boolean setPriority(int priority) {
         if (this.soundPool == null) {
-            System.err.println("SoundPool not initializated.");
+            System.err.println("SoundPool not initialized.");
             return false;
         }
 
@@ -69,7 +51,7 @@ public class AndroidSound extends Sound {
             return false;
         }
 
-        this.priority = priority;
+        super.setPriority(priority);
         this.soundPool.setPriority(this.streamId, this.priority);
         return true;
     }
@@ -86,8 +68,7 @@ public class AndroidSound extends Sound {
             return false;
         }
 
-        this.leftVolume = leftVolume;
-        this.rightVolume = rightVolume;
+        super.setVolume(leftVolume, rightVolume);
         this.soundPool.setVolume(this.streamId, this.leftVolume, this.rightVolume);
         return true;
     }
@@ -114,7 +95,7 @@ public class AndroidSound extends Sound {
             return false;
         }
 
-        this.loop = loop;
+        super.setLoop(loop);
         this.soundPool.setLoop(this.streamId, this.loop);
         return true;
     }
@@ -131,12 +112,13 @@ public class AndroidSound extends Sound {
             return false;
         }
 
-        this.rate = rate;
+        super.setRate(rate);
         this.soundPool.setRate(this.streamId, this.rate);
         return true;
     }
 
-    private boolean performSoundAction(int option) {
+    @Override
+    public boolean performSoundAction(int option) {
         if (this.soundPool == null) {
             System.err.println("SoundPool not initializated.");
             return false;

@@ -46,16 +46,6 @@ public class AndroidGraphics extends Graphics {
 
     @Override
     public void render(Scene currentScene) {
-        /*
-        // Pintamos el frame
-        while (!this.holder.getSurface().isValid()) ;
-        // Se permite editar el canvas
-        this.canvas = this.holder.lockCanvas();
-        // Se pinta la escena actual si existe
-        currentScene.render(this);
-
-        this.holder.unlockCanvasAndPost(canvas);
-        */
         // Se indica al gestor de renderizado que prepare el frame
         this.prepareFrame();
         // Se pinta la escena

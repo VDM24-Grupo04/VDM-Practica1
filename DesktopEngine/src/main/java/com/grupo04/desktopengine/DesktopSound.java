@@ -3,6 +3,8 @@ package com.grupo04.desktopengine;
 import com.grupo04.engine.Sound;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -10,46 +12,36 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.SourceDataLine;
 
 public class DesktopSound extends Sound {
-    String soundName                = "";
     File audioFile                  = null;
     AudioInputStream audioStream    = null;
-    Clip clip                       = null;
-    int priority                    = 0;
-    float leftVolume                = 1;
-    float rightVolume               = 1;
-    int loop                        = 0; // Clip.LOOP_CONTINUOUSLY = -1
-    float rate                      = 1f;//
+    List<Clip> clips                = null;
 
     long currentFrame               = 0; // Para el resume()
     SourceDataLine dataLine         = null;
     AudioFormat audioFormat         = null;
+    boolean isPlaying               = false;
 
     DesktopSound(String fileName, int priority) {
-        this(fileName, priority, 1, 1, 0, 1.0f);
+        this(fileName, priority, 1.0f, 1.0f, 0, 1.0f);
     }
 
     DesktopSound(String fileName, int priority, int loop, float rate) {
-        this(fileName, priority, 1, 1, loop, rate);
+        this(fileName, priority, 1.0f, 1.0f, loop, rate);
     }
 
     DesktopSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
-        this.priority = priority;
-        this.leftVolume = leftVolume;
-        this.rightVolume = rightVolume;
-        this.loop = loop;
-        this.rate = rate;
+        super(fileName, priority, leftVolume, rightVolume, loop, rate);
+
+        this.clips = new ArrayList<>();
 
         try {
-            this.soundName = fileName;
             this.audioFile = new File("./assets/" + this.soundName);
             this.audioStream = AudioSystem.getAudioInputStream(this.audioFile);
             this.audioFormat = this.audioStream.getFormat();
-            this.clip = AudioSystem.getClip();
-            this.clip.open(audioStream);
-            this.clip.loop(this.loop);
         } catch (Exception e) {
             System.err.printf("Couldn't load audio file (%s)%n", fileName);
             e.printStackTrace();
@@ -57,42 +49,23 @@ public class DesktopSound extends Sound {
     }
 
     @Override
-    public boolean play() { return perfomSoundAction(0); }
+    public boolean setVolume(float leftVolume, float rightVolume) {
+        super.setVolume(leftVolume, rightVolume);
 
-    @Override
-    public boolean stop() { return perfomSoundAction(1); }
-
-    @Override
-    public boolean resume() { return perfomSoundAction(2); }
-
-    @Override
-    public boolean setPriority(int priority) {
-        this.priority = priority;
+        for (Clip clip : this.clips) {
+            setClipVolume(clip, leftVolume, rightVolume);
+        }
         return true;
     }
 
-    @Override
-    public boolean setVolume(float leftVolume, float rightVolume) {
-        this.leftVolume = leftVolume;
-        this.rightVolume = rightVolume;
-
+    private void setClipVolume(Clip clip, float leftVolume, float rightVolume) {
         try {
             FloatControl balanceControl = (FloatControl) clip.getControl(FloatControl.Type.BALANCE);
-            // Calculate the balance (range -1.0 to 1.0, where -1 is fully left, 1 is fully right)
-            float balance = (rightVolume - leftVolume);
+            float balance = (rightVolume - leftVolume); // Balance between -1.0 and 1.0
             balanceControl.setValue(balance);
-//            // Set master volume (if needed, for overall volume control)
-//            FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-//            float maxVolume = volumeControl.getMaximum();
-//            float minVolume = volumeControl.getMinimum();
-//            float targetVolume = (this.leftVolume + this.rightVolume) / 2;
-//            // Set master volume
-//            volumeControl.setValue(Math.min(maxVolume, Math.max(minVolume, targetVolume)));
         } catch (Exception e) {
             System.err.println("Error setting volume: " + e.getMessage());
         }
-
-        return true;
     }
 
     @Override
@@ -107,8 +80,13 @@ public class DesktopSound extends Sound {
 
     @Override
     public boolean setLoop(int loop) {
-        this.loop = loop;
-        this.clip.loop(this.loop);
+        super.setLoop(loop);
+
+        for (Clip clip : clips) {
+            if (clip.isRunning()) {
+                clip.loop(this.loop);
+            }
+        }
         return true;
     }
 
@@ -118,7 +96,7 @@ public class DesktopSound extends Sound {
             throw new IllegalArgumentException("New rate should be bigger than 0.0f.");
         }
 
-        this.rate = rate;
+        super.setRate(rate);
         float newRate = audioFormat.getSampleRate() * rate;
         AudioFormat newFormat = new AudioFormat(
                 newRate,
@@ -144,24 +122,45 @@ public class DesktopSound extends Sound {
         }
     }
 
-    private boolean perfomSoundAction(int option) {
-        if (this.clip == null) {
-            System.err.println("Clip not loaded or initialized.");
-            return false;
-        }
-
+    @Override
+    public boolean performSoundAction(int option) {
         try {
             switch (option) {
-                case 0: this.clip.start(); break;
+                case 0:
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(AudioSystem.getAudioInputStream(audioFile));
+                    setClipVolume(clip, this.leftVolume, this.rightVolume);
+                    clip.loop(this.loop);
+
+                    clip.start();
+                    this.isPlaying = true;
+
+                    clip.addLineListener(event -> {
+                        if (event.getType() == LineEvent.Type.STOP) {
+                            clip.close();
+                            this.clips.remove(clip);
+                        }
+                    });
+                    this.clips.add(clip);
+                    break;
                 case 1:
-                    this.currentFrame = this.clip.getMicrosecondPosition();
-                    this.clip.stop();
+                    for (Clip clipIt : this.clips) {
+                        if (clipIt.isRunning()) {
+                            clipIt.stop();
+                            clipIt.close();
+                        }
+                    }
+                    this.clips.clear();
+                    this.isPlaying = false;
                     break;
                 case 2:
-                    this.clip.close();
-                    resetAudioStream();
-                    this.clip.setMicrosecondPosition(currentFrame);
-                    this.play();
+                    for (Clip clipIt : this.clips) {
+                        if (!clipIt.isRunning()) {
+                            clipIt.setMicrosecondPosition(this.currentFrame);
+                            clipIt.start();
+                        }
+                    }
+                    this.isPlaying = true;
                     break;
                 default:
                     System.err.println("No action was taken.");
@@ -173,16 +172,6 @@ public class DesktopSound extends Sound {
             else System.err.println("Failed to stop the clip.");
             e.printStackTrace();
             return false;
-        }
-    }
-
-    private void resetAudioStream() {
-        try {
-            this.clip.open(audioStream);
-            this.clip.loop(this.loop);
-        } catch (Exception e) {
-            System.err.printf("Couldn't load audio file (%s)%n", this.soundName);
-            e.printStackTrace();
         }
     }
 }

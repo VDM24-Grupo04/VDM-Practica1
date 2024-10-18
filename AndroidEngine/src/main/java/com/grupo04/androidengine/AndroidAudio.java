@@ -17,6 +17,7 @@ public class AndroidAudio extends Audio {
         this.assetManager = assetManager;
         this.maxStreams = maxStreams;
         this.soundPool = new SoundPool.Builder().setMaxStreams(this.maxStreams).build();
+        this.sounds = new HashMap<>();
     }
 
     @Override
