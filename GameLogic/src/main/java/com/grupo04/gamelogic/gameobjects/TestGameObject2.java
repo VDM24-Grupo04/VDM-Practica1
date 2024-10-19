@@ -22,6 +22,6 @@ public class TestGameObject2 extends GameObject {
 
     @Override
     public void render(Graphics graphics) {
-        graphics.drawImage(img, new Vector(graphics.getWorldWidth() / 2, graphics.getWorldHeight() / 2), 200, 200);
+        // graphics.drawImage(img, new Vector(graphics.getWorldWidth() / 2, graphics.getWorldHeight() / 2), 200, 200);
     }
 }

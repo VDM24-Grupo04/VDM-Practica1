@@ -15,7 +15,7 @@ public class DesktopImage implements Image {
         try {
             this.img = ImageIO.read(new File("./assets/" + fileName));
         } catch (IOException ex) {
-            // Tratar excepcion...
+            System.err.println("Error en la imagen con nombre" + fileName + ": " + ex.getMessage());
         }
     }
 

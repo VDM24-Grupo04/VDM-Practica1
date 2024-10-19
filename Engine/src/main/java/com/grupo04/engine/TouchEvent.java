@@ -1,7 +1,7 @@
 package com.grupo04.engine;
 
 public class TouchEvent {
-    public enum TouchEventType { NONE, PRESS, RELEASE, DRAG };
+    public enum TouchEventType { NONE, PRESS, RELEASE, DRAG, MOTION };
     private TouchEventType type = TouchEventType.NONE;
     private Vector pos;
     int finger;

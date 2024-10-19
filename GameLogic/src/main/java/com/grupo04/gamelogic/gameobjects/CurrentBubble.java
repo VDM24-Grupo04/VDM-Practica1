@@ -22,7 +22,8 @@ public class CurrentBubble extends GameObject {
     Color color;
 
     @Override
-    public void init() {  }
+    public void init() {
+    }
 
     public CurrentBubble(int w, int h, int r, int wallThickness) {
         super();
@@ -75,7 +76,7 @@ public class CurrentBubble extends GameObject {
         // Aumenta la velocidad en vertical si es demasiado pequena
         // para que no se quede atascado rebotando de lado a lado
         if (shot && dir.y < minDirY) {
-            dir.y -= (float)deltaTime / 10.0f;
+            dir.y -= (float) deltaTime / 10.0f;
         }
     }
 
@@ -96,8 +97,7 @@ public class CurrentBubble extends GameObject {
                         if (event.getPos().y < pos.y) {
                             shot = true;
                         }
-                    }
-                    else if (event.getType() == TouchEvent.TouchEventType.DRAG || event.getType() == TouchEvent.TouchEventType.PRESS) {
+                    } else if (event.getType() == TouchEvent.TouchEventType.DRAG || event.getType() == TouchEvent.TouchEventType.PRESS) {
                         dir = event.getPos().minus(pos);
                     }
 
@@ -114,6 +114,4 @@ public class CurrentBubble extends GameObject {
         dragging = false;
         shot = false;
     }
-
-
 }

@@ -7,10 +7,13 @@ import android.view.SurfaceView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.grupo04.androidengine.AndroidEngine;
+import com.grupo04.gamelogic.scenes.GameOverScene;
 import com.grupo04.gamelogic.scenes.GameScene;
 import com.grupo04.gamelogic.scenes.TestScene;
 import com.grupo04.gamelogic.scenes.TestScene2;
 import com.grupo04.gamelogic.scenes.TestScene3;
+import com.grupo04.gamelogic.scenes.TitleScene;
+import com.grupo04.gamelogic.scenes.VictoryScene;
 
 public class MainActivity extends AppCompatActivity {
     private AndroidEngine androidEngine;
@@ -30,13 +33,9 @@ public class MainActivity extends AppCompatActivity {
         this.androidEngine = new AndroidEngine(window, assetManager);
 
         // Creacion de la escena
-//        TestScene testScene = new TestScene(this.androidEngine);
-//        TestScene2 testScene = new TestScene2(this.androidEngine);
-//        TestScene3 testScene = new TestScene3(this.androidEngine);
-        GameScene testScene = new GameScene(this.androidEngine);
+        VictoryScene testScene = new VictoryScene(this.androidEngine, 425);
 
         this.androidEngine.pushScene(testScene);
-
     }
 
     @Override

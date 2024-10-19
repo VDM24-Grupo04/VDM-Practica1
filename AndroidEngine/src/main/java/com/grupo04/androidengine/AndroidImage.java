@@ -17,7 +17,7 @@ public class AndroidImage implements Image {
             InputStream is = assetManager.open(fileName);
             this.img = BitmapFactory.decodeStream(is);
         } catch (IOException ex) {
-            // Tratar excepcion
+            System.err.println("Error en la fuente con nombre " + fileName + ": " + ex.getMessage());
         }
     }
 

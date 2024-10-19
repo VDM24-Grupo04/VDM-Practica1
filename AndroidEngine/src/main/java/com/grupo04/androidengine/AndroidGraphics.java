@@ -80,13 +80,13 @@ public class AndroidGraphics extends Graphics {
     public void drawCircle(Vector position, float radius, float strokeWidth) {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(strokeWidth);
-        this.canvas.drawCircle(position.x, position.y, radius, this.paint);
+        this.canvas.drawCircle(position.x, position.y, radius * 2, this.paint);
     }
 
     @Override
     public void fillCircle(Vector position, float radius) {
         this.paint.setStyle(Paint.Style.FILL);
-        this.canvas.drawCircle(position.x, position.y, radius, this.paint);
+        this.canvas.drawCircle(position.x, position.y, radius * 2, this.paint);
     }
 
     @Override
@@ -194,25 +194,16 @@ public class AndroidGraphics extends Graphics {
     @Override
     public void setFont(Font font) {
         AndroidFont androidFont = (AndroidFont) font;
-        // Se establece el tipo de letra
-        this.paint.setTypeface(androidFont.getFont());
         // Se establece el tamano de letra
         this.paint.setTextSize(font.getSize());
         this.paint.setStyle(Paint.Style.FILL);
-        if (font.isBold()) {
-            // Si se ha establecido que esta en negrita, se aplica un efecto sintetico que lo simula
-            this.paint.setFlags(Paint.FAKE_BOLD_TEXT_FLAG);
-        } else {
-            // Si no se ha establecido que esta en negrita, se desactiva
-            // Hay que desactivarlo porque si antes se hubiera pintado texto en negrita
-            // y no se desactivara, este nuevo texto seguiria en negrita
-            this.paint.setFlags(0);
-        }
+        // Se establece el tipo de letra
+        this.paint.setTypeface(androidFont.getFont());
     }
 
     @Override
-    public Font newFont(String name, float size, boolean isBold) {
-        return new AndroidFont(name, size, isBold, this.assetManager);
+    public Font newFont(String name, float size, boolean bold, boolean italian) {
+        return new AndroidFont(name, size, bold, italian, this.assetManager);
     }
 
     // Al contrario que en desktop, en android si se puede conseguir el alto del texto actual que se va a pintar.
@@ -221,10 +212,7 @@ public class AndroidGraphics extends Graphics {
         Rect rect = new Rect();
         this.paint.getTextBounds(text, 0, text.length(), rect);
         this.paint.setTextAlign(Paint.Align.CENTER);
-        // Nota: no estoy seguro si esta del todo bien porque el texto
-        // se pinta desde la baseline y no se esta teniendo eso en cuenta...
         float y = position.y - rect.centerY();
-        //float y = position.y - this.paint.descent() - rect.centerY();
         this.canvas.drawText(text, position.x, y, this.paint);
     }
 
@@ -237,8 +225,7 @@ public class AndroidGraphics extends Graphics {
 
     @Override
     public int getTextHeight(String text) {
-        Rect rect = new Rect();
-        this.paint.getTextBounds(text, 0, text.length(), rect);
-        return rect.height();
+        Paint.FontMetrics fontMetrics = this.paint.getFontMetrics();
+        return (int) (fontMetrics.bottom - fontMetrics.top);
     }
 }

@@ -16,8 +16,7 @@ public class DesktopInput extends Input {
 
         // Se anade al JFrame un listener de raton
         window.addMouseListener(new MouseAdapter() {
-
-            // Se sobreescribe el evento de pulsar el raton
+            // Se sobrescribe el evento de pulsar el raton
             @Override
             public void mousePressed(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
@@ -26,7 +25,7 @@ public class DesktopInput extends Input {
                 touchEvents.add(evt);
             }
 
-            // Se sobreescribe el evento de soltar el raton
+            // Se sobrescribe el evento de soltar el raton
             @Override
             public void mouseReleased(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
@@ -38,12 +37,30 @@ public class DesktopInput extends Input {
 
         // Se anade al JFrame un listener de movimiento del raton
         window.addMouseMotionListener(new MouseAdapter() {
-            // Se sobreescribe el evento de arrastrar el raton
+            // Se sobrescribe el evento de arrastrar el raton
             @Override
             public void mouseDragged(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
                 //Vector pos = engine.worldToScreenPoint(new Vector(e.getX(), e.getY()));
                 TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.DRAG, pos, 0);
+                touchEvents.add(evt);
+            }
+
+            // Se sobrescribe el evento de que ha entrado el raton en el componente, en este caso en la ventana
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Vector pos = new Vector(e.getX(), e.getY());
+                //Vector pos = engine.worldToScreenPoint(new Vector(e.getX(), e.getY()));
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos, 0);
+                touchEvents.add(evt);
+            }
+
+            // Se sobrescribe el evento de que se ha movido el raton
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                Vector pos = new Vector(e.getX(), e.getY());
+                //Vector pos = engine.worldToScreenPoint(new Vector(e.getX(), e.getY()));
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos, 0);
                 touchEvents.add(evt);
             }
         });

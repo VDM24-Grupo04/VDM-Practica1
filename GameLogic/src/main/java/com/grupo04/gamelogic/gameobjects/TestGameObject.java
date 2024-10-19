@@ -25,8 +25,8 @@ public class TestGameObject extends GameObject {
     @Override
     public void init() {
         this.engine = scene.getEngine();
-        this.font = engine.getGraphics().newFont("kimberley.ttf", 200, false);
-        this.boldFont = engine.getGraphics().newFont("kimberley.ttf", 200, true);
+        this.font = engine.getGraphics().newFont("kimberley.ttf", 200, false, false);
+        this.boldFont = engine.getGraphics().newFont("kimberley.ttf", 200, true, false);
     }
 
     @Override

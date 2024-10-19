@@ -19,7 +19,7 @@ public class TestScene extends Scene {
     public TestScene(Engine engine) {
         super(engine, 400, 600, new Color(0, 0, 255));
         img = engine.getGraphics().newImage("regirock.jpg");
-        font = engine.getGraphics().newFont("kimberley.ttf", 300, false);
+        font = engine.getGraphics().newFont("kimberley.ttf", 300, false, false);
         //boldFont = engine.getGraphics().newFont("qties.ttf", 100, true);
     }
 
@@ -41,7 +41,7 @@ public class TestScene extends Scene {
         Vector pos = new Vector((float) graphics.getWindowWidth() / 2,
                 (float) graphics.getWindowHeight() / 2);
         graphics.drawText(text, new Vector(pos));
-
+        
         graphics.drawRectangle(pos, graphics.getTextWidth(text), graphics.getTextHeight(text), 10);
 
         /*

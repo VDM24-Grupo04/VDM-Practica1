@@ -8,10 +8,17 @@ import com.grupo04.engine.Font;
 public class AndroidFont extends Font {
     private Typeface typeface;
 
-    public AndroidFont(String name, float size, boolean bold, AssetManager assetManager) {
-        super(size, bold);
+    public AndroidFont(String name, float size, boolean bold, boolean italic, AssetManager assetManager) {
+        super(size);
         try {
-            this.typeface = Typeface.createFromAsset(assetManager, name);
+            this.typeface = Typeface.createFromAsset(assetManager, "fonts/" + name);
+            if (bold && italic) {
+                this.typeface = Typeface.create(this.typeface, Typeface.BOLD_ITALIC);
+            } else if (bold) {
+                this.typeface = Typeface.create(this.typeface, Typeface.BOLD);
+            } else if (italic) {
+                this.typeface = Typeface.create(this.typeface, Typeface.ITALIC);
+            }
         } catch (RuntimeException ex) {
             System.err.println("Error en la fuente con nombre " + name + ": " + ex.getMessage());
         }

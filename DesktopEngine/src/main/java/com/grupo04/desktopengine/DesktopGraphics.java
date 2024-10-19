@@ -13,10 +13,6 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.awt.font.LineMetrics;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
 
 public class DesktopGraphics extends Graphics {
@@ -103,15 +99,15 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void drawCircle(Vector position, float radius, float strokeWidth) {
         this.graphics2D.setStroke(new BasicStroke(strokeWidth));
-        this.graphics2D.drawOval((int) (position.x), (int) (position.y),
-                (int) radius * 2, (int) radius * 2);
+        this.graphics2D.drawOval((int) (position.x - radius), (int) (position.y - radius),
+                (int) (radius * 2), (int) (radius * 2));
         this.graphics2D.setPaintMode();
     }
 
     @Override
     public void fillCircle(Vector position, float radius) {
         this.graphics2D.fillOval((int) (position.x - radius), (int) (position.y - radius),
-                (int) radius * 2, (int) radius * 2);
+                (int) (radius * 2), (int) (radius * 2));
         this.graphics2D.setPaintMode();
     }
 
@@ -140,7 +136,7 @@ public class DesktopGraphics extends Graphics {
 
     @Override
     public void fillRoundRectangle(Vector position, float w, float h, float arc) {
-        this.graphics2D.drawRoundRect((int) (position.x - w / 2), (int) (position.y - h / 2),
+        this.graphics2D.fillRoundRect((int) (position.x - w / 2), (int) (position.y - h / 2),
                 (int) w, (int) h, (int) arc, (int) arc);
         this.graphics2D.setPaintMode();
     }
@@ -205,8 +201,8 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public Font newFont(String name, float size, boolean isBold) {
-        return new DesktopFont(name, size, isBold);
+    public Font newFont(String name, float size, boolean bold, boolean italian) {
+        return new DesktopFont(name, size, bold, italian);
     }
 
     @Override
@@ -241,8 +237,7 @@ public class DesktopGraphics extends Graphics {
     }
 
     public int getTextHeight(String text) {
-        FontRenderContext fontRenderContext = this.graphics2D.getFontRenderContext();
-        GlyphVector glyphVector = this.graphics2D.getFont().createGlyphVector(fontRenderContext, text);
-        return glyphVector.getPixelBounds(null, 0, 0).height;
+        FontMetrics fontMetrics = this.graphics2D.getFontMetrics();
+        return fontMetrics.getHeight();
     }
 }

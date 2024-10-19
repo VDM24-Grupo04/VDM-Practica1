@@ -7,18 +7,12 @@ import com.grupo04.gamelogic.gameobjects.CurrentBubble;
 import com.grupo04.gamelogic.gameobjects.Walls;
 
 public class GameScene extends Scene {
-    private final static int worldWidth = 400, worldHeight = 600;
-
+    // Nota: crear los objetos en la constructora
     public GameScene(Engine engine) {
-        super(engine, worldWidth, worldHeight, new Color(255, 255, 255));
-    }
-
-    @Override
-    public void init() {
-        super.init();
-
+        super(engine, 400, 600, new Color(255, 255, 255));
+        
         int wallThickness = 20;
-        int r = ((worldWidth - (wallThickness * 2)) / 10) / 2 ;
+        int r = ((worldWidth - (wallThickness * 2)) / 10) / 2;
         addGameObject(new Walls(wallThickness, worldWidth, worldHeight));
         addGameObject(new CurrentBubble(worldWidth, worldHeight, r, wallThickness));
     }

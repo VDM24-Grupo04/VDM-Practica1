@@ -19,14 +19,6 @@ public abstract class Graphics {
         this.worldHeight = worldHeight;
     }
 
-    public float getWorldWidth() {
-        return this.worldWidth;
-    }
-
-    public float getWorldHeight() {
-        return this.worldHeight;
-    }
-
     public abstract void clear(Color color);
 
     public abstract void setColor(Color color);
@@ -61,7 +53,7 @@ public abstract class Graphics {
 
     public abstract void drawImage(Image img, Vector position, int w, int h);
 
-    public abstract Font newFont(String name, float size, boolean isBold);
+    public abstract Font newFont(String name, float size, boolean bold, boolean italic);
 
     public abstract void setFont(Font font);
 

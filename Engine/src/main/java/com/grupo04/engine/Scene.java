@@ -9,14 +9,18 @@ public abstract class Scene {
     private HashSet<GameObject> gameObjects;
     private HashMap<String, GameObject> handlers;
     protected Engine engine;
+    protected int worldWidth;
+    protected int worldHeight;
     protected Color bgColor;
 
-    protected Scene(Engine engine, int worldWidth, int worldHeigth, Color bgColor) {
+    protected Scene(Engine engine, int worldWidth, int worldHeight, Color bgColor) {
         this.alive = true;
         this.gameObjects = new HashSet<GameObject>();
         this.handlers = new HashMap<String, GameObject>();
         this.engine = engine;
-        this.engine.setWorldSize(worldWidth, worldHeigth);
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+        this.engine.setWorldSize(worldWidth, worldHeight);
         this.bgColor = bgColor;
     }
 
@@ -109,6 +113,14 @@ public abstract class Scene {
         for (GameObject gameObject : gameObjects) {
             gameObject.init();
         }
+    }
+
+    public int getWorldWidth() {
+        return worldWidth;
+    }
+
+    public int getWorldHeight() {
+        return worldHeight;
     }
 
     public Engine getEngine() {

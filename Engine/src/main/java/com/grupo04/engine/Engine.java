@@ -10,7 +10,7 @@ public abstract class Engine implements Runnable {
     private static final double FIXED_DELTA_TIME = 1000.0 / 60.0;
 
     private int worldWidth;
-    private float worldHeight;
+    private int worldHeight;
 
     // Se necesita un hilo para correr el renderizado a la par que la ejecucion de android
     private Thread mainLoopThread;
@@ -148,11 +148,14 @@ public abstract class Engine implements Runnable {
         if (!scenes.empty()) {
             scenes.peek().refresh();
 
+            boolean hasDeadScenes = false;
+
             Stack<Scene> aliveScenes = new Stack<Scene>();
             while (!scenes.empty()) {
                 Scene scene = scenes.peek();
                 if (!scene.isAlive()) {
                     scene.dereference();
+                    hasDeadScenes = true;
                 } else {
                     aliveScenes.push(scene);
                 }
@@ -163,6 +166,13 @@ public abstract class Engine implements Runnable {
                 Scene scene = aliveScenes.peek();
                 scenes.push(scene);
                 aliveScenes.pop();
+            }
+
+            // Si se ha eliminado una escena, quiere decir que se vuelve a la anterior y, por lo tanto,
+            // hay que actualizar el tam del mundo
+            if (!scenes.empty() && hasDeadScenes) {
+                Scene currentScene = scenes.peek();
+                this.setWorldSize(currentScene.getWorldWidth(), currentScene.getWorldHeight());
             }
         }
     }
@@ -203,16 +213,6 @@ public abstract class Engine implements Runnable {
         }
     }
 
-    public Graphics getGraphics() {
-        return this.graphics;
-    }
-
-    public Audio getAudio() { return this.audio; }
-
-    public Input getInput() {
-        return this.input;
-    }
-
     public void setWorldSize(int worldWidth, int worldHeight) {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
@@ -225,5 +225,13 @@ public abstract class Engine implements Runnable {
         System.out.println(this.graphics.getWindowWidth() + " " + this.worldWidth +
                 " " + this.graphics.getWindowHeight() + " " + this.worldHeight);
         return new Vector(screenX, screenY);
+    }
+
+    public Graphics getGraphics() {
+        return this.graphics;
+    }
+
+    public Audio getAudio() {
+        return this.audio;
     }
 }
