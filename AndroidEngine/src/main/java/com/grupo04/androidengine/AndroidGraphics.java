@@ -80,13 +80,13 @@ public class AndroidGraphics extends Graphics {
     public void drawCircle(Vector position, float radius, float strokeWidth) {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(strokeWidth);
-        this.canvas.drawCircle(position.x, position.y, radius * 2, this.paint);
+        this.canvas.drawCircle(position.x, position.y, radius, this.paint);
     }
 
     @Override
     public void fillCircle(Vector position, float radius) {
         this.paint.setStyle(Paint.Style.FILL);
-        this.canvas.drawCircle(position.x, position.y, radius * 2, this.paint);
+        this.canvas.drawCircle(position.x, position.y, radius, this.paint);
     }
 
     @Override
