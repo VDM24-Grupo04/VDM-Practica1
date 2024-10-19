@@ -27,7 +27,8 @@ public class DesktopGame {
 //        TestScene testScene = new TestScene(engine);
 //        TestScene2 testScene = new TestScene2(engine);
 //        TestScene3 testScene = new TestScene3(engine);
-        VictoryScene testScene = new VictoryScene(engine, 425);
+        GameScene testScene = new GameScene(engine);
+        //VictoryScene testScene = new VictoryScene(engine, 425);
         engine.pushScene(testScene);
 
         engine.onResume();

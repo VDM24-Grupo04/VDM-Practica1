@@ -4,6 +4,7 @@ import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.Scene;
 import com.grupo04.gamelogic.gameobjects.CurrentBubble;
+import com.grupo04.gamelogic.gameobjects.Spawner;
 import com.grupo04.gamelogic.gameobjects.Walls;
 
 public class GameScene extends Scene {
@@ -15,5 +16,6 @@ public class GameScene extends Scene {
         int r = ((worldWidth - (wallThickness * 2)) / 10) / 2;
         addGameObject(new Walls(wallThickness, worldWidth, worldHeight));
         addGameObject(new CurrentBubble(worldWidth, worldHeight, r, wallThickness));
+        addGameObject(new Spawner(worldWidth - wallThickness * 2, 5, r, wallThickness));
     }
 }
