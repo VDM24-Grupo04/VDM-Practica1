@@ -36,6 +36,10 @@ public class AndroidGraphics extends Graphics {
         while (!this.holder.getSurface().isValid()) ;
         // Se permite editar el canvas
         this.canvas = this.holder.lockCanvas();
+        this.clear(this.bgColor);
+        this.calculateTransform();
+        this.canvas.translate(this.offsetX, this.offsetY);
+        this.canvas.scale(this.scale, this.scale);
     }
 
     @Override
@@ -227,5 +231,25 @@ public class AndroidGraphics extends Graphics {
     public int getTextHeight(String text) {
         Paint.FontMetrics fontMetrics = this.paint.getFontMetrics();
         return (int) (fontMetrics.bottom - fontMetrics.top);
+    }
+
+    @Override
+    protected void calculateTransform() {
+        float tempScaleX = this.getWindowWidth() / this.worldWidth;
+        float tempScaleY = this.getWindowHeight() / this.worldHeight;
+        this.scale = Math.min(tempScaleX, tempScaleY);
+
+        this.offsetX = (this.getWindowWidth() - this.worldWidth * this.scale) / 2.0f;
+        this.offsetY = (this.getWindowHeight() - this.worldHeight * this.scale) / 2.0f;
+    }
+
+    @Override
+    public void scale(float scale) {
+        this.canvas.scale(scale, scale);
+    }
+
+    @Override
+    public void translate(float offsetX, float offsetY) {
+        this.canvas.translate(offsetX, offsetY);
     }
 }

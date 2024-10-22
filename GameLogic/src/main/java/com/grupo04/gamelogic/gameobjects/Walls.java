@@ -6,12 +6,12 @@ import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Vector;
 
 public class Walls extends GameObject {
-    private int thickness, width, height;
+    private float thickness, width, height;
 
     final Color color = new Color(60, 60, 60);
     Vector[] pos;
 
-    public Walls(int thickness, int width, int height) {
+    public Walls(float thickness, float width, float height) {
         super();
         this.thickness = thickness;
         this.width = width;

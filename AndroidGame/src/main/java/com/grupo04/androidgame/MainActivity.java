@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
         this.androidEngine = new AndroidEngine(window, assetManager);
 
         // Creacion de la escena
-        VictoryScene testScene = new VictoryScene(this.androidEngine, 425);
+        //VictoryScene testScene = new VictoryScene(this.androidEngine, 425);
+        GameScene testScene = new GameScene(this.androidEngine);
 
         this.androidEngine.pushScene(testScene);
     }

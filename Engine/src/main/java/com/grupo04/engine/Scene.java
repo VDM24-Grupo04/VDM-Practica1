@@ -9,8 +9,8 @@ public abstract class Scene {
     private HashSet<GameObject> gameObjects;
     private HashMap<String, GameObject> handlers;
     protected Engine engine;
-    protected int worldWidth;
-    protected int worldHeight;
+    protected float worldWidth;
+    protected float worldHeight;
     protected Color bgColor;
 
     protected Scene(Engine engine, int worldWidth, int worldHeight, Color bgColor) {
@@ -20,7 +20,7 @@ public abstract class Scene {
         this.engine = engine;
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
-        this.engine.setWorldSize(worldWidth, worldHeight);
+        this.engine.setWorldSize(this.worldWidth, this.worldHeight);
         this.bgColor = bgColor;
     }
 
@@ -78,7 +78,7 @@ public abstract class Scene {
     }
 
     public void render(Graphics graphics) {
-        graphics.clear(this.bgColor);
+        graphics.setBgColor(this.bgColor);
         for (GameObject gameObject : gameObjects) {
             gameObject.render(graphics);
         }
@@ -115,11 +115,11 @@ public abstract class Scene {
         }
     }
 
-    public int getWorldWidth() {
+    public float getWorldWidth() {
         return worldWidth;
     }
 
-    public int getWorldHeight() {
+    public float getWorldHeight() {
         return worldHeight;
     }
 

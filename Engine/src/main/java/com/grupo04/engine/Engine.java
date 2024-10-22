@@ -9,8 +9,8 @@ public abstract class Engine implements Runnable {
     private static final int MAX_NUM_FIXED_UDPATES = 150;
     private static final double FIXED_DELTA_TIME = 1000.0 / 60.0;
 
-    private int worldWidth;
-    private int worldHeight;
+    private float worldWidth;
+    private float worldHeight;
 
     // Se necesita un hilo para correr el renderizado a la par que la ejecucion de android
     private Thread mainLoopThread;
@@ -213,18 +213,10 @@ public abstract class Engine implements Runnable {
         }
     }
 
-    public void setWorldSize(int worldWidth, int worldHeight) {
+    public void setWorldSize(float worldWidth, float worldHeight) {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
         this.graphics.setWorldSize(worldWidth, worldHeight);
-    }
-
-    public Vector worldToScreenPoint(Vector position) {
-        float screenX = position.x * this.graphics.getWindowWidth() / this.worldWidth;
-        float screenY = position.y * this.graphics.getWindowHeight() / this.worldHeight;
-        System.out.println(this.graphics.getWindowWidth() + " " + this.worldWidth +
-                " " + this.graphics.getWindowHeight() + " " + this.worldHeight);
-        return new Vector(screenX, screenY);
     }
 
     public Graphics getGraphics() {

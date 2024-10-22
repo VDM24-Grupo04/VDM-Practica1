@@ -8,27 +8,38 @@ import com.grupo04.engine.Vector;
 
 import javax.swing.JFrame;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.BasicStroke;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Polygon;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 
 public class DesktopGraphics extends Graphics {
+
     private JFrame window;
     private Graphics2D graphics2D;
     private BufferStrategy bufferStrategy;
+    private AffineTransform affineTransform;
 
     public DesktopGraphics(JFrame window, Graphics2D graphics2D, BufferStrategy bufferStrategy) {
         this.window = window;
         this.graphics2D = graphics2D;
         this.bufferStrategy = bufferStrategy;
+        this.affineTransform = this.graphics2D.getTransform();
     }
 
     @Override
     protected void prepareFrame() {
         this.graphics2D = (Graphics2D) this.bufferStrategy.getDrawGraphics();
+        this.graphics2D.setTransform(affineTransform);
+        this.clear(this.bgColor);
+        this.calculateTransform();
+        Insets insets = this.window.getInsets();
+        this.graphics2D.translate(this.offsetX + insets.left, this.offsetY + insets.top);
+        this.graphics2D.scale(this.scale, this.scale);
     }
 
     @Override
@@ -45,21 +56,6 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void render(Scene currentScene) {
         // Pintamos el frame
-        /*
-        do {
-            do {
-                this.graphics2D = (Graphics2D) this.bufferStrategy.getDrawGraphics();
-                try {
-                    // Se pinta la escena actual si existe
-                    currentScene.render(this);
-                } finally {
-                    // Elimina el contexto grafico y libera recursos del sistema realacionado
-                    this.graphics2D.dispose();
-                }
-            } while (this.bufferStrategy.contentsRestored());
-            this.bufferStrategy.show();
-        } while (this.bufferStrategy.contentsLost());
-        */
         do {
             // Se indica al gestor de renderizado que prepare el frame
             this.prepareFrame();
@@ -76,14 +72,22 @@ public class DesktopGraphics extends Graphics {
 
     @Override
     public int getWindowHeight() {
-        return this.window.getHeight();
+        return this.window.getHeight() ;
+    }
+
+    public int getWindowWidthWithoutInsets() {
+        Insets insets = this.window.getInsets();
+        return this.window.getWidth() - insets.left - insets.right;
+    }
+    public int getWindowHeightWithoutInsets() {
+        Insets insets = this.window.getInsets();
+        return this.window.getHeight() - insets.top - insets.bottom;
     }
 
     @Override
     public void clear(com.grupo04.engine.Color color) {
-        Color colorInt = new Color(color.red, color.green, color.blue, color.alpha);
-        this.graphics2D.setColor(colorInt);
-        this.graphics2D.fillRect(0, 0, this.getWindowWidth(), this.getWindowHeight());
+        this.setColor(color);
+        this.graphics2D.fillRect(0,0, this.getWindowWidth(), this.getWindowHeight());
         // Establece que si ya hay algo dibujado en graphics2D y se vuelve a dibujar en el,
         // se pinta por encima de lo que habia
         // Es el modo por defecto. Hay otros modos como setXORMode()...
@@ -239,5 +243,25 @@ public class DesktopGraphics extends Graphics {
     public int getTextHeight(String text) {
         FontMetrics fontMetrics = this.graphics2D.getFontMetrics();
         return fontMetrics.getHeight();
+    }
+
+    @Override
+    protected void calculateTransform() {
+        float tempScaleX = this.getWindowWidthWithoutInsets() / this.worldWidth;
+        float tempScaleY = this.getWindowHeightWithoutInsets() / this.worldHeight;
+        this.scale = Math.min(tempScaleX, tempScaleY);
+
+        this.offsetX = (this.getWindowWidthWithoutInsets() - this.worldWidth * this.scale) / 2.0f;
+        this.offsetY = (this.getWindowHeightWithoutInsets() - this.worldHeight * this.scale) / 2.0f;
+    }
+
+    @Override
+    public void scale(float scale) {
+        this.graphics2D.scale(scale, scale);
+    }
+
+    @Override
+    public void translate(float offsetX, float offsetY) {
+        this.graphics2D.translate(offsetX, offsetY);
     }
 }

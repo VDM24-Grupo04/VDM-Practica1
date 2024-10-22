@@ -17,7 +17,7 @@ public class CurrentBubble extends GameObject {
     final float minDirY = 0.01f;
 
     private boolean shot = false, dragging = false;
-    int r, wallThickness, worldWidth, worldHeight;
+    float r, wallThickness, worldWidth, worldHeight;
     Vector initPos, pos, dir;
     Color color;
 
@@ -25,7 +25,7 @@ public class CurrentBubble extends GameObject {
     public void init() {
     }
 
-    public CurrentBubble(int w, int h, int r, int wallThickness) {
+    public CurrentBubble(float w, float h, float r, float wallThickness) {
         super();
         dir = new Vector(0, 0);
         worldWidth = w;

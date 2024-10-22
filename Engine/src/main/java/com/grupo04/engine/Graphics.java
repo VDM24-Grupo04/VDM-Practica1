@@ -1,8 +1,12 @@
 package com.grupo04.engine;
 
 public abstract class Graphics {
-    private int worldWidth;
-    private int worldHeight;
+    protected float worldWidth;
+    protected float worldHeight;
+    protected float scale = 1.0f;
+    protected float offsetX = 0.0f;
+    protected float offsetY = 0.0f;
+    protected Color bgColor = new Color(0,0,0,255);
 
     protected abstract void prepareFrame();
 
@@ -14,12 +18,26 @@ public abstract class Graphics {
 
     public abstract int getWindowHeight();
 
-    public void setWorldSize(int worldWidth, int worldHeight) {
+    protected abstract void calculateTransform();
+
+    public abstract void scale(float scale);
+    public float getScale() { return this.scale; }
+
+    public abstract void translate(float offsetX, float offsetY);
+    public float getOffsetX() { return this.offsetX; }
+    public float getOffsetY() { return this.offsetY; }
+
+    public float getWorldWidth() { return this.worldWidth; }
+    public float getWorldHeight() { return this.worldHeight; }
+
+    protected void setWorldSize(float worldWidth, float worldHeight) {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
     }
 
-    public abstract void clear(Color color);
+    public void setBgColor(Color bgColor) { this.bgColor = bgColor; }
+
+    public abstract void clear(com.grupo04.engine.Color color);
 
     public abstract void setColor(Color color);
 
@@ -62,4 +80,12 @@ public abstract class Graphics {
     public abstract int getTextWidth(String text);
 
     public abstract int getTextHeight(String text);
+
+    public Vector worldToScreenPoint(Vector position) {
+        float screenX = position.x * this.getWindowWidth() / this.worldWidth;
+        float screenY = position.y * this.getWindowHeight() / this.worldHeight;
+        System.out.println(this.getWindowWidth() + " " + this.worldWidth +
+                " " + this.getWindowHeight() + " " + this.worldHeight);
+        return new Vector(screenX, screenY);
+    }
 }

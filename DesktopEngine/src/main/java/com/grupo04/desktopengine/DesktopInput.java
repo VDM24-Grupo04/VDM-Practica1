@@ -7,6 +7,8 @@ import com.grupo04.engine.Vector;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -62,6 +64,13 @@ public class DesktopInput extends Input {
                 //Vector pos = engine.worldToScreenPoint(new Vector(e.getX(), e.getY()));
                 TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos, 0);
                 touchEvents.add(evt);
+            }
+        });
+
+        // Al cerrar la ventana se realiza una salida adecuada del sistema
+        window.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                System.exit(0);
             }
         });
     }
