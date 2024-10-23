@@ -4,13 +4,13 @@ import com.grupo04.engine.Color;
 import java.util.Random;
 
 public enum BallColors {
-    RED, GREEN, BLUE, YELLOW;
+    RED, GREEN, BLUE, YELLOW, NONE;
 
     private static final Color[] colors = {
-            new Color(255, 77, 104),
-            new Color(2, 247, 68),
-            new Color(127, 155, 240),
-            new Color(251, 230, 70)
+            new Color(245, 75, 100),
+            new Color(105, 245, 85),
+            new Color(135, 150, 235),
+            new Color(245, 225, 85)
     };
 
     private static final Random randomNumbers = new Random();

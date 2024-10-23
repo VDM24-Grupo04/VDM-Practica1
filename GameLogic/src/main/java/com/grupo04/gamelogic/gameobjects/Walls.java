@@ -6,35 +6,32 @@ import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Vector;
 
 public class Walls extends GameObject {
-    private float thickness, width, height;
-
     final Color color = new Color(60, 60, 60);
     Vector[] pos;
+    Vector[] sizes;
 
-    public Walls(float thickness, float width, float height) {
+    public Walls(int thickness, int headerOffset, int width, int height) {
         super();
-        this.thickness = thickness;
-        this.width = width;
-        this.height = height;
-
-        pos = new Vector[] {
-                new Vector(thickness / 2.0f,height / 2.0f),
-                new Vector(width / 2.0f, thickness * 2),
-                new Vector(width - (thickness / 2.0f),height / 2.0f)
+        pos = new Vector[]{
+                new Vector(thickness / 2.0f, headerOffset + (height - headerOffset) / 2.0f),
+                new Vector(width / 2.0f, headerOffset + thickness / 2.0f),
+                new Vector(width - (thickness / 2.0f), headerOffset + (height - headerOffset) / 2.0f)
+        };
+        sizes = new Vector[]{
+                new Vector(thickness, height - headerOffset),
+                new Vector(width, thickness),
         };
     }
 
     @Override
-    public void init() {
-
-    }
+    public void init() { }
 
     @Override
     public void render(Graphics graphics) {
         super.render(graphics);
         graphics.setColor(color);
-        graphics.fillRectangle(pos[0],thickness, height);
-        graphics.fillRectangle(pos[1], width, thickness);
-        graphics.fillRectangle(pos[2],thickness, height);
+        graphics.fillRectangle(pos[0], sizes[0].x, sizes[0].y);
+        graphics.fillRectangle(pos[1], sizes[1].x, sizes[1].y);
+        graphics.fillRectangle(pos[2], sizes[0].x, sizes[0].y);
     }
 }
