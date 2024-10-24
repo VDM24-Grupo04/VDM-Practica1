@@ -18,11 +18,10 @@ public class CurrentBubble extends GameObject {
     private boolean shot = false, dragging = false;
     int r, wallThickness, worldWidth;
     Vector initPos, pos, dir;
-    Color color;
+    int color;
 
-    @Override
-    public void init() {
-    }
+    Grid grid;
+
 
     public CurrentBubble(int w, int r, int wallThickness, int limitY) {
         super();
@@ -38,11 +37,21 @@ public class CurrentBubble extends GameObject {
     }
 
     @Override
+    public void init() {
+        grid = (Grid)scene.getHandler("grid");
+    }
+
+    @Override
+    public void dereference() {
+        grid.dereference();
+    }
+
+    @Override
     public void render(Graphics graphics) {
         super.render(graphics);
 
         // Se dibuja la bola
-        graphics.setColor(color);
+        graphics.setColor(BallColors.getColor(color));
         graphics.fillCircle(pos, r);
 
         // Si se esta manteniendo pulsado, se dibuja la linea en direccion al lugar que se pulsa
@@ -62,12 +71,10 @@ public class CurrentBubble extends GameObject {
             dir.normalize();
             pos = pos.plus(dir.times(spd * (float) deltaTime));
 
-            // comprobar colisoines
-            // le digo a la matriz mi posicion actual y la matriz calcula
-            // if (matriz->checkColiison(pos, this.color)) {
-            //      reset();
-            // }
-
+            // Comprobar colisiones. Si hay colision, se reinicia la bola
+             if (grid.checkCollision(pos, color)) {
+                  reset();
+             }
         }
 
         // Si choca con las paredes laterales, se coloca al limite y

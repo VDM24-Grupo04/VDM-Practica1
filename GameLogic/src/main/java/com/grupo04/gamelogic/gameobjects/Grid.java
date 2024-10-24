@@ -8,9 +8,10 @@ import com.grupo04.gamelogic.BallColors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 public class Grid extends GameObject {
-    Color[][] bubbles;          // Matriz de burbujas con los colores de las mismas
+    int[][] bubbles;          // Matriz de burbujas con los colores de las mismas
     int rows;                   // Numero de filas
     int bubblesPerRow;          // Numero de columnas
     int numBubbles;             // Numero total de burbujas
@@ -25,6 +26,7 @@ public class Grid extends GameObject {
 
     List<Vector> dirs;
     boolean[][] visited;
+    int[] colorCount;
 
     @Override
     public void init() {
@@ -40,10 +42,14 @@ public class Grid extends GameObject {
         // (Se pone 1 fila mas que sera la que sobrepase el limte inferior)
         this.bubblesPerRow = (int) ((width - wallThickness * 2) / (this.bubbleRadius * 2));
         this.rows = 1 + (int) (limitY - headerOffset - wallThickness) / (this.bubbleRadius * 2);
-        this.bubbles = new Color[this.rows][this.bubblesPerRow];
+        this.bubbles = new int[this.rows][this.bubblesPerRow];
+        for(int[] row : this.bubbles) {
+            Arrays.fill(row, -1);
+        }
 
         // Se generan initRows filas iniciales
         this.numBubbles = 0;
+        this.colorCount = new int[BallColors.getColorCount()];
         for (int i = 0; i < initRows; i++) {
             // En las filas impares hay una bola menos
             int bPerRow = (i % 2 == 0) ? this.bubblesPerRow : (this.bubblesPerRow - 1);
@@ -51,7 +57,9 @@ public class Grid extends GameObject {
 
             // Se generan las burbujas de la fila
             for (int j = 0; j < bPerRow; ++j) {
-                this.bubbles[i][j] = BallColors.getRandomColor();
+                int color = BallColors.getRandomColor();
+                this.bubbles[i][j] = color;
+                this.colorCount[color]++;
             }
         }
 
@@ -79,8 +87,8 @@ public class Grid extends GameObject {
         for (int i = 0; i < this.rows; i++) {
             int bPerRow = (i % 2 == 0) ? this.bubblesPerRow : (this.bubblesPerRow - 1);
             for (int j = 0; j < bPerRow; ++j) {
-                if (this.bubbles[i][j] != null) {
-                    graphics.setColor(this.bubbles[i][j]);
+                if (this.bubbles[i][j] >= 0) {
+                    graphics.setColor(BallColors.getColor(this.bubbles[i][j]));
                     graphics.fillCircle(gridToWorldPosition(i, j), this.bubbleRadius);
                 }
             }
@@ -89,10 +97,6 @@ public class Grid extends GameObject {
         // Pintala linea del limite inferior
         graphics.setColor(lineColor);
         graphics.drawLine(lineInit, lineEnd, lineThickness);
-    }
-
-    public Color[][] getBubbles() {
-        return this.bubbles;
     }
 
     // Convierte de coordenadas de la matriz a coordenadas de mundo
@@ -112,6 +116,26 @@ public class Grid extends GameObject {
     //      if(hayColision) manageCollision(i, j, col);
     //      return true al colisionar o si la celda actual tiene y = 0
     // }
+
+//    private Vector worldToGridPosition(Vector pos) {
+//        Vector
+//    }
+
+     public boolean checkCollision(Vector pos, int color) {
+         int i = -1, j = -1;
+
+        //          int i,j = screenToMatrix(pos)
+//          chequear la celda actual y la sigiuente. Si la siguiente esta ocupada, me coloco en la actual
+//          cambiar el valor i,j de la matriz por color
+//
+//          if(hayColision) manageCollision(i, j, col);
+//          return true al colisionar o si la celda actual tiene y = 0
+         if (colorCount[color] <= 0) {
+             BallColors.removeColor(color);
+         }
+
+         return false;
+     }
 
     // private void manageCollision(int i, int j, Color col) {
     //      recorro dfs con grafo implicito y me guarda las bolas del mismo color por coordenadas
