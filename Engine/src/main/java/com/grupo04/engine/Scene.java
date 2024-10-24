@@ -9,8 +9,8 @@ public abstract class Scene {
     private HashSet<GameObject> gameObjects;
     private HashMap<String, GameObject> handlers;
     protected Engine engine;
-    protected float worldWidth;
-    protected float worldHeight;
+    protected int worldWidth;
+    protected int worldHeight;
     protected Color bgColor;
 
     protected Scene(Engine engine, int worldWidth, int worldHeight, Color bgColor) {
@@ -115,11 +115,11 @@ public abstract class Scene {
         }
     }
 
-    public float getWorldWidth() {
+    public int getWorldWidth() {
         return worldWidth;
     }
 
-    public float getWorldHeight() {
+    public int getWorldHeight() {
         return worldHeight;
     }
 

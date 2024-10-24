@@ -34,18 +34,44 @@ public class AndroidGraphics extends Graphics {
     protected void prepareFrame() {
         // Pintamos el frame
         while (!this.holder.getSurface().isValid()) ;
+
         // Se permite editar el canvas
         this.canvas = this.holder.lockCanvas();
+
         this.clear(this.bgColor);
+
         this.calculateTransform();
-        this.canvas.translate(this.offsetX, this.offsetY);
-        this.canvas.scale(this.scale, this.scale);
+        this.translate(this.offsetX, this.offsetY);
+        this.scale(this.scale);
     }
 
     @Override
     protected boolean endFrame() {
         this.holder.unlockCanvasAndPost(canvas);
         return true;
+    }
+
+    @Override
+    protected void calculateTransform() {
+        int windowWidth = this.getWindowWidth();
+        int windowHeight = this.getWindowHeight();
+
+        float tempScaleX = (float) (windowWidth) / this.worldWidth;
+        float tempScaleY = (float) (windowHeight) / this.worldHeight;
+        this.scale = Math.min(tempScaleX, tempScaleY);
+
+        this.offsetX = (windowWidth - this.worldWidth * this.scale) / 2.0f;
+        this.offsetY = (windowHeight - this.worldHeight * this.scale) / 2.0f;
+    }
+
+    @Override
+    protected void scale(float scale) {
+        this.canvas.scale(scale, scale);
+    }
+
+    @Override
+    protected void translate(float offsetX, float offsetY) {
+        this.canvas.translate(offsetX, offsetY);
     }
 
     @Override
@@ -234,22 +260,15 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
-    protected void calculateTransform() {
-        float tempScaleX = this.getWindowWidth() / this.worldWidth;
-        float tempScaleY = this.getWindowHeight() / this.worldHeight;
-        this.scale = Math.min(tempScaleX, tempScaleY);
+    public Vector screenToWorldPoint(Vector point) {
+        Vector worldPoint = new Vector();
 
-        this.offsetX = (this.getWindowWidth() - this.worldWidth * this.scale) / 2.0f;
-        this.offsetY = (this.getWindowHeight() - this.worldHeight * this.scale) / 2.0f;
-    }
+        int windowWidth = this.getWindowWidth();
+        int windowHeight = this.getWindowHeight();
 
-    @Override
-    public void scale(float scale) {
-        this.canvas.scale(scale, scale);
-    }
-
-    @Override
-    public void translate(float offsetX, float offsetY) {
-        this.canvas.translate(offsetX, offsetY);
+        // Se divide el offset entre 2 porque hay que dejar el mismo espacio a ambos lados
+        worldPoint.x = (point.x - (windowWidth - this.worldWidth * this.scale) / 2.0f) / this.scale;
+        worldPoint.y = (point.y - (windowHeight - this.worldHeight * this.scale) / 2.0f) / this.scale;
+        return worldPoint;
     }
 }

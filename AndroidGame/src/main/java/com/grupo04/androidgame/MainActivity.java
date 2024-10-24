@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Creacion de la escena
         //VictoryScene testScene = new VictoryScene(this.androidEngine, 425);
-        GameScene testScene = new GameScene(this.androidEngine);
+        TitleScene testScene = new TitleScene(this.androidEngine);
 
         this.androidEngine.pushScene(testScene);
     }

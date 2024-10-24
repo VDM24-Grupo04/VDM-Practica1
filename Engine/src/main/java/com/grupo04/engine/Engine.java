@@ -9,9 +9,6 @@ public abstract class Engine implements Runnable {
     private static final int MAX_NUM_FIXED_UDPATES = 150;
     private static final double FIXED_DELTA_TIME = 1000.0 / 60.0;
 
-    private float worldWidth;
-    private float worldHeight;
-
     // Se necesita un hilo para correr el renderizado a la par que la ejecucion de android
     private Thread mainLoopThread;
     private volatile boolean isRunning;
@@ -29,6 +26,7 @@ public abstract class Engine implements Runnable {
         this.isRunning = false;
         this.graphics = null;
         this.audio = null;
+        this.input = null;
         scenes = new Stack<Scene>();
     }
 
@@ -126,8 +124,11 @@ public abstract class Engine implements Runnable {
 
     private void handleInput() {
         List<TouchEvent> sceneTouchEvents = input.getTouchEvents();
-//        if (!sceneTouchEvents.isEmpty()) System.out.println(sceneTouchEvents);
         if (!scenes.empty()) {
+            for (TouchEvent event : sceneTouchEvents) {
+                Vector worldPoint = graphics.screenToWorldPoint(event.getPos());
+                event.setPos(worldPoint);
+            }
             scenes.peek().handleInput(sceneTouchEvents);
         }
     }
@@ -213,9 +214,7 @@ public abstract class Engine implements Runnable {
         }
     }
 
-    public void setWorldSize(float worldWidth, float worldHeight) {
-        this.worldWidth = worldWidth;
-        this.worldHeight = worldHeight;
+    public void setWorldSize(int worldWidth, int worldHeight) {
         this.graphics.setWorldSize(worldWidth, worldHeight);
     }
 

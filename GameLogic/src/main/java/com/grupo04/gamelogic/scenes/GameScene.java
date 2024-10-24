@@ -13,12 +13,12 @@ public class GameScene extends Scene {
         super(engine, 400, 600, new Color(255, 255, 255));
 
         int wallThickness = 20;
-        float r = ((worldWidth - (wallThickness * 2)) / 10) / 2;
+        float r = (((float) worldWidth - (wallThickness * 2)) / 10) / 2;
         int limitY = (int) (worldHeight * 0.85f);
         int headerWidth = 50;
 
-        addGameObject(new Walls(wallThickness, headerWidth, (int) worldWidth, (int) worldHeight));
-        addGameObject(new CurrentBubble((int) worldWidth, (int) r, wallThickness, limitY));
-        addGameObject(new Grid((int) worldWidth, 5, (int) r, wallThickness, headerWidth, limitY));
+        addGameObject(new Walls(wallThickness, headerWidth, worldWidth, worldHeight));
+        addGameObject(new CurrentBubble(worldWidth, (int) r, wallThickness, limitY));
+        addGameObject(new Grid(worldWidth, 5, (int) r, wallThickness, headerWidth, limitY));
     }
 }

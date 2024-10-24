@@ -1,12 +1,21 @@
 package com.grupo04.engine;
 
 public abstract class Graphics {
-    protected float worldWidth;
-    protected float worldHeight;
-    protected float scale = 1.0f;
-    protected float offsetX = 0.0f;
-    protected float offsetY = 0.0f;
-    protected Color bgColor = new Color(0,0,0,255);
+    protected int worldWidth;
+    protected int worldHeight;
+    protected float scale;
+    protected float offsetX;
+    protected float offsetY;
+    protected Color bgColor;
+
+    protected Graphics() {
+        this.worldWidth = 0;
+        this.worldHeight = 0;
+        this.scale = 1.0f;
+        this.offsetX = 0.0f;
+        this.offsetY = 0.0f;
+        this.bgColor = new Color(0, 0, 0, 255);
+    }
 
     protected abstract void prepareFrame();
 
@@ -20,22 +29,18 @@ public abstract class Graphics {
 
     protected abstract void calculateTransform();
 
-    public abstract void scale(float scale);
-    public float getScale() { return this.scale; }
+    protected abstract void scale(float scale);
 
-    public abstract void translate(float offsetX, float offsetY);
-    public float getOffsetX() { return this.offsetX; }
-    public float getOffsetY() { return this.offsetY; }
+    protected abstract void translate(float offsetX, float offsetY);
 
-    public float getWorldWidth() { return this.worldWidth; }
-    public float getWorldHeight() { return this.worldHeight; }
-
-    protected void setWorldSize(float worldWidth, float worldHeight) {
+    protected void setWorldSize(int worldWidth, int worldHeight) {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
     }
 
-    public void setBgColor(Color bgColor) { this.bgColor = bgColor; }
+    public void setBgColor(Color bgColor) {
+        this.bgColor = bgColor;
+    }
 
     public abstract void clear(com.grupo04.engine.Color color);
 
@@ -81,11 +86,5 @@ public abstract class Graphics {
 
     public abstract int getTextHeight(String text);
 
-    public Vector worldToScreenPoint(Vector position) {
-        float screenX = position.x * this.getWindowWidth() / this.worldWidth;
-        float screenY = position.y * this.getWindowHeight() / this.worldHeight;
-        System.out.println(this.getWindowWidth() + " " + this.worldWidth +
-                " " + this.getWindowHeight() + " " + this.worldHeight);
-        return new Vector(screenX, screenY);
-    }
+    public abstract Vector screenToWorldPoint(Vector point);
 }

@@ -18,7 +18,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 
 public class DesktopGraphics extends Graphics {
-
     private JFrame window;
     private Graphics2D graphics2D;
     private BufferStrategy bufferStrategy;
@@ -35,11 +34,13 @@ public class DesktopGraphics extends Graphics {
     protected void prepareFrame() {
         this.graphics2D = (Graphics2D) this.bufferStrategy.getDrawGraphics();
         this.graphics2D.setTransform(affineTransform);
+
         this.clear(this.bgColor);
+
         this.calculateTransform();
         Insets insets = this.window.getInsets();
-        this.graphics2D.translate(this.offsetX + insets.left, this.offsetY + insets.top);
-        this.graphics2D.scale(this.scale, this.scale);
+        this.translate(this.offsetX + insets.left, this.offsetY + insets.top);
+        this.scale(this.scale);
     }
 
     @Override
@@ -51,6 +52,28 @@ public class DesktopGraphics extends Graphics {
         }
         this.bufferStrategy.show();
         return this.bufferStrategy.contentsLost();
+    }
+
+    @Override
+    protected void calculateTransform() {
+        int widthWithoutInsets = this.getWindowWidthWithoutInsets();
+        int heightWithoutInsets = this.getWindowHeightWithoutInsets();
+        float tempScaleX = (float) (widthWithoutInsets) / this.worldWidth;
+        float tempScaleY = (float) (heightWithoutInsets) / this.worldHeight;
+        this.scale = Math.min(tempScaleX, tempScaleY);
+
+        this.offsetX = (widthWithoutInsets - this.worldWidth * this.scale) / 2.0f;
+        this.offsetY = (heightWithoutInsets - this.worldHeight * this.scale) / 2.0f;
+    }
+
+    @Override
+    protected void scale(float scale) {
+        this.graphics2D.scale(scale, scale);
+    }
+
+    @Override
+    protected void translate(float offsetX, float offsetY) {
+        this.graphics2D.translate(offsetX, offsetY);
     }
 
     @Override
@@ -72,13 +95,14 @@ public class DesktopGraphics extends Graphics {
 
     @Override
     public int getWindowHeight() {
-        return this.window.getHeight() ;
+        return this.window.getHeight();
     }
 
     public int getWindowWidthWithoutInsets() {
         Insets insets = this.window.getInsets();
         return this.window.getWidth() - insets.left - insets.right;
     }
+
     public int getWindowHeightWithoutInsets() {
         Insets insets = this.window.getInsets();
         return this.window.getHeight() - insets.top - insets.bottom;
@@ -87,7 +111,7 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void clear(com.grupo04.engine.Color color) {
         this.setColor(color);
-        this.graphics2D.fillRect(0,0, this.getWindowWidth(), this.getWindowHeight());
+        this.graphics2D.fillRect(0, 0, this.getWindowWidth(), this.getWindowHeight());
         // Establece que si ya hay algo dibujado en graphics2D y se vuelve a dibujar en el,
         // se pinta por encima de lo que habia
         // Es el modo por defecto. Hay otros modos como setXORMode()...
@@ -246,22 +270,17 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    protected void calculateTransform() {
-        float tempScaleX = this.getWindowWidthWithoutInsets() / this.worldWidth;
-        float tempScaleY = this.getWindowHeightWithoutInsets() / this.worldHeight;
-        this.scale = Math.min(tempScaleX, tempScaleY);
+    public Vector screenToWorldPoint(Vector point) {
+        Vector worldPoint = new Vector();
 
-        this.offsetX = (this.getWindowWidthWithoutInsets() - this.worldWidth * this.scale) / 2.0f;
-        this.offsetY = (this.getWindowHeightWithoutInsets() - this.worldHeight * this.scale) / 2.0f;
-    }
+        int windowWidth = this.getWindowWidthWithoutInsets();
+        int windowHeight = this.getWindowHeightWithoutInsets();
 
-    @Override
-    public void scale(float scale) {
-        this.graphics2D.scale(scale, scale);
-    }
+        Insets insets = window.getInsets();
 
-    @Override
-    public void translate(float offsetX, float offsetY) {
-        this.graphics2D.translate(offsetX, offsetY);
+        // Se divide el offset entre 2 porque hay que dejar el mismo espacio a ambos lados
+        worldPoint.x = ((point.x - insets.left) - (windowWidth - this.worldWidth * this.scale) / 2.0f) / this.scale;
+        worldPoint.y = ((point.y - insets.top) - (windowHeight - this.worldHeight * this.scale) / 2.0f) / this.scale;
+        return worldPoint;
     }
 }
