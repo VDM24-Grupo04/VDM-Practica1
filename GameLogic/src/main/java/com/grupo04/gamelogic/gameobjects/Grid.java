@@ -21,7 +21,8 @@ public class Grid extends GameObject {
     Vector lineInit, lineEnd;
 
     @Override
-    public void init() { }
+    public void init() {
+    }
 
     public Grid(int width, int initRows, int r, int wallThickness, int headerOffset, int limitY) {
         super();
@@ -32,7 +33,7 @@ public class Grid extends GameObject {
         // Calculamos el numero de filas y columnas a partir del tamano de la zona de juego y el radio
         // (Se pone 1 fila mas que sera la que sobrepase el limte inferior)
         this.bubblesPerRow = (int) ((width - wallThickness * 2) / (this.bubbleRadius * 2));
-        this.rows =  1 + (int)(limitY - headerOffset - wallThickness) / (this.bubbleRadius * 2);
+        this.rows = 1 + (int) (limitY - headerOffset - wallThickness) / (this.bubbleRadius * 2);
         this.bubbles = new Color[this.rows][this.bubblesPerRow];
 
         // Se generan initRows filas iniciales
@@ -72,7 +73,9 @@ public class Grid extends GameObject {
         graphics.drawLine(lineInit, lineEnd, lineThickness);
     }
 
-    public Color[][] getBubbles() { return this.bubbles; }
+    public Color[][] getBubbles() {
+        return this.bubbles;
+    }
 
     // Convierte de coordenadas de la matriz a coordenadas de mundo
     private Vector gridToWorldPosition(int i, int j) {
@@ -82,5 +85,25 @@ public class Grid extends GameObject {
         return pos;
     }
 
+    // public bool checkCollision(Vector2 pos, Color col) {
+    //      int i,j = screenToMatrix(pos)
+    //      chequear la celda actual y la sigiuente. Si la siguiente esta ocupada, me coloco en la actual
+    //      cambiar el valor i,j de la matriz por color
+    //
+    //      if(hayColision) manageCollision(i, j, col);
+    //      return true al colisionar o si la celda actual tiene y = 0
+    // }
 
+    // private void manageCollision(int i, int j, Color col) {
+    //      recorro dfs con grafo implicito y me guarda las bolas del mismo color por coordenadas
+    //      tb me guardo las coordenadas adyacentes a partir del borde del conjunto de bolas
+    //      si hay igual o mas de 3 bolas, significa que se eliminara el conjunto de bolas
+    //      por lo que despegar las bolas que se queden sueltsa
+    // }
+
+    // private void manageFall(List<Vector> coordsAdy) {
+    //      a partir de la lista de coordenadas adyacentes tras la eliminacion del conjunto de
+    //      bolas, sacar conjuntos con dfs y comprobar si hay al menos una bola en el conjunto
+    //      que este pegada al techo
+    //}
 }

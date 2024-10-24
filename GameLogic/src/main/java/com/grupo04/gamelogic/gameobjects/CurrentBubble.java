@@ -61,6 +61,13 @@ public class CurrentBubble extends GameObject {
         if (shot) {
             dir.normalize();
             pos = pos.plus(dir.times(spd * (float) deltaTime));
+
+            // comprobar colisoines
+            // le digo a la matriz mi posicion actual y la matriz calcula
+            // if (matriz->checkColiison(pos, this.color)) {
+            //      reset();
+            // }
+
         }
 
         // Si choca con las paredes laterales, se coloca al limite y
@@ -125,4 +132,6 @@ public class CurrentBubble extends GameObject {
         dragging = false;
         shot = false;
     }
+
+
 }
