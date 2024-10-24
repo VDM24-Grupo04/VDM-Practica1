@@ -6,6 +6,9 @@ import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.BallColors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Grid extends GameObject {
     Color[][] bubbles;          // Matriz de burbujas con los colores de las mismas
     int rows;                   // Numero de filas
@@ -19,6 +22,9 @@ public class Grid extends GameObject {
     final int lineThickness = 1;
     final Color lineColor = new Color(0, 0, 0, 255);
     Vector lineInit, lineEnd;
+
+    List<Vector> dirs;
+    boolean[][] visited;
 
     @Override
     public void init() {
@@ -51,6 +57,18 @@ public class Grid extends GameObject {
 
         lineInit = new Vector(offsetX, limitY);
         lineEnd = new Vector(width - offsetX, limitY);
+
+        // Creamos la lista de direcciones adyacentes
+        dirs = new ArrayList<>();
+        dirs.add(new Vector(-1, 0));    // Izquierda
+        dirs.add(new Vector(1, 0));     // Derecha
+        dirs.add(new Vector(0, -1));    // Arriba izquierda
+        dirs.add(new Vector(0, 1));     // Abajo izquierda
+        dirs.add(new Vector(1, -1));    // Arriba derecha
+        dirs.add(new Vector(1, 1));     // Abajo derecha
+
+        // Inicializamos la matriz de visited para usarlo en la eliminacion de bolas y en la caida
+        visited = new boolean[this.rows][this.bubblesPerRow];
     }
 
     @Override
@@ -85,6 +103,7 @@ public class Grid extends GameObject {
         return pos;
     }
 
+
     // public bool checkCollision(Vector2 pos, Color col) {
     //      int i,j = screenToMatrix(pos)
     //      chequear la celda actual y la sigiuente. Si la siguiente esta ocupada, me coloco en la actual
@@ -101,9 +120,14 @@ public class Grid extends GameObject {
     //      por lo que despegar las bolas que se queden sueltsa
     // }
 
-    // private void manageFall(List<Vector> coordsAdy) {
-    //      a partir de la lista de coordenadas adyacentes tras la eliminacion del conjunto de
-    //      bolas, sacar conjuntos con dfs y comprobar si hay al menos una bola en el conjunto
-    //      que este pegada al techo
-    //}
+     private void manageFall(List<Vector> coordsAdy) {
+//          a partir de la lista de coordenadas adyacentes tras la eliminacion del conjunto de
+//          bolas, sacar conjuntos con dfs y comprobar si hay al menos una bola en el conjunto
+//          que este pegada al techo
+
+    }
+
+    private void dfs() {
+
+    }
 }
