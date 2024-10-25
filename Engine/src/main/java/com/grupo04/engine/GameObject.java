@@ -13,6 +13,12 @@ public abstract class GameObject {
         this.scene = null;
     }
 
+    public void onResume() {
+    }
+
+    public void onPause() {
+    }
+
     public void handleInput(List<TouchEvent> touchEvents) {
     }
 

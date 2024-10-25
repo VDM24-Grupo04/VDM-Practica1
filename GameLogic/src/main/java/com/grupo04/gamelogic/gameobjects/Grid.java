@@ -1,8 +1,10 @@
 package com.grupo04.gamelogic.gameobjects;
 
 import com.grupo04.engine.Color;
+import com.grupo04.engine.Engine;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
+import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.BallColors;
 
@@ -27,6 +29,8 @@ public class Grid extends GameObject {
 
     List<Vector> dirs;
     int[] colorCount;
+
+    Sound onAttachSound = null;
 
     @Override
     public void init() {
@@ -94,6 +98,9 @@ public class Grid extends GameObject {
         // Pintala linea del limite inferior
         graphics.setColor(lineColor);
         graphics.drawLine(lineInit, lineEnd, lineThickness);
+
+        Engine engine = this.scene.getEngine();
+        this.onAttachSound = engine.getAudio().newSound("ballAttach.wav");
     }
 
     // Convierte de coordenadas de la matriz a coordenadas de mundo
@@ -135,6 +142,7 @@ public class Grid extends GameObject {
      }
 
      private void manageCollision(int i, int j, Color col) {
+        playAttachSound();
     //      recorro dfs con grafo implicito y me guarda las bolas del mismo color por coordenadas
     //      tb me guardo las coordenadas adyacentes a partir del borde del conjunto de bolas
     //      si hay igual o mas de 3 bolas, significa que se eliminara el conjunto de bolas
@@ -216,5 +224,11 @@ public class Grid extends GameObject {
 
     private boolean isRoof(int i, int j) {
         return i == 0 && j >= 0 && j < this.bubblesPerRow;
+    }
+
+    private void playAttachSound() {
+        if (onAttachSound != null) {
+            onAttachSound.play();
+        }
     }
 }

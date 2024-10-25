@@ -47,17 +47,10 @@ public class AndroidAudio implements Audio {
         return newSound(fileName, 0);
     }
 
-    @Override
-    public boolean playSound(String soundName) { return perfomAudioAction(soundName, 0); }
-
-    @Override
-    public boolean stopSound(String soundName) { return perfomAudioAction(soundName, 1); }
-
-    @Override
-    public boolean resumeSound(String soundName) { return perfomAudioAction(soundName, 2); }
+    public SoundPool getSoundPool() { return this.soundPool; }
 
     private boolean perfomAudioAction(String soundName, int option) {
-        AndroidSound sound = sounds.get(soundName);
+        AndroidSound sound = this.sounds.get(soundName);
         if (sound == null) {
             System.err.printf("Cannot find %s in sounds.%n", soundName);
             return false;
@@ -72,4 +65,13 @@ public class AndroidAudio implements Audio {
                 return false;
         }
     }
+
+    @Override
+    public boolean playSound(String soundName) { return perfomAudioAction(soundName, 0); }
+
+    @Override
+    public boolean stopSound(String soundName) { return perfomAudioAction(soundName, 1); }
+
+    @Override
+    public boolean resumeSound(String soundName) { return perfomAudioAction(soundName, 2); }
 }

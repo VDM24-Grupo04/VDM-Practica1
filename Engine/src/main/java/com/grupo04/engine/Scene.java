@@ -24,6 +24,18 @@ public abstract class Scene {
         this.bgColor = bgColor;
     }
 
+    public void onResume() {
+        for (GameObject gameObject : gameObjects) {
+            gameObject.onResume();
+        }
+    }
+
+    public void onPause() {
+        for (GameObject gameObject : gameObjects) {
+            gameObject.onResume();
+        }
+    }
+
     public void addGameObject(GameObject gameObject) {
         gameObjects.add(gameObject);
         gameObject.setScene(this);

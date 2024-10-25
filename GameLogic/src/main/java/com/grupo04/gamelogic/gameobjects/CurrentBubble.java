@@ -1,8 +1,10 @@
 package com.grupo04.gamelogic.gameobjects;
 
 import com.grupo04.engine.Color;
+import com.grupo04.engine.Engine;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
+import com.grupo04.engine.Sound;
 import com.grupo04.engine.TouchEvent;
 import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.BallColors;
@@ -22,6 +24,7 @@ public class CurrentBubble extends GameObject {
 
     Grid grid;
 
+    Sound onBounceSound             = null;
 
     public CurrentBubble(int w, int r, int wallThickness, int limitY) {
         super();
@@ -39,6 +42,8 @@ public class CurrentBubble extends GameObject {
     @Override
     public void init() {
         grid = (Grid)scene.getHandler("grid");
+        Engine engine = this.scene.getEngine();
+        this.onBounceSound = engine.getAudio().newSound("ballAttach.wav"); // Cambiar por otro
     }
 
     @Override
@@ -73,7 +78,7 @@ public class CurrentBubble extends GameObject {
 
             // Comprobar colisiones. Si hay colision, se reinicia la bola
              if (grid.checkCollision(pos, color)) {
-                  reset();
+                 reset();
              }
         }
 
@@ -83,11 +88,13 @@ public class CurrentBubble extends GameObject {
         if (dir.x > 0 && (pos.x + r) >= worldWidth - wallThickness) {
             pos.x = worldWidth - wallThickness - r;
             dir.x *= -1;
+            playBounceSound();
         }
         // Pared izquierda
         else if (dir.x < 0 && (pos.x - r) <= wallThickness) {
             pos.x = wallThickness + r;
             dir.x *= -1;
+            playBounceSound();
         }
 
         // Aumenta la velocidad en vertical si es demasiado pequena
@@ -140,5 +147,9 @@ public class CurrentBubble extends GameObject {
         shot = false;
     }
 
-
+    private void playBounceSound() {
+        if (onBounceSound != null) {
+            onBounceSound.play();
+        }
+    }
 }

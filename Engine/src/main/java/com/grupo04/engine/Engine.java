@@ -194,11 +194,19 @@ public abstract class Engine implements Runnable {
             this.mainLoopThread = new Thread(this);
             // El hilo tiene que estar sincronizado con el de android studio
             this.mainLoopThread.start();
+
+            for (Scene scene : scenes) {
+                scene.onResume();
+            }
         }
     }
 
     public void onPause() {
         if (this.isRunning) {
+            for (Scene scene : scenes) {
+                scene.onPause();
+            }
+
             // Se pone isRunning a false y se intenta esperar a que termine el hilo
             this.isRunning = false;
             while (true) {
