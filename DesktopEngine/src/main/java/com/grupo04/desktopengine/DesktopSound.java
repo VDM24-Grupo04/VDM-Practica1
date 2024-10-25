@@ -25,13 +25,7 @@ public class DesktopSound extends Sound {
     AudioFormat audioFormat         = null;
     boolean isPlaying               = false;
 
-    DesktopSound(String fileName, int priority) {
-        this(fileName, priority, 1.0f, 1.0f, 0, 1.0f);
-    }
-
-    DesktopSound(String fileName, int priority, int loop, float rate) {
-        this(fileName, priority, 1.0f, 1.0f, loop, rate);
-    }
+    boolean isValid                 = false;
 
     DesktopSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         super(fileName, priority, leftVolume, rightVolume, loop, rate);
@@ -42,9 +36,69 @@ public class DesktopSound extends Sound {
             this.audioFile = new File("./assets/" + this.soundName);
             this.audioStream = AudioSystem.getAudioInputStream(this.audioFile);
             this.audioFormat = this.audioStream.getFormat();
+            super.isValid = true;
         } catch (Exception e) {
-            System.err.printf("Couldn't load audio file (%s)%n", fileName);
-            e.printStackTrace();
+            System.err.printf("Couldn't load audio file (\"%s\")%n", fileName);
+        }
+    }
+
+    DesktopSound(String fileName, int priority) {
+        this(fileName, priority, 1.0f, 1.0f, 0, 1.0f);
+    }
+
+    DesktopSound(String fileName, int priority, int loop, float rate) {
+        this(fileName, priority, 1.0f, 1.0f, loop, rate);
+    }
+
+    @Override
+    public boolean performSoundAction(int option) {
+        try {
+            switch (option) {
+                case 0:
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(AudioSystem.getAudioInputStream(audioFile));
+                    setClipVolume(clip, this.leftVolume, this.rightVolume);
+                    clip.loop(this.loop);
+
+                    clip.start();
+                    this.isPlaying = true;
+
+                    clip.addLineListener(event -> {
+                        if (event.getType() == LineEvent.Type.STOP) {
+                            clip.close();
+                            this.clips.remove(clip);
+                        }
+                    });
+                    this.clips.add(clip);
+                    break;
+                case 1:
+                    for (Clip clipIt : this.clips) {
+                        if (clipIt.isRunning()) {
+                            clipIt.stop();
+                            clipIt.close();
+                        }
+                    }
+                    this.clips.clear();
+                    this.isPlaying = false;
+                    break;
+                case 2:
+                    for (Clip clipIt : this.clips) {
+                        if (!clipIt.isRunning()) {
+                            clipIt.setMicrosecondPosition(this.currentFrame);
+                            clipIt.start();
+                        }
+                    }
+                    this.isPlaying = true;
+                    break;
+                default:
+                    System.err.println("No action was taken.");
+
+            }
+            return true;
+        } catch (Exception e) {
+            if (option == 0) System.err.println("Failed to play the clip.");
+            else System.err.println("Failed to stop the clip.");
+            return false;
         }
     }
 
@@ -118,59 +172,6 @@ public class DesktopSound extends Sound {
             return true;
         } catch (Exception e) {
             System.err.println("Could not set new rate in clip.");
-            return false;
-        }
-    }
-
-    @Override
-    public boolean performSoundAction(int option) {
-        try {
-            switch (option) {
-                case 0:
-                    Clip clip = AudioSystem.getClip();
-                    clip.open(AudioSystem.getAudioInputStream(audioFile));
-                    setClipVolume(clip, this.leftVolume, this.rightVolume);
-                    clip.loop(this.loop);
-
-                    clip.start();
-                    this.isPlaying = true;
-
-                    clip.addLineListener(event -> {
-                        if (event.getType() == LineEvent.Type.STOP) {
-                            clip.close();
-                            this.clips.remove(clip);
-                        }
-                    });
-                    this.clips.add(clip);
-                    break;
-                case 1:
-                    for (Clip clipIt : this.clips) {
-                        if (clipIt.isRunning()) {
-                            clipIt.stop();
-                            clipIt.close();
-                        }
-                    }
-                    this.clips.clear();
-                    this.isPlaying = false;
-                    break;
-                case 2:
-                    for (Clip clipIt : this.clips) {
-                        if (!clipIt.isRunning()) {
-                            clipIt.setMicrosecondPosition(this.currentFrame);
-                            clipIt.start();
-                        }
-                    }
-                    this.isPlaying = true;
-                    break;
-                default:
-                    System.err.println("No action was taken.");
-
-            }
-            return true;
-        } catch (Exception e) {
-            if (option == 0) System.err.println("Failed to play the clip.");
-            else System.err.println("Failed to stop the clip.");
-            e.printStackTrace();
             return false;
         }
     }

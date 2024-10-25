@@ -7,7 +7,7 @@ import com.grupo04.engine.Audio;
 
 import java.util.HashMap;
 
-public class AndroidAudio extends Audio {
+public class AndroidAudio implements Audio {
     public AssetManager assetManager     = null;
     SoundPool soundPool                  = null;
     int maxStreams                       = 0;
@@ -21,8 +21,15 @@ public class AndroidAudio extends Audio {
     }
 
     @Override
-    public AndroidSound newSound(String fileName, int priority) {
-        return newSound(fileName, priority, 1.0f, 1.0f, 0, 1.0f);
+    public AndroidSound newSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
+        if (!fileName.isBlank() && !fileName.isEmpty()) {
+            AndroidSound sound = new AndroidSound(this.assetManager, this.soundPool, fileName, priority, leftVolume, rightVolume, loop, rate);
+            if (sound.isValid()) {
+                sounds.put(fileName, sound);
+                return sound;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -31,10 +38,13 @@ public class AndroidAudio extends Audio {
     }
 
     @Override
-    public AndroidSound newSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
-        AndroidSound sound = new AndroidSound(this.assetManager, this.soundPool, fileName, priority, leftVolume, rightVolume, loop, rate);
-        sounds.put(fileName, sound);
-        return sound;
+    public AndroidSound newSound(String fileName, int priority) {
+        return newSound(fileName, priority, 1.0f, 1.0f, 0, 1.0f);
+    }
+
+    @Override
+    public AndroidSound newSound(String fileName) {
+        return newSound(fileName, 0);
     }
 
     @Override

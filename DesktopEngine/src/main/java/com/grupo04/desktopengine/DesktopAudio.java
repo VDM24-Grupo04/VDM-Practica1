@@ -4,7 +4,7 @@ import com.grupo04.engine.Audio;
 
 import java.util.HashMap;
 
-public class DesktopAudio extends Audio {
+public class DesktopAudio implements Audio {
     int maxStreams = 0;
     HashMap<String, DesktopSound> soundPool;
 
@@ -14,15 +14,35 @@ public class DesktopAudio extends Audio {
     }
 
     @Override
-    public DesktopSound newSound(String fileName, int priority) {
+    public DesktopSound newSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         if (soundPool.size() >= this.maxStreams) {
             throw new IllegalStateException("Maximum number of streams exceeded.");
         }
 
-        DesktopSound newSound = new DesktopSound(fileName, priority);
-        soundPool.put(fileName, newSound);
-        ++this.maxStreams;
-        return newSound;
+        if (!fileName.isEmpty() && !fileName.isBlank()) {
+            DesktopSound newSound = new DesktopSound(fileName, priority);
+            if (newSound.isValid()) {
+                soundPool.put(fileName, newSound);
+                ++this.maxStreams;
+                return newSound;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public DesktopSound newSound(String fileName, int priority, int loop, float rate) {
+        return newSound(fileName, priority, 1.0f, 1.0f, loop, rate);
+    }
+
+    @Override
+    public DesktopSound newSound(String fileName, int priority) {
+        return newSound(fileName, priority, 1.0f, 1.0f, 0, 0.0f);
+    }
+
+    @Override
+    public DesktopSound newSound(String fileName) {
+        return newSound(fileName, 0);
     }
 
     @Override

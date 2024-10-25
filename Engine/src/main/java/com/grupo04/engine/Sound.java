@@ -8,6 +8,8 @@ public abstract class Sound {
     protected int loop            = 0;
     protected float rate          = 0.0f;
 
+    protected boolean isValid     = false;
+
     public Sound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         this.soundName = fileName;
         this.priority = priority;
@@ -16,6 +18,7 @@ public abstract class Sound {
         this.loop = loop;
         this.rate = rate;
     }
+    public boolean isValid() { return this.isValid; }
     public abstract boolean performSoundAction(int option);
     public boolean play() { return performSoundAction(0); }
     public boolean stop() { return performSoundAction(1); }

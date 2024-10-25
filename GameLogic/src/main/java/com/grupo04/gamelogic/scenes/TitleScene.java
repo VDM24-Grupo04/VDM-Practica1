@@ -32,7 +32,7 @@ public class TitleScene extends Scene {
         Button playButton = new Button(new Vector(worldWidth / 2f, 3f * worldHeight / 5f),
                 BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_ARC, BUTTON_BASE_COLOR, BUTTON_OVER_COLOR,
                 "Play", BUTTON_FONT,
-                () -> engine.changeScene(new GameScene(engine)));
+                () -> engine.changeScene(new GameScene(engine)), "button.wav");
         addGameObject(playButton);
     }
 }

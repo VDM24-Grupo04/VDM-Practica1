@@ -6,6 +6,7 @@ import com.grupo04.engine.Engine;
 import com.grupo04.engine.Font;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
+import com.grupo04.engine.Sound;
 import com.grupo04.engine.TouchEvent;
 import com.grupo04.engine.Vector;
 
@@ -30,6 +31,9 @@ public class Button extends GameObject {
 
     private Vector topLeft;
 
+    private String onClickSoundPath;
+    private Sound onClickSound;
+
     private boolean withinArea(Vector pos) {
         return pos.x > this.topLeft.x && pos.x < this.topLeft.x + width &&
                 pos.y > this.topLeft.y && pos.y < this.topLeft.y + height;
@@ -37,7 +41,7 @@ public class Button extends GameObject {
 
     public Button(Vector pos,
                   float width, float height, float arc, Color baseCol, Color pointerOverCol,
-                  String text, String fontName, Color fontColor, boolean bold, Callback onClick) {
+                  String text, String fontName, Color fontColor, boolean bold, Callback onClick, String onClickSoundPath) {
         this.pos = pos;
 
         this.width = width;
@@ -56,30 +60,27 @@ public class Button extends GameObject {
         this.onClick = onClick;
 
         this.topLeft = new Vector(pos.x - (float) width / 2, pos.y - (float) height / 2);
+
+        this.onClickSoundPath = onClickSoundPath;
+    }
+
+    public Button(Vector pos,
+                  float width, float height, float arc, Color baseCol, Color pointerOverCol,
+                  String text, String fontName, Callback onClick, String onClickSoundPathName) {
+        this(pos, width, height, arc, baseCol, pointerOverCol, text, fontName,
+                new Color(0,0,0), false, onClick, onClickSoundPathName);
+    }
+
+    public Button(Vector pos,
+                  float width, float height, float arc, Color baseCol, Color pointerOverCol,
+                  String text, String fontName, Color fontColor, boolean bold, Callback onClick) {
+        this(pos, width, height, arc, baseCol, pointerOverCol, text, fontName, fontColor, bold, onClick, "");
     }
 
     public Button(Vector pos,
                   float width, float height, float arc, Color baseCol, Color pointerOverCol,
                   String text, String fontName, Callback onClick) {
-        super();
-        this.pos = pos;
-
-        this.width = width;
-        this.height = height;
-        this.arc = arc;
-        this.baseCol = baseCol;
-        this.pointerOverCol = pointerOverCol;
-        this.bgCol = this.baseCol;
-
-        this.font = null;
-        this.text = text;
-        this.fontName = fontName;
-        this.fontColor = new Color(0, 0, 0);
-        this.bold = false;
-
-        this.onClick = onClick;
-
-        this.topLeft = new Vector(pos.x - (float) width / 2, pos.y - (float) height / 2);
+        this(pos, width, height, arc, baseCol, pointerOverCol, text, fontName, onClick, "");
     }
 
     @Override
@@ -87,6 +88,7 @@ public class Button extends GameObject {
         Engine engine = this.scene.getEngine();
         Graphics graphics = engine.getGraphics();
         this.font = graphics.newFont(fontName, this.height / 1.7f, false, false);
+        this.onClickSound = engine.getAudio().newSound(this.onClickSoundPath);
     }
 
     @Override
@@ -94,6 +96,9 @@ public class Button extends GameObject {
         for (TouchEvent touchEvent : touchEvents) {
             if (touchEvent.getType() == TouchEvent.TouchEventType.PRESS) {
                 if (withinArea(touchEvent.getPos())) {
+                    if (this.onClickSound != null) {
+                        this.onClickSound.play();
+                    }
                     this.onClick.call();
                 }
             } else if (touchEvent.getType() == TouchEvent.TouchEventType.MOTION) {
