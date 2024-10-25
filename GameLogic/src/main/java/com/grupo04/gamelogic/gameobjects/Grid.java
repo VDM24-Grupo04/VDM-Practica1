@@ -4,11 +4,13 @@ import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
+import com.grupo04.engine.Pair;
 import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.BallColors;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Set;
@@ -30,13 +32,16 @@ public class Grid extends GameObject {
     List<Vector> dirs;
     int[] colorCount;
 
+    float fallingSpeed = 10.0f;
+    List<Pair<Vector, Integer>> fallingBubbles;
+
     Sound onAttachSound = null;
 
     @Override
     public void init() {
     }
 
-    public Grid(int width, int initRows, int r, int wallThickness, int headerOffset, int limitY) {
+    public Grid(int width, int initRows, int r, int wallThickness, int headerOffset, int limitY, float fallingSpeed) {
         super();
         this.bubbleRadius = r;
         this.offsetX = wallThickness;
@@ -67,17 +72,24 @@ public class Grid extends GameObject {
             }
         }
 
-        lineInit = new Vector(offsetX, limitY);
-        lineEnd = new Vector(width - offsetX, limitY);
+        this.lineInit = new Vector(this.offsetX, limitY);
+        this.lineEnd = new Vector(width - this.offsetX, limitY);
 
         // Creamos la lista de direcciones adyacentes
-        dirs = new ArrayList<>();
-        dirs.add(new Vector(-1, 0));    // Izquierda
-        dirs.add(new Vector(1, 0));     // Derecha
-        dirs.add(new Vector(0, -1));    // Arriba izquierda
-        dirs.add(new Vector(0, 1));     // Abajo izquierda
-        dirs.add(new Vector(1, -1));    // Arriba derecha
-        dirs.add(new Vector(1, 1));     // Abajo derecha
+        this.dirs = new ArrayList<>();
+        this.dirs.add(new Vector(-1, 0));    // Izquierda
+        this.dirs.add(new Vector(1, 0));     // Derecha
+        this.dirs.add(new Vector(0, -1));    // Arriba izquierda
+        this.dirs.add(new Vector(0, 1));     // Abajo izquierda
+        this.dirs.add(new Vector(1, -1));    // Arriba derecha
+        this.dirs.add(new Vector(1, 1));     // Abajo derecha
+
+        this.fallingSpeed = fallingSpeed;
+        this.fallingBubbles = new ArrayList<>();
+    }
+
+    public Grid(int width, int initRows, int r, int wallThickness, int headerOffset, int limitY) {
+        this(width, initRows, r, wallThickness, headerOffset, limitY, 10.0f);
     }
 
     @Override
@@ -95,12 +107,39 @@ public class Grid extends GameObject {
             }
         }
 
-        // Pintala linea del limite inferior
+        // Recorre las bolas caidas y las pinta
+        if (!this.fallingBubbles.isEmpty()) {
+            for (Pair<Vector, Integer> bubble : this.fallingBubbles) {
+                graphics.setColor(BallColors.getColor(bubble.getSecond()));
+                Vector bPos = bubble.getFirst();
+                graphics.fillCircle(gridToWorldPosition((int)bPos.x, (int)bPos.y), this.bubbleRadius);
+            }
+        }
+
+        // Pinta la linea del limite inferior
         graphics.setColor(lineColor);
         graphics.drawLine(lineInit, lineEnd, lineThickness);
 
         Engine engine = this.scene.getEngine();
         this.onAttachSound = engine.getAudio().newSound("ballAttach.wav");
+    }
+
+    @Override
+    public void update(double deltaTime) {
+        if (!this.fallingBubbles.isEmpty()) {
+            // Para tener la posibilidad de eliminar elementos mientras se recorre,
+            // realizamos la actualizacion con iteradores
+            Iterator<Pair<Vector, Integer>> iterator = this.fallingBubbles.iterator();
+            while (iterator.hasNext()) {
+                Pair<Vector, Integer> bubble = iterator.next();
+                bubble.getFirst().y += this.fallingSpeed * (float) deltaTime;
+
+                // Si la posición de la bola ya se salió de la pantalla, eliminarla
+                if (bubble.getFirst().y + (float)this.bubbleRadius > this.scene.getWorldHeight()) {
+                    iterator.remove();
+                }
+            }
+        }
     }
 
     // Convierte de coordenadas de la matriz a coordenadas de mundo
@@ -110,7 +149,6 @@ public class Grid extends GameObject {
         pos.y = this.offsetY + this.bubbleRadius + this.bubbleRadius * 2 * (i);
         return pos;
     }
-
 
     // public bool checkCollision(Vector2 pos, Color col) {
     //      int i,j = screenToMatrix(pos)
@@ -171,7 +209,9 @@ public class Grid extends GameObject {
                 // Si no hay ninguna bola del conjunto que toque el techo, se eliminan
                 if (!dfs(visited, (int)v.x, (int)v.y, bubbles)) {
                     for (Vector w : bubbles) {
-                        // Por ahora hacemos que se "eliminen" en vez de recrear la caida
+                        // Se guardan en una lista de bolas en movimiento simulando la caida
+                        this.fallingBubbles.add(new Pair<>(new Vector((int)w.x, (int)w.y), this.bubbles[(int)w.x][(int)w.y]));
+                        // Se quitan del grid
                         this.bubbles[(int)w.x][(int)w.y] = -1;
                     }
                 }
