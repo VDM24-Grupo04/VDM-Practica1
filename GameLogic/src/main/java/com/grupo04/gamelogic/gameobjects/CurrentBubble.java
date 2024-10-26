@@ -26,7 +26,7 @@ public class CurrentBubble extends GameObject {
 
     Sound onBounceSound             = null;
 
-    public CurrentBubble(int w, int r, int wallThickness, int limitY) {
+    public CurrentBubble(int w, int r, int wallThickness, int rows) {
         super();
         dir = new Vector(0, 0);
         worldWidth = w;
@@ -34,7 +34,7 @@ public class CurrentBubble extends GameObject {
         this.wallThickness = wallThickness;
 
         // La posicion inicial sera en el centro del mundo y por debajo del limite vertical
-        initPos = new Vector((w - r) / 2.0f, limitY + (int)(r * 2.5));
+        initPos = new Vector((w - r) / 2.0f, (1.5f + rows) * this.r * 2);
 
         reset();
     }
@@ -59,6 +59,8 @@ public class CurrentBubble extends GameObject {
         graphics.setColor(BallColors.getColor(color));
         graphics.fillCircle(pos, r);
 
+//        graphics.fillCircle(pos.plus(dir.times(-this.r * 2)), r);
+
         // Si se esta manteniendo pulsado, se dibuja la linea en direccion al lugar que se pulsa
         if (dragging) {
             graphics.setColor(lineColor);
@@ -77,7 +79,7 @@ public class CurrentBubble extends GameObject {
             pos = pos.plus(dir.times(spd * (float) deltaTime));
 
             // Comprobar colisiones. Si hay colision, se reinicia la bola
-             if (grid.checkCollision(pos, color)) {
+             if (grid.checkCollision(pos, dir, color)) {
                  reset();
              }
         }
