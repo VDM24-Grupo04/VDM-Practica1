@@ -75,6 +75,27 @@ public class CurrentBubble extends GameObject {
         // Si se ha disparado, se normaliza la direccion y se mueve
         // la pelota en esa direccion a la velocidad establecida
         if (shot) {
+            // Si choca con las paredes laterales, se coloca al limite y
+            // se pone la dir horizontal hacia el sentido contrario
+            // Pared derecha
+            if (dir.x > 0 && (pos.x + r) >= worldWidth - wallThickness) {
+                pos.x = worldWidth - wallThickness - r;
+                dir.x *= -1;
+                playBounceSound();
+            }
+            // Pared izquierda
+            else if (dir.x < 0 && (pos.x - r) <= wallThickness) {
+                pos.x = wallThickness + r;
+                dir.x *= -1;
+                playBounceSound();
+            }
+
+            // Aumenta la velocidad en vertical si es demasiado pequena
+            // para que no se quede atascado rebotando de lado a lado
+            if (dir.y < minDirY) {
+                dir.y -= (float) deltaTime / 10.0f;
+            }
+
             dir.normalize();
             pos = pos.plus(dir.times(spd * (float) deltaTime));
 
@@ -84,26 +105,7 @@ public class CurrentBubble extends GameObject {
              }
         }
 
-        // Si choca con las paredes laterales, se coloca al limite y
-        // se pone la dir horizontal hacia el sentido contrario
-        // Pared derecha
-        if (dir.x > 0 && (pos.x + r) >= worldWidth - wallThickness) {
-            pos.x = worldWidth - wallThickness - r;
-            dir.x *= -1;
-            playBounceSound();
-        }
-        // Pared izquierda
-        else if (dir.x < 0 && (pos.x - r) <= wallThickness) {
-            pos.x = wallThickness + r;
-            dir.x *= -1;
-            playBounceSound();
-        }
 
-        // Aumenta la velocidad en vertical si es demasiado pequena
-        // para que no se quede atascado rebotando de lado a lado
-        if (shot && dir.y < minDirY) {
-            dir.y -= (float) deltaTime / 10.0f;
-        }
     }
 
     @Override

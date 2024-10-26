@@ -32,7 +32,7 @@ public class Grid extends GameObject {
 
     List<Vector> dirs;
     int[] colorCount;
-
+    int currI = -1, currJ = -1;
     float fallingSpeed = 10.0f;
     List<Pair<Vector, Integer>> fallingBubbles;
 
@@ -57,7 +57,6 @@ public class Grid extends GameObject {
         // Se generan initRows filas iniciales
         this.totalBubbles = 0;
         this.colorCount = new int[BallColors.getColorCount()];
-        initRows = 0;
         for (int i = 0; i < initRows; i++) {
             // En las filas impares hay una bola menos
             int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
@@ -71,8 +70,9 @@ public class Grid extends GameObject {
             }
         }
 
-        this.lineInit = new Vector(this.offsetX, this.rows * this.r * 2);
-        this.lineEnd = new Vector(width - this.offsetX, this.rows * this.r * 2);
+        int lineY = (int) (this.r * 2 * (this.rows - 1)) - this.bubbleOffset * (this.rows - 1) + this.bubbleOffset;
+        this.lineInit = new Vector(this.offsetX, this.offsetY + lineY);
+        this.lineEnd = new Vector(width - this.offsetX, this.offsetY + lineY);
 
         // Creamos la lista de direcciones adyacentes
         this.dirs = new ArrayList<>();
@@ -123,6 +123,33 @@ public class Grid extends GameObject {
             }
         }
 
+        // DEBUG DE LAS CELDAS
+        if( currI >= 0 && currJ >= 0) {
+            Vector pos = gridToWorldPosition(currI, currJ);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(0));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+
+            pos = gridToWorldPosition(currI, currJ - 1);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(1));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+
+            pos = gridToWorldPosition(currI, currJ + 1);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(1));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+
+            pos = gridToWorldPosition(currI - 1, currJ);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(1));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+
+            pos = gridToWorldPosition(currI - 1, (currI % 2 == 0) ? currJ - 1 : currJ + 1);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(1));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+        }
 
         // Pinta la linea del limite inferior
         graphics.setColor(lineColor);
@@ -173,39 +200,52 @@ public class Grid extends GameObject {
 
     // Convierte coordenadas de mundo a posiciones i,j de la matriz
     private Vector worldToGridPosition(Vector pos) {
-        float y = (pos.y - this.offsetY + this.r) / (this.r * 2);
+        float y = (pos.y - this.offsetY) / (this.r * 2);
+        y += (this.bubbleOffset * y) / (this.r * 2);
+
         float x = (pos.x - this.offsetX - ((y % 2 == 0) ? 0 : this.r)) / (this.r * 2);
 
-        // Se redondea x por si la bola esta mas hacia un lado o hacia el otro,
-        // pero y no se redondea porque se se necesita la posicion de la parte superior
-        return new Vector(Math.round(x), y);
+        return new Vector(x, y);
     }
 
     public boolean checkCollision(Vector pos, Vector dir, int color) {
         boolean hasCollided = false;
         Vector rowCol = worldToGridPosition(pos);
-        int i = (int) rowCol.y;
-        int j = (int) rowCol.x;
         System.out.println(rowCol.x + " " + rowCol.y);
 
-        // Si llega a la primera fila, colisiona con la pared superior
-        if (i <= 0) {
-            hasCollided = true;
-        }
-        // Si no, comprueba las casillas adyacentes y si hay alguna ocupada, colisiona con ella
-        else {
-//            rowCol.y = Math.round(rowCol.y);
+        // Se redondea x por si la bola esta mas hacia un lado o hacia el otro,
+        // pero y no se redondea porque se se necesita la posicion de la parte superior
+        int i = (int) rowCol.y;
+        int j = (i % 2 == 0) ? Math.round(rowCol.x) : (int) rowCol.x;
 
-            hasCollided |= occupied(pos, i - 1, (j % 2 == 0) ? j - 1 : j);
-            hasCollided |= occupied(pos, i - 1, j + 1);
-            hasCollided |= occupied(pos, i, j - 1);
-            hasCollided |= occupied(pos, i, j + 1);
+        // Se comprueban las casillas adyacentes y si hay alguna ocupada, se marca que ha colisionado
+        hasCollided |= occupied(pos, i - 1, (i % 2 == 0) ? j - 1 : j + 1);
+        hasCollided |= occupied(pos, i - 1, j);
+        hasCollided |= occupied(pos,  i, j - 1);
+        hasCollided |= occupied(pos, i, j + 1);
+
+        // DEBUG DE LAS CELDAS
+        currI = i;
+        currJ = j;
+
+        // Si no ha colisionado tras comprobar las casillas contiguas, habra
+        // colisionado con la pared superior si llega a la primera fila
+        if (!hasCollided) {
+            hasCollided = i <= 0;
         }
-        if (hasCollided) {
+
+        // Si ha colisionado
+        if (hasCollided && i >= 0 && j >= 0 && i < this.rows && j < ((i % 2 == 0) ? this.cols : this.cols - 1)) {
+            // DEBUG DE LAS CELDAS
+            currI = -1;
+            currJ = -1;
+
             this.bubbles[i][j] = color;
             // manageCollision
             // hay que hacer que tanto manageCollision como manageFall
             // vayan quitando las burbujas que borren de colorCount
+
+            // gestonar tambien que pasa si despues de explotar las burbujas alguna queda por debajo del limite (i == cols)
         }
 
         return hasCollided;

@@ -2,9 +2,7 @@ package com.grupo04.gamelogic.scenes;
 
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
-import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Scene;
-import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.BallColors;
 import com.grupo04.gamelogic.gameobjects.CurrentBubble;
 import com.grupo04.gamelogic.gameobjects.Grid;
