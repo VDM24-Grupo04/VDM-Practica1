@@ -70,13 +70,13 @@ public class AndroidSound extends Sound {
         } catch (Exception e) {
             switch (option) {
                 case 0:
-                    System.err.println("Failed to play the clip.");
+                    System.err.println("Failed to play the clip");
                     break;
                 case 1:
-                    System.err.println("Failed to stop the clip.");
+                    System.err.println("Failed to stop the clip");
                     break;
                 case 2:
-                    System.err.println("Failed to resume the clip.");
+                    System.err.println("Failed to resume the clip");
                     break;
             }
             return false;
@@ -86,12 +86,12 @@ public class AndroidSound extends Sound {
     @Override
     public boolean setPriority(int priority) {
         if (this.soundPool == null) {
-            System.err.println("SoundPool not initialized.");
+            System.err.println("SoundPool not initialized");
             return false;
         }
 
         if (this.streamId == 0) {
-            System.err.println("Sound has not been played.");
+            System.err.println("Sound has not been played");
             return false;
         }
 
@@ -103,7 +103,7 @@ public class AndroidSound extends Sound {
     @Override
     public boolean setVolume(float leftVolume, float rightVolume) {
         if (this.soundPool == null) {
-            System.err.println("SoundPool not initialized.");
+            System.err.println("SoundPool not initialized");
             return false;
         }
 

@@ -27,11 +27,11 @@ public class DesktopFont extends Font {
                 this.derivedFont = baseFont.deriveFont(size);
             }
         } catch (FileNotFoundException ex) {
-            System.err.println("Fuente con nombre " + name + " no encontrada: " + ex.getMessage());
+            System.err.println("Font with name " + name + " not found: " + ex.getMessage());
         } catch (FontFormatException ex) {
-            System.err.println("Error en el formato de la fuente con nombre" + name + ": " + ex.getMessage());
+            System.err.println("Error in the formate of the font with name " + name + ": " + ex.getMessage());
         } catch (IOException ex) {
-            System.err.println("Error en la fuente con nombre" + name + ": " + ex.getMessage());
+            System.err.println("Error in the font with name " + name + ": " + ex.getMessage());
         }
     }
 

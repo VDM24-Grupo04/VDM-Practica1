@@ -136,7 +136,7 @@ public class Grid extends GameObject {
     public Grid(int width, int wallThickness, int headerOffset, int r, int rows, int cols, int initRows,
                 int bubblesToExplode, int greatScore, int smallScore) {
         this(width, wallThickness, headerOffset, r, rows, cols, initRows,
-                bubblesToExplode, greatScore, smallScore, 10.0f);
+                bubblesToExplode, greatScore, smallScore, 300.0f);
     }
 
     @Override
@@ -211,7 +211,7 @@ public class Grid extends GameObject {
             for (Pair<Vector, Integer> bubble : this.fallingBubbles) {
                 graphics.setColor(BallColors.getColor(bubble.getSecond()));
                 Vector bPos = bubble.getFirst();
-                graphics.fillCircle(gridToWorldPosition((int) bPos.x, (int) bPos.y), this.r);
+                graphics.fillCircle(bPos, this.r);
             }
         }
 
@@ -226,10 +226,10 @@ public class Grid extends GameObject {
             Iterator<Pair<Vector, Integer>> iterator = this.fallingBubbles.iterator();
             while (iterator.hasNext()) {
                 Pair<Vector, Integer> bubble = iterator.next();
-                bubble.getFirst().x += this.fallingSpeed * (float) deltaTime;
+                bubble.getFirst().y += this.fallingSpeed * (float) deltaTime;
 
                 // Si la posición de la bola ya se salió de la pantalla, eliminarla
-                if (bubble.getFirst().x + (float) this.r > this.scene.getWorldHeight()) {
+                if (bubble.getFirst().y + (float) this.r > this.scene.getWorldHeight()) {
                     iterator.remove();
                 }
             }
@@ -382,7 +382,8 @@ public class Grid extends GameObject {
                         // Se guardan en una lista de bolas en movimiento simulando la caida
                         int wX = w.getFirst();
                         int wY = w.getSecond();
-                        this.fallingBubbles.add(new Pair<>(new Vector(wX, wY), this.bubbles[wX][wY]));
+                        Vector worldPos = gridToWorldPosition(wX, wY);
+                        this.fallingBubbles.add(new Pair<>(worldPos, this.bubbles[wX][wY]));
                         // Se quitan del grid
                         this.bubbles[wX][wY] = -1;
                     }

@@ -20,7 +20,7 @@ public class AndroidFont extends Font {
                 this.typeface = Typeface.create(this.typeface, Typeface.ITALIC);
             }
         } catch (RuntimeException ex) {
-            System.err.println("Error en la fuente con nombre " + name + ": " + ex.getMessage());
+            System.err.println("Error in the font with name " + name + ": " + ex.getMessage());
         }
     }
 

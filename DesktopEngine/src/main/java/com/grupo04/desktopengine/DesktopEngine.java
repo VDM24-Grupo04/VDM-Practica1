@@ -21,13 +21,14 @@ public class DesktopEngine extends Engine {
                 window.createBufferStrategy(2);
                 break;
             } catch (Exception e) {
+                System.out.println("Error creating double buffer: " + e.getMessage());
             }
         }
         if (attempts == 0) {
             System.err.println("No pude crear la BufferStrategy");
             return;
         } else {
-            System.out.println("BufferStrategy tras " + (100 - attempts) + " intentos.");
+            System.out.println("BufferStrategy affter " + (100 - attempts) + " attempts");
         }
 
         this.bufferStrategy = window.getBufferStrategy();

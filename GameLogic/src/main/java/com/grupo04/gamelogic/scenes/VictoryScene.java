@@ -25,8 +25,6 @@ public class VictoryScene extends Scene {
     final String BUTTON_FONT = "kimberley.ttf";
     final float BUTTON_OFFSET_Y = 25f;
 
-    Sound winSound = null;
-
     public VictoryScene(Engine engine, int score) {
         super(engine, 400, 600, new Color(255, 255, 255));
 
@@ -53,11 +51,7 @@ public class VictoryScene extends Scene {
                 () -> engine.changeScene(new TitleScene(engine)));
         addGameObject(menuButton);
 
-        winSound = engine.getAudio().newSound("win.wav");
-    }
-
-    @Override
-    public void onResume() {
+        Sound winSound = engine.getAudio().newSound("win.wav");
         if (winSound != null) {
             winSound.play();
         }

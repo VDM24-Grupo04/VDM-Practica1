@@ -171,7 +171,7 @@ public class DesktopSound extends Sound {
             this.dataLine.open(newFormat);
             return true;
         } catch (Exception e) {
-            System.err.println("Could not set new rate in clip.");
+            System.err.println("Could not set new rate in clip");
             return false;
         }
     }
