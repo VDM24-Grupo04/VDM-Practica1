@@ -5,8 +5,8 @@ import com.grupo04.engine.Audio;
 import java.util.HashMap;
 
 public class DesktopAudio implements Audio {
-    int maxStreams = 0;
-    HashMap<String, DesktopSound> soundPool;
+    private int maxStreams = 0;
+    private HashMap<String, DesktopSound> soundPool;
 
     public DesktopAudio(int maxStreams) {
         this.maxStreams = maxStreams;
@@ -46,13 +46,19 @@ public class DesktopAudio implements Audio {
     }
 
     @Override
-    public boolean playSound(String soundName) { return performAudioAction(soundName, 0); }
+    public boolean playSound(String soundName) {
+        return performAudioAction(soundName, 0);
+    }
 
     @Override
-    public boolean stopSound(String soundName) { return performAudioAction(soundName, 1); }
+    public boolean stopSound(String soundName) {
+        return performAudioAction(soundName, 1);
+    }
 
     @Override
-    public boolean resumeSound(String soundName) { return performAudioAction(soundName, 2); }
+    public boolean resumeSound(String soundName) {
+        return performAudioAction(soundName, 2);
+    }
 
     private boolean performAudioAction(String soundName, int option) {
         if (this.soundPool == null) {
@@ -67,9 +73,12 @@ public class DesktopAudio implements Audio {
         }
 
         switch (option) {
-            case 0: return sound.play();
-            case 1: return sound.stop();
-            case 2: return sound.resume();
+            case 0:
+                return sound.play();
+            case 1:
+                return sound.stop();
+            case 2:
+                return sound.resume();
             default:
                 System.err.println("No action was taken.");
                 break;

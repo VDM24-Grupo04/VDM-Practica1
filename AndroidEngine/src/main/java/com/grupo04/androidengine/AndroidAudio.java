@@ -8,15 +8,13 @@ import com.grupo04.engine.Audio;
 import java.util.HashMap;
 
 public class AndroidAudio implements Audio {
-    public AssetManager assetManager     = null;
-    SoundPool soundPool                  = null;
-    int maxStreams                       = 0;
-    HashMap<String, AndroidSound> sounds = null;
+    private AssetManager assetManager               = null;
+    private SoundPool soundPool                     = null;
+    private HashMap<String, AndroidSound> sounds    = null;
 
     public AndroidAudio(AssetManager assetManager, int maxStreams) {
         this.assetManager = assetManager;
-        this.maxStreams = maxStreams;
-        this.soundPool = new SoundPool.Builder().setMaxStreams(this.maxStreams).build();
+        this.soundPool = new SoundPool.Builder().setMaxStreams(maxStreams).build();
         this.sounds = new HashMap<>();
     }
 
@@ -47,7 +45,9 @@ public class AndroidAudio implements Audio {
         return newSound(fileName, 0);
     }
 
-    public SoundPool getSoundPool() { return this.soundPool; }
+    public SoundPool getSoundPool() {
+        return this.soundPool;
+    }
 
     private boolean perfomAudioAction(String soundName, int option) {
         AndroidSound sound = this.sounds.get(soundName);
@@ -57,9 +57,12 @@ public class AndroidAudio implements Audio {
         }
 
         switch (option) {
-            case 0: return sound.play();
-            case 1: return sound.stop();
-            case 2: return sound.resume();
+            case 0:
+                return sound.play();
+            case 1:
+                return sound.stop();
+            case 2:
+                return sound.resume();
             default:
                 System.err.println("No action was taken with the sound");
                 return false;
@@ -67,11 +70,17 @@ public class AndroidAudio implements Audio {
     }
 
     @Override
-    public boolean playSound(String soundName) { return perfomAudioAction(soundName, 0); }
+    public boolean playSound(String soundName) {
+        return perfomAudioAction(soundName, 0);
+    }
 
     @Override
-    public boolean stopSound(String soundName) { return perfomAudioAction(soundName, 1); }
+    public boolean stopSound(String soundName) {
+        return perfomAudioAction(soundName, 1);
+    }
 
     @Override
-    public boolean resumeSound(String soundName) { return perfomAudioAction(soundName, 2); }
+    public boolean resumeSound(String soundName) {
+        return perfomAudioAction(soundName, 2);
+    }
 }

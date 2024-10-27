@@ -23,8 +23,7 @@ public class DesktopFont extends Font {
                 this.derivedFont = baseFont.deriveFont(java.awt.Font.BOLD, size);
             } else if (italic) {
                 this.derivedFont = baseFont.deriveFont(java.awt.Font.ITALIC, size);
-            }
-            else {
+            } else {
                 this.derivedFont = baseFont.deriveFont(size);
             }
         } catch (FileNotFoundException ex) {

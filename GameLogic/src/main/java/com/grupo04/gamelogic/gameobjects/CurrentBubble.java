@@ -24,7 +24,7 @@ public class CurrentBubble extends GameObject {
 
     Grid grid;
 
-    Sound onBounceSound             = null;
+    Sound onBounceSound = null;
 
     public CurrentBubble(int w, int r, int wallThickness, int rows) {
         super();
@@ -41,7 +41,7 @@ public class CurrentBubble extends GameObject {
 
     @Override
     public void init() {
-        grid = (Grid)scene.getHandler("grid");
+        grid = (Grid) scene.getHandler("grid");
         Engine engine = this.scene.getEngine();
         this.onBounceSound = engine.getAudio().newSound("ballAttach.wav"); // Cambiar por otro
     }
@@ -100,12 +100,10 @@ public class CurrentBubble extends GameObject {
             pos = pos.plus(dir.times(spd * (float) deltaTime));
 
             // Comprobar colisiones. Si hay colision, se reinicia la bola
-             if (grid.checkCollision(pos, dir, color)) {
-                 reset();
-             }
+            if (grid.checkCollision(pos, dir, color)) {
+                reset();
+            }
         }
-
-
     }
 
     @Override

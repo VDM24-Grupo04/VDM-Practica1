@@ -16,16 +16,15 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.SourceDataLine;
 
 public class DesktopSound extends Sound {
-    File audioFile                  = null;
-    AudioInputStream audioStream    = null;
-    List<Clip> clips                = null;
+    private File audioFile          = null;
+    private List<Clip> clips        = null;
 
-    long currentFrame               = 0; // Para el resume()
-    SourceDataLine dataLine         = null;
-    AudioFormat audioFormat         = null;
-    boolean isPlaying               = false;
-
-    boolean isValid                 = false;
+    // COMENTAR: NO DEBERIA SER UNA CONSTANTE??
+    private long currentFrame       = 0; // Para el resume()
+    private SourceDataLine dataLine = null;
+    private AudioFormat audioFormat = null;
+    // COMENTAR: NO SE USA NUNCA??
+    private boolean isPlaying       = false;
 
     DesktopSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         super(fileName, priority, leftVolume, rightVolume, loop, rate);
@@ -34,8 +33,8 @@ public class DesktopSound extends Sound {
 
         try {
             this.audioFile = new File("./assets/" + this.soundName);
-            this.audioStream = AudioSystem.getAudioInputStream(this.audioFile);
-            this.audioFormat = this.audioStream.getFormat();
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(this.audioFile);
+            this.audioFormat = audioStream.getFormat();
             super.isValid = true;
         } catch (Exception e) {
             System.err.printf("Couldn't load audio file (\"%s\")%n", fileName);

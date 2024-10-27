@@ -13,7 +13,6 @@ import com.grupo04.engine.Audio;
 import com.grupo04.androidengine.AndroidAudio;
 import com.grupo04.androidengine.AndroidEngine;
 import com.grupo04.gamelogic.scenes.TitleScene;
-import com.grupo04.gamelogic.scenes.VictoryScene;
 
 public class MainActivity extends AppCompatActivity {
     private AndroidEngine androidEngine;
@@ -48,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Creacion de la escena
         TitleScene testScene = new TitleScene(this.androidEngine);
-        //VictoryScene testScene = new VictoryScene(this.androidEngine, 425);
         this.androidEngine.pushScene(testScene);
     }
 
@@ -68,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
         // Si ya cargó, realiza el onResume de las escenas
         if (this.audioLoaded) {
             this.androidEngine.onResume();
-        }
-        else {
+        } else {
             // Realizar un chequeo retrasado de 100ms hasta que cargue la SoundPool
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(new Runnable() {

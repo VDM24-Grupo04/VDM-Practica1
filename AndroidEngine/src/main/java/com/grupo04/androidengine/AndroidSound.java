@@ -9,24 +9,21 @@ import android.media.SoundPool;
 import java.io.IOException;
 
 public class AndroidSound extends Sound {
-    AssetFileDescriptor audioFile   = null;
-    int soundId                     = 0; // returned by the load function (0 if failed)
-    int streamId                    = 0; // returned by the play function (0 if failed)
+    private int soundId = 0; // returned by the load function (0 if failed)
+    int streamId = 0; // returned by the play function (0 if failed)
 
     // Referencias
-    AssetManager assetManager       = null;
-    SoundPool soundPool             = null;
+    private SoundPool soundPool = null;
 
     AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         super(fileName, priority, leftVolume, rightVolume, loop, rate);
 
-        this.assetManager = assetManager;
         this.soundPool = soundPool;
 
         try {
-            this.audioFile = assetManager.openFd(fileName);
-            if (this.audioFile != null) {
-                this.soundId = soundPool.load(this.audioFile, this.priority);
+            AssetFileDescriptor audioFile = assetManager.openFd(fileName);
+            if (audioFile != null) {
+                this.soundId = soundPool.load(audioFile, this.priority);
                 super.isValid = true;
             }
         } catch (IOException e) {

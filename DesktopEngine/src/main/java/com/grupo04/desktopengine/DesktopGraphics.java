@@ -46,7 +46,7 @@ public class DesktopGraphics extends Graphics {
     @Override
     protected boolean endFrame() {
         this.graphics2D.dispose();
-        this.graphics2D = null;
+        //this.graphics2D = null;
         if (bufferStrategy.contentsRestored()) {
             return true;
         }

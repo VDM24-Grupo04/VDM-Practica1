@@ -2,7 +2,6 @@ package com.grupo04.desktopgame;
 
 import com.grupo04.desktopengine.DesktopEngine;
 import com.grupo04.gamelogic.scenes.TitleScene;
-import com.grupo04.gamelogic.scenes.VictoryScene;
 
 import javax.swing.JFrame;
 
@@ -20,7 +19,6 @@ public class DesktopGame {
 
         // Creacion de la escena
         TitleScene testScene = new TitleScene(engine);
-        //VictoryScene testScene = new VictoryScene(engine, 425);
         engine.pushScene(testScene);
 
         engine.onResume();

@@ -1,5 +1,6 @@
 package com.grupo04.gamelogic.gameobjects;
 
+import com.grupo04.engine.Audio;
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.GameObject;
@@ -8,51 +9,80 @@ import com.grupo04.engine.Pair;
 import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.BallColors;
+import com.grupo04.gamelogic.scenes.VictoryScene;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
-import java.util.Set;
 
 public class Grid extends GameObject {
-    int[][] bubbles;            // Matriz de burbujas con los colores de las mismas
-    int rows, cols;             // Numero de filas y columnas
-    int totalBubbles;           // Numero total de burbujas
-
-    int r;                      // Radio de las burbujas
-    float hexagonRadius;        // Radio de los hexagonos de la c
-    int offsetX, offsetY;       // Offsets para las paredes y la cabecera
-    int bubbleOffset;           // Offsets para que las bolas
-
     // Linea del final del nivel
     final int lineThickness = 1;
     final Color lineColor = new Color(0, 0, 0, 255);
-    Vector lineInit, lineEnd;
 
-    List<Vector> dirs;
-    int[] colorCount;
-    int currI = -1, currJ = -1;
-    float fallingSpeed = 10.0f;
-    List<Pair<Vector, Integer>> fallingBubbles;
+    // Matriz de burbujas con los colores de las mismas
+    private int[][] bubbles;
+    // Numero de filas y columnas
+    private int rows, cols;
 
-    Sound onAttachSound = null;
+    // Numero total de burbujas
+    // Cuando se ha llegado a 0, se gana la partida
+    private int totalBubbles;
+    // Indica cuantas bolas hay de cada color en el mapa
+    // Se usa para saber de que color puede ser la bola que se lanza
+    private int[] colorCount;
+    // 5 puntos por cada burbuja en un grupo de 3 y 10 puntos por cada burbuja en un grupo de 10 o mas
 
-    public Grid(int width, int wallThickness, int headerOffset, int r, int rows, int cols, int initRows, float fallingSpeed) {
+    // Radio de las burbujas
+    private int r;
+    // Radio de los hexagonos de la cuadricula
+    private float hexagonRadius;
+    // Offsets para las paredes y la cabecera
+    private int offsetX, offsetY;
+    // Offsets para que no haya mucho espacio entre las bolas en y
+    private int bubbleOffset;
+
+    // Linea del final del nivel
+    private Vector lineInit, lineEnd;
+
+    // Posibles posiciones adyacentes a cada bola
+    private List<Pair<Integer, Integer>> unevenAdjacentCells;
+    private List<Pair<Integer, Integer>> evenAdjacentCells;
+
+    // Bolas necesarias que esten juntas para que se produzca la explosion
+    private int bubblesToExplode;
+    // Puntuacion que se otorga si el grupo de bolas que se forma es del tamano bubblesToExplode + 1
+    private int greatScore;
+    // Puntuacion que se otorga si el grupo de bolas que se forma es del tamano bubblesToExplode
+    private int smallScore;
+    // Puntuacion actual
+    private int score;
+
+    private float fallingSpeed;
+    private List<Pair<Vector, Integer>> fallingBubbles;
+
+    private Engine engine;
+    private Sound attachSound;
+
+    // DEBUG DE LAS CELDAS
+    private int currI = -1, currJ = -1;
+
+    public Grid(int width, int wallThickness, int headerOffset, int r, int rows, int cols, int initRows,
+                int bubblesToExplode, int greatScore, int smallScore, float fallingSpeed) {
         super();
-        this.r = r;
-        this.hexagonRadius = (float) Math.ceil((this.r / (Math.sqrt(3) / 2.0f)));
-
-        this.offsetX = wallThickness;
-        this.offsetY = wallThickness + headerOffset;
-        this.bubbleOffset = (int) (this.r * 0.3);
-
         this.cols = cols;
         this.rows = rows;
         this.bubbles = new int[this.rows][this.cols];
         for (int[] row : this.bubbles) {
             Arrays.fill(row, -1);
         }
+
+        this.r = r;
+        this.hexagonRadius = (float) Math.ceil((this.r / (Math.sqrt(3) / 2.0f)));
+        this.offsetX = wallThickness;
+        this.offsetY = wallThickness + headerOffset;
+        this.bubbleOffset = (int) (this.r * 0.3);
 
         // Se generan initRows filas iniciales
         this.totalBubbles = 0;
@@ -74,40 +104,61 @@ public class Grid extends GameObject {
         this.lineInit = new Vector(this.offsetX, this.offsetY + lineY);
         this.lineEnd = new Vector(width - this.offsetX, this.offsetY + lineY);
 
-        // Creamos la lista de direcciones adyacentes
-        this.dirs = new ArrayList<>();
-        this.dirs.add(new Vector(-1, 0));    // Izquierda
-        this.dirs.add(new Vector(1, 0));     // Derecha
-        this.dirs.add(new Vector(0, -1));    // Arriba izquierda
-        this.dirs.add(new Vector(0, 1));     // Abajo izquierda
-        this.dirs.add(new Vector(1, -1));    // Arriba derecha
-        this.dirs.add(new Vector(1, 1));     // Abajo derecha
+        // Creamos la lista de celdas adyacentes a cada posicion
+        this.unevenAdjacentCells = new ArrayList<>();
+        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
+        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
+        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));    // Arriba izquierda
+        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(-1, 1));    // Arriba derecha
+        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));     // Abajo izquierda
+        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(1, 1));     // Abajo derecha
+
+        this.evenAdjacentCells = new ArrayList<>();
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, -1));    // Arriba izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));    // Arriba derecha
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, -1));     // Abajo izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));     // Abajo derecha
+
+        this.bubblesToExplode = bubblesToExplode;
+        this.score = 0;
+        this.greatScore = greatScore;
+        this.smallScore = smallScore;
 
         this.fallingSpeed = fallingSpeed;
         this.fallingBubbles = new ArrayList<>();
+
+        this.engine = null;
+        this.attachSound = null;
     }
 
-    public Grid(int width, int wallThickness, int headerOffset, int r, int rows, int cols, int initRows) {
-        this(width, wallThickness, headerOffset, r, rows, cols, initRows, 10.0f);
+    public Grid(int width, int wallThickness, int headerOffset, int r, int rows, int cols, int initRows,
+                int bubblesToExplode, int greatScore, int smallScore) {
+        this(width, wallThickness, headerOffset, r, rows, cols, initRows,
+                bubblesToExplode, greatScore, smallScore, 10.0f);
     }
 
     @Override
     public void init() {
+        this.engine = this.scene.getEngine();
+        Audio audio = engine.getAudio();
+        this.attachSound = audio.newSound("ballAttach.wav");
     }
 
     @Override
     public void render(Graphics graphics) {
         super.render(graphics);
 
-        // Recorre la matriz y pinta las bolas si el color en la posicion i,j de la matriz no es null
+        // Recorre la matriz y pinta las bolas si el color en la posicion i,j de la matriz es >= 0
         for (int i = 0; i < this.rows; i++) {
             int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
             for (int j = 0; j < bPerRow; ++j) {
                 if (this.bubbles[i][j] >= 0) {
+                    Vector pos = gridToWorldPosition(i, j);
                     graphics.setColor(BallColors.getColor(this.bubbles[i][j]));
                     graphics.fillCircle(gridToWorldPosition(i, j), this.r);
                 }
-
             }
         }
 
@@ -124,7 +175,7 @@ public class Grid extends GameObject {
         }
 
         // DEBUG DE LAS CELDAS
-        if( currI >= 0 && currJ >= 0) {
+        if (currI >= 0 && currJ >= 0) {
             Vector pos = gridToWorldPosition(currI, currJ);
             pos.x += 0.5f;
             graphics.setColor(BallColors.getColor(0));
@@ -164,8 +215,7 @@ public class Grid extends GameObject {
             }
         }
 
-        Engine engine = this.scene.getEngine();
-        this.onAttachSound = engine.getAudio().newSound("ballAttach.wav");
+        // NOTA: NO SE PUEDEN CREAR ARCHIVOS EN EL BUCLE DE JUEGO
     }
 
     @Override
@@ -186,7 +236,6 @@ public class Grid extends GameObject {
         }
     }
 
-
     // Convierte posiciones i,j de la matriz a coordenadas de mundo
     private Vector gridToWorldPosition(int i, int j) {
         Vector pos = new Vector(0, 0);
@@ -199,30 +248,33 @@ public class Grid extends GameObject {
     }
 
     // Convierte coordenadas de mundo a posiciones i,j de la matriz
-    private Vector worldToGridPosition(Vector pos) {
+    private Pair<Integer, Integer> worldToGridPosition(Vector pos) {
         float y = (pos.y - this.offsetY) / (this.r * 2);
         y += (this.bubbleOffset * y) / (this.r * 2);
 
         float x = (pos.x - this.offsetX - ((y % 2 == 0) ? 0 : this.r)) / (this.r * 2);
 
-        return new Vector(x, y);
+        // Se redondea x por si la bola esta mas hacia un lado o hacia el otro,
+        // pero y no se redondea porque se se necesita la posicion de la parte superior
+        int i = (int) y;
+        int j = (i % 2 == 0) ? Math.round(x) : (int) x;
+
+        return new Pair<>(i, j);
     }
 
     public boolean checkCollision(Vector pos, Vector dir, int color) {
         boolean hasCollided = false;
-        Vector rowCol = worldToGridPosition(pos);
-        System.out.println(rowCol.x + " " + rowCol.y);
+        Pair<Integer, Integer> rowCol = worldToGridPosition(pos);
+        //System.out.println(rowCol.x + " " + rowCol.y);
 
-        // Se redondea x por si la bola esta mas hacia un lado o hacia el otro,
-        // pero y no se redondea porque se se necesita la posicion de la parte superior
-        int i = (int) rowCol.y;
-        int j = (i % 2 == 0) ? Math.round(rowCol.x) : (int) rowCol.x;
+        int i = rowCol.getFirst();
+        int j = rowCol.getSecond();
 
         // Se comprueban las casillas adyacentes y si hay alguna ocupada, se marca que ha colisionado
-        hasCollided |= occupied(pos, i - 1, (i % 2 == 0) ? j - 1 : j + 1);
-        hasCollided |= occupied(pos, i - 1, j);
-        hasCollided |= occupied(pos,  i, j - 1);
-        hasCollided |= occupied(pos, i, j + 1);
+        hasCollided |= cellOccupied(pos, i - 1, (i % 2 == 0) ? j - 1 : j + 1);
+        hasCollided |= cellOccupied(pos, i - 1, j);
+        hasCollided |= cellOccupied(pos, i, j - 1);
+        hasCollided |= cellOccupied(pos, i, j + 1);
 
         // DEBUG DE LAS CELDAS
         currI = i;
@@ -240,19 +292,25 @@ public class Grid extends GameObject {
             currI = -1;
             currJ = -1;
 
+            this.totalBubbles += 1;
+            ++this.colorCount[color];
             this.bubbles[i][j] = color;
-            // manageCollision
-            // hay que hacer que tanto manageCollision como manageFall
-            // vayan quitando las burbujas que borren de colorCount
 
-            // gestonar tambien que pasa si despues de explotar las burbujas alguna queda por debajo del limite (i == cols)
+            playAttachSound();
+            if (manageCollision(i, j)) {
+                engine.changeScene(new VictoryScene(engine, score));
+            }
         }
 
         return hasCollided;
     }
 
-    private boolean occupied(Vector pos, int i, int j) {
-        if (i >= 0 && j >= 0 && i < this.rows && j < ((i % 2 == 0) ? this.cols : this.cols - 1)) {
+    private boolean cellWithinGrid(int i, int j) {
+        return i >= 0 && j >= 0 && i < this.rows && j < ((i % 2 == 0) ? this.cols : this.cols - 1);
+    }
+
+    private boolean cellOccupied(Vector pos, int i, int j) {
+        if (cellWithinGrid(i, j)) {
             if (this.bubbles[i][j] >= 0) {
                 Vector laterals = gridToWorldPosition(i, j);
                 return (laterals.distance(pos) < this.r * 2);
@@ -261,97 +319,136 @@ public class Grid extends GameObject {
         return false;
     }
 
-
-    private void manageCollision(int i, int j, Color col) {
-        playAttachSound();
-        //      recorro dfs con grafo implicito y me guarda las bolas del mismo color por coordenadas
-        //      tb me guardo las coordenadas adyacentes a partir del borde del conjunto de bolas
-        //      si hay igual o mas de 3 bolas, significa que se eliminara el conjunto de bolas
-        //      por lo que despegar las bolas que se queden sueltsa
-//        List<Vector> bubblesToErase = new ArrayList<>();
-//        Set<Vector> pBubblesToFall = new Set<Vector>() ... // Implementar los conjuntos con vectores
-//        boolean[][] visited = new boolean[this.rows][this.bubblesPerRow];
-//        dfs(..., bubblesToErase, pBubblesToFall)
-//        if (bubblesToErase.length > 3) {
-//            eliminar bubblesToErase
-//            pasar a laura pBubblesToFall
-//
-//        }
+    private boolean roofCell(int i, int j) {
+        return i == 0 && cellWithinGrid(i, j);
     }
 
-    // A partir de la lista de coordenadas adyacentes tras la eliminacion del conjunto de
-    // bolas, sacar conjuntos con dfs y comprobar si hay al menos una bola en el conjunto
-    // que este pegada al techo, en ese caso, no se caen.
-    private void manageFall(Set<Vector> pBubblesToFall) {
+    private boolean manageCollision(int i, int j) {
+        // El valor por defecto de un booleano es false
         boolean[][] visited = new boolean[this.rows][this.cols];
-        for (Vector v : pBubblesToFall) {
-            // Se comprueba que sea distinto de nulo porque puede dos bolas pueden ser del
+        int col = bubbles[i][j];
+        List<Pair<Integer, Integer>> bubblesToErase = new ArrayList<>();
+        List<Pair<Integer, Integer>> bubblesToFall = new ArrayList<>();
+
+        dfs(visited, i, j, col, bubblesToErase, bubblesToFall);
+
+        // Numero de bolas del grupo
+        int bubblesToEraseSize = bubblesToErase.size();
+        // Si se supera el limite establecido, se eliminan
+        if (bubblesToEraseSize >= this.bubblesToExplode) {
+            // Si el grupo es mayor que el limite establecido, la puntuacion es mayor
+            if (bubblesToEraseSize >= this.bubblesToExplode + 1) {
+                this.score += bubblesToEraseSize * this.greatScore;
+            } else {
+                this.score += bubblesToEraseSize * this.smallScore;
+            }
+            // Se actualiza el numero de bolas totales
+            this.totalBubbles -= bubblesToEraseSize;
+            System.out.println(totalBubbles);
+            // Se actualiza el numero de bolas que hay de cada color
+            colorCount[col] -= bubblesToEraseSize;
+            // Se actualiza el mapa
+            for (Pair<Integer, Integer> bubble : bubblesToErase) {
+                int bubbleI = bubble.getFirst();
+                int bubbleJ = bubble.getSecond();
+                bubbles[bubbleI][bubbleJ] = -1;
+            }
+            // Si no quedan bolas, se ha ganado
+            if (this.totalBubbles <= 0) {
+                return true;
+            }
+            // Si siguen quedando bolas, se comprueba si hay bolas que se pueden caer
+            //return manageFall(bubblesToFall);
+        }
+        return false;
+    }
+
+    // A partir de la lista de coordenadas adyacentes, obtenida tras la eliminacion de la bolas del mismo color
+    // bolas, se sacan los diferentes conjuntos con dfs y se comprueba si en cada conjunto hay al menos una bola
+    // pegada al techo. En ese caso, todas las bolas de ese conjunto no se caen
+    private boolean manageFall(List<Pair<Integer, Integer>> bubblesToFall) {
+        boolean[][] visited = new boolean[this.rows][this.cols];
+        for (Pair<Integer, Integer> v : bubblesToFall) {
+            int vX = v.getFirst();
+            int vY = v.getSecond();
+            // Se comprueba que sea distinto de nulo porque dos bolas pueden ser del
             // mismo conjunto y se puede haber eliminado ya la coordenada
-            if (this.bubbles[(int) v.x][(int) v.y] != -1) {
-                List<Vector> bubbles = new ArrayList<>();
+            if (this.bubbles[vX][vY] >= 0) {
+                List<Pair<Integer, Integer>> bubbles = new ArrayList<>();
                 // Si no hay ninguna bola del conjunto que toque el techo, se eliminan
-                if (!dfs(visited, (int) v.x, (int) v.y, bubbles)) {
-                    for (Vector w : bubbles) {
+                if (!dfs(visited, vX, vY, bubbles)) {
+                    for (Pair<Integer, Integer> w : bubbles) {
                         // Se guardan en una lista de bolas en movimiento simulando la caida
-                        this.fallingBubbles.add(new Pair<>(new Vector((int) w.x, (int) w.y), this.bubbles[(int) w.x][(int) w.y]));
+                        int wX = w.getFirst();
+                        int wY = w.getSecond();
+                        this.fallingBubbles.add(new Pair<>(new Vector(wX, wY), this.bubbles[wX][wY]));
                         // Se quitan del grid
-                        this.bubbles[(int) w.x][(int) w.y] = -1;
+                        this.bubbles[wX][wY] = -1;
+                    }
+                }
+            }
+        }
+        // Devolver indicando si todavia quedan bolas o no
+        return true;
+    }
+
+    private void dfs(boolean[][] visited, int i, int j, int color, List<Pair<Integer, Integer>> bubblesToErase,
+                     List<Pair<Integer, Integer>> bubblesToFall) {
+        visited[i][j] = true;
+
+        int currBubbleCol = this.bubbles[i][j];
+        // Si son del mismo color que la bola lanzada, se anade para eliminar
+        Pair<Integer, Integer> bubblePos = new Pair<>(i, j);
+
+        if (color == currBubbleCol) {
+            bubblesToErase.add(bubblePos);
+        }
+        // Si no, se trata de una bola adyacente y se tendra en cuenta para la caida...
+        else {
+            bubblesToFall.add(bubblePos);
+        }
+
+        if (color == currBubbleCol) {
+            List<Pair<Integer, Integer>> adjacentCells = (i % 2 == 0) ?
+                    this.evenAdjacentCells : this.unevenAdjacentCells;
+            for (Pair<Integer, Integer> dir : adjacentCells) {
+                int ni = i + dir.getFirst();
+                int nj = j + dir.getSecond();
+                // Si es una posicion correcta dentro del mapa...
+                if (cellWithinGrid(ni, nj)) {
+                    // Si hay bola y no esta visitada...
+                    if (this.bubbles[ni][nj] >= 0 && !visited[ni][nj]) {
+                        dfs(visited, ni, nj, color, bubblesToErase, bubblesToFall);
                     }
                 }
             }
         }
     }
 
-    // En los recorridos en profundidad (DFS), igual es posible crear solo una funcion general
-    // condicionada a los parametros para obtener unas listas u otras dependiendo de si manejamos
-    // la eliminacion de bolas del mismo color o de la caida de bolas
-
-    private void dfs(boolean[][] visited, int i, int j, int color, List<Vector> bubblesToErase, Set<Vector> pBubblesToFall) {
+    private boolean dfs(boolean[][] visited, int i, int j, List<Pair<Integer, Integer>> bubbles) {
         visited[i][j] = true;
-        for (Vector dir : this.dirs) {
-            int ni = i + (int) dir.x, nj = j + (int) dir.y; // Cambiar Vector para que sea con template
-            // Si es una posicion correcta dentro del array bidimensional, hay bola y no esta visitado
-            if (isCorrect(ni, nj) && !visited[ni][nj] && this.bubbles[ni][nj] != -1) {
-                // Si son del mismo color que la bola lanzada, se añade a la lista de a eliminar
-                if (color == this.bubbles[ni][nj]) {
-                    bubblesToErase.add(new Vector(ni, nj));
+        boolean isRoof = roofCell(i, j);
+        List<Pair<Integer, Integer>> adjacentCells = (i % 2 == 0) ?
+                this.evenAdjacentCells : this.unevenAdjacentCells;
+        for (Pair<Integer, Integer> dir : adjacentCells) {
+            int ni = i + dir.getFirst();
+            int nj = j + dir.getSecond();
+            // Si es una posicion correcta dentro del mapa...
+            if (cellWithinGrid(ni, nj)) {
+                if (this.bubbles[ni][nj] >= 0 && !visited[ni][nj]) {
+                    Pair<Integer, Integer> bubblePos = new Pair<>(ni, nj);
+                    bubbles.add(bubblePos);
+                    // Si se devuelve true, es que el conjunto calculado tras la recursion esta pegado al techo
+                    isRoof = dfs(visited, ni, nj, bubbles) || isRoof;
                 }
-                // Si no, se tendra en cuenta para la caida
-                else {
-                    pBubblesToFall.add(new Vector(ni, nj));
-                }
-                dfs(visited, ni, nj, color, bubblesToErase, pBubblesToFall);
-            }
-        }
-    }
-
-    private boolean dfs(boolean[][] visited, int i, int j, List<Vector> bubbles) {
-        visited[i][j] = true;
-        boolean isRoof = isRoof(i, j);
-        for (Vector dir : this.dirs) {
-            int ni = i + (int) dir.x, nj = j + (int) dir.y; // Cambiar Vector para que sea con template
-            // Si es una posicion correcta dentro del array bidimensional, hay bola y no esta visitado
-            if (isCorrect(ni, nj) && this.bubbles[ni][nj] != -1 && !visited[ni][nj]) {
-                bubbles.add(new Vector(ni, nj));
-                // Si alguna devuelve true, es que el conjunto calculado tras la recursion
-                // se caera
-                isRoof = dfs(visited, ni, nj, bubbles) || isRoof;
             }
         }
         return isRoof;
     }
 
-    private boolean isCorrect(int i, int j) {
-        return i >= 0 && i < this.rows && j >= 0 && j < this.cols;
-    }
-
-    private boolean isRoof(int i, int j) {
-        return i == 0 && j >= 0 && j < this.cols;
-    }
-
     private void playAttachSound() {
-        if (onAttachSound != null) {
-            onAttachSound.play();
+        if (this.attachSound != null) {
+            this.attachSound.play();
         }
     }
 }
