@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class DesktopAudio implements Audio {
     private int maxStreams = 0;
-    private HashMap<String, DesktopSound> soundPool;
+    final private HashMap<String, DesktopSound> soundPool;
 
     public DesktopAudio(int maxStreams) {
         this.maxStreams = maxStreams;
@@ -15,14 +15,14 @@ public class DesktopAudio implements Audio {
 
     @Override
     public DesktopSound newSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
-        if (soundPool.size() >= this.maxStreams) {
+        if (this.soundPool.size() >= this.maxStreams) {
             throw new IllegalStateException("Maximum number of streams exceeded.");
         }
 
         if (!fileName.isEmpty() && !fileName.isBlank()) {
             DesktopSound newSound = new DesktopSound(fileName, priority);
             if (newSound.isValid()) {
-                soundPool.put(fileName, newSound);
+                this.soundPool.put(fileName, newSound);
                 ++this.maxStreams;
                 return newSound;
             }
@@ -61,12 +61,7 @@ public class DesktopAudio implements Audio {
     }
 
     private boolean performAudioAction(String soundName, int option) {
-        if (this.soundPool == null) {
-            System.err.println("SoundPool not initialized.");
-            return false;
-        }
-
-        DesktopSound sound = soundPool.get(soundName);
+        DesktopSound sound = this.soundPool.get(soundName);
         if (sound == null) {
             System.err.printf("Cannot find %s in soundPool.%n", soundName);
             return false;

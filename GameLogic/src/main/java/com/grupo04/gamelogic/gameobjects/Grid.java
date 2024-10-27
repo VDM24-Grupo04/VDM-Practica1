@@ -106,20 +106,20 @@ public class Grid extends GameObject {
 
         // Creamos la lista de celdas adyacentes a cada posicion
         this.unevenAdjacentCells = new ArrayList<>();
-        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
-        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
         this.unevenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));    // Arriba izquierda
         this.unevenAdjacentCells.add(new Pair<Integer, Integer>(-1, 1));    // Arriba derecha
+        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
+        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
         this.unevenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));     // Abajo izquierda
         this.unevenAdjacentCells.add(new Pair<Integer, Integer>(1, 1));     // Abajo derecha
 
         this.evenAdjacentCells = new ArrayList<>();
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, -1));    // Arriba izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));    // Arriba derecha
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, -1));     // Abajo izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));     // Abajo derecha
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, -1));     // Arriba izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));      // Arriba derecha
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));      // Izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));       // Derecha
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, -1));      // Abajo izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));       // Abajo derecha
 
         this.bubblesToExplode = bubblesToExplode;
         this.score = 0;
@@ -226,10 +226,10 @@ public class Grid extends GameObject {
             Iterator<Pair<Vector, Integer>> iterator = this.fallingBubbles.iterator();
             while (iterator.hasNext()) {
                 Pair<Vector, Integer> bubble = iterator.next();
-                bubble.getFirst().y += this.fallingSpeed * (float) deltaTime;
+                bubble.getFirst().x += this.fallingSpeed * (float) deltaTime;
 
                 // Si la posición de la bola ya se salió de la pantalla, eliminarla
-                if (bubble.getFirst().y + (float) this.r > this.scene.getWorldHeight()) {
+                if (bubble.getFirst().x + (float) this.r > this.scene.getWorldHeight()) {
                     iterator.remove();
                 }
             }
@@ -326,7 +326,7 @@ public class Grid extends GameObject {
     private boolean manageCollision(int i, int j) {
         // El valor por defecto de un booleano es false
         boolean[][] visited = new boolean[this.rows][this.cols];
-        int col = bubbles[i][j];
+        int col = this.bubbles[i][j];
         List<Pair<Integer, Integer>> bubblesToErase = new ArrayList<>();
         List<Pair<Integer, Integer>> bubblesToFall = new ArrayList<>();
 
@@ -344,21 +344,21 @@ public class Grid extends GameObject {
             }
             // Se actualiza el numero de bolas totales
             this.totalBubbles -= bubblesToEraseSize;
-            System.out.println(totalBubbles);
+            System.out.println(this.totalBubbles);
             // Se actualiza el numero de bolas que hay de cada color
-            colorCount[col] -= bubblesToEraseSize;
+            this.colorCount[col] -= bubblesToEraseSize;
             // Se actualiza el mapa
             for (Pair<Integer, Integer> bubble : bubblesToErase) {
                 int bubbleI = bubble.getFirst();
                 int bubbleJ = bubble.getSecond();
-                bubbles[bubbleI][bubbleJ] = -1;
+                this.bubbles[bubbleI][bubbleJ] = -1;
             }
             // Si no quedan bolas, se ha ganado
             if (this.totalBubbles <= 0) {
                 return true;
             }
             // Si siguen quedando bolas, se comprueba si hay bolas que se pueden caer
-            //return manageFall(bubblesToFall);
+            return manageFall(bubblesToFall);
         }
         return false;
     }
@@ -367,7 +367,7 @@ public class Grid extends GameObject {
     // bolas, se sacan los diferentes conjuntos con dfs y se comprueba si en cada conjunto hay al menos una bola
     // pegada al techo. En ese caso, todas las bolas de ese conjunto no se caen
     private boolean manageFall(List<Pair<Integer, Integer>> bubblesToFall) {
-        boolean[][] visited = new boolean[this.rows][this.cols];
+        int numBubblesToFall = 0;
         for (Pair<Integer, Integer> v : bubblesToFall) {
             int vX = v.getFirst();
             int vY = v.getSecond();
@@ -375,8 +375,9 @@ public class Grid extends GameObject {
             // mismo conjunto y se puede haber eliminado ya la coordenada
             if (this.bubbles[vX][vY] >= 0) {
                 List<Pair<Integer, Integer>> bubbles = new ArrayList<>();
+                boolean[][] visited = new boolean[this.rows][this.cols];
                 // Si no hay ninguna bola del conjunto que toque el techo, se eliminan
-                if (!dfs(visited, vX, vY, bubbles)) {
+                if (!dfs(visited, vX, vY, bubbles) && !bubbles.isEmpty()) {
                     for (Pair<Integer, Integer> w : bubbles) {
                         // Se guardan en una lista de bolas en movimiento simulando la caida
                         int wX = w.getFirst();
@@ -385,11 +386,13 @@ public class Grid extends GameObject {
                         // Se quitan del grid
                         this.bubbles[wX][wY] = -1;
                     }
+                    numBubblesToFall += bubbles.size();
                 }
             }
         }
+        this.totalBubbles -= numBubblesToFall;
         // Devolver indicando si todavia quedan bolas o no
-        return true;
+        return this.totalBubbles <= 0;
     }
 
     private void dfs(boolean[][] visited, int i, int j, int color, List<Pair<Integer, Integer>> bubblesToErase,
@@ -428,6 +431,8 @@ public class Grid extends GameObject {
     private boolean dfs(boolean[][] visited, int i, int j, List<Pair<Integer, Integer>> bubbles) {
         visited[i][j] = true;
         boolean isRoof = roofCell(i, j);
+        if (isRoof) return true;
+        bubbles.add(new Pair<>(i, j));
         List<Pair<Integer, Integer>> adjacentCells = (i % 2 == 0) ?
                 this.evenAdjacentCells : this.unevenAdjacentCells;
         for (Pair<Integer, Integer> dir : adjacentCells) {
@@ -436,14 +441,13 @@ public class Grid extends GameObject {
             // Si es una posicion correcta dentro del mapa...
             if (cellWithinGrid(ni, nj)) {
                 if (this.bubbles[ni][nj] >= 0 && !visited[ni][nj]) {
-                    Pair<Integer, Integer> bubblePos = new Pair<>(ni, nj);
-                    bubbles.add(bubblePos);
                     // Si se devuelve true, es que el conjunto calculado tras la recursion esta pegado al techo
-                    isRoof = dfs(visited, ni, nj, bubbles) || isRoof;
+                    if (dfs(visited, ni, nj, bubbles))
+                        return true;
                 }
             }
         }
-        return isRoof;
+        return false;
     }
 
     private void playAttachSound() {

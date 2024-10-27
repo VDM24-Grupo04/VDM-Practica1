@@ -17,13 +17,11 @@ import javax.sound.sampled.SourceDataLine;
 
 public class DesktopSound extends Sound {
     private File audioFile          = null;
-    private List<Clip> clips        = null;
+    final private List<Clip> clips;
 
-    // COMENTAR: NO DEBERIA SER UNA CONSTANTE??
-    private long currentFrame       = 0; // Para el resume()
+    final private long currentFrame = 0;    // Para el resume()
     private SourceDataLine dataLine = null;
     private AudioFormat audioFormat = null;
-    // COMENTAR: NO SE USA NUNCA??
     private boolean isPlaying       = false;
 
     DesktopSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
@@ -95,8 +93,11 @@ public class DesktopSound extends Sound {
             }
             return true;
         } catch (Exception e) {
-            if (option == 0) System.err.println("Failed to play the clip.");
-            else System.err.println("Failed to stop the clip.");
+            switch (option) {
+                case 0: System.err.println("Failed to play the clip."); break;
+                case 1: System.err.println("Failed to stop the clip."); break;
+                case 2: System.err.println("Failed to resume the clip."); break;
+            }
             return false;
         }
     }
@@ -150,24 +151,24 @@ public class DesktopSound extends Sound {
         }
 
         super.setRate(rate);
-        float newRate = audioFormat.getSampleRate() * rate;
+        float newRate = this.audioFormat.getSampleRate() * rate;
         AudioFormat newFormat = new AudioFormat(
                 newRate,
-                audioFormat.getSampleSizeInBits(),
-                audioFormat.getChannels(),
-                audioFormat.isBigEndian(),
-                audioFormat.isBigEndian()
+                this.audioFormat.getSampleSizeInBits(),
+                this.audioFormat.getChannels(),
+                this.audioFormat.isBigEndian(),
+                this.audioFormat.isBigEndian()
         );
 
-        if (dataLine != null && dataLine.isOpen()) {
-            dataLine.stop();
-            dataLine.close();
+        if (this.dataLine != null && this.dataLine.isOpen()) {
+            this.dataLine.stop();
+            this.dataLine.close();
         }
 
         try {
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, newFormat);
-            dataLine = (SourceDataLine) AudioSystem.getLine(info);
-            dataLine.open(newFormat);
+            this.dataLine = (SourceDataLine) AudioSystem.getLine(info);
+            this.dataLine.open(newFormat);
             return true;
         } catch (Exception e) {
             System.err.println("Could not set new rate in clip.");

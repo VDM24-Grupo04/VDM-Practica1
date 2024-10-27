@@ -9,8 +9,8 @@ import android.media.SoundPool;
 import java.io.IOException;
 
 public class AndroidSound extends Sound {
-    private int soundId = 0; // returned by the load function (0 if failed)
-    int streamId = 0; // returned by the play function (0 if failed)
+    private int soundId         = 0; // returned by the load function (0 if failed)
+    private int streamId        = 0; // returned by the play function (0 if failed)
 
     // Referencias
     private SoundPool soundPool = null;
@@ -23,7 +23,7 @@ public class AndroidSound extends Sound {
         try {
             AssetFileDescriptor audioFile = assetManager.openFd(fileName);
             if (audioFile != null) {
-                this.soundId = soundPool.load(audioFile, this.priority);
+                this.soundId = this.soundPool.load(audioFile, this.priority);
                 super.isValid = true;
             }
         } catch (IOException e) {
@@ -42,7 +42,7 @@ public class AndroidSound extends Sound {
     @Override
     public boolean performSoundAction(int option) {
         if (this.soundPool == null) {
-            System.err.println("SoundPool not initializated.");
+            System.err.println("SoundPool not initialized.");
             return false;
         }
 
@@ -103,7 +103,7 @@ public class AndroidSound extends Sound {
     @Override
     public boolean setVolume(float leftVolume, float rightVolume) {
         if (this.soundPool == null) {
-            System.err.println("SoundPool not initializated.");
+            System.err.println("SoundPool not initialized.");
             return false;
         }
 
@@ -130,7 +130,7 @@ public class AndroidSound extends Sound {
     @Override
     public boolean setLoop(int loop) {
         if (this.soundPool == null) {
-            System.err.println("SoundPool not initializated.");
+            System.err.println("SoundPool not initialized.");
             return false;
         }
 
@@ -147,7 +147,7 @@ public class AndroidSound extends Sound {
     @Override
     public boolean setRate(float rate) {
         if (this.soundPool == null) {
-            System.err.println("SoundPool not initializated.");
+            System.err.println("SoundPool not initialized.");
             return false;
         }
 
