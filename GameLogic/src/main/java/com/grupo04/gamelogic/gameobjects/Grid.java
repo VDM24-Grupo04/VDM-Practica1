@@ -175,33 +175,8 @@ public class Grid extends GameObject {
             }
         }
 
-        // DEBUG DE LAS CELDAS
-        if (currI >= 0 && currJ >= 0) {
-            Vector pos = gridToWorldPosition(currI, currJ);
-            pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(0));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+        debugCollisions(graphics);
 
-            pos = gridToWorldPosition(currI, currJ - 1);
-            pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(1));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
-
-            pos = gridToWorldPosition(currI, currJ + 1);
-            pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(1));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
-
-            pos = gridToWorldPosition(currI - 1, currJ);
-            pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(1));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
-
-            pos = gridToWorldPosition(currI - 1, (currI % 2 == 0) ? currJ - 1 : currJ + 1);
-            pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(1));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
-        }
 
         // Pinta la linea del limite inferior
         graphics.setColor(lineColor);
@@ -234,6 +209,35 @@ public class Grid extends GameObject {
                     iterator.remove();
                 }
             }
+        }
+    }
+
+    private void debugCollisions(Graphics graphics) {
+        if (currI >= 0 && currJ >= 0) {
+            Vector pos = gridToWorldPosition(currI, currJ);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(0));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+
+            pos = gridToWorldPosition(currI, currJ - 1);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(1));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+
+            pos = gridToWorldPosition(currI, currJ + 1);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(1));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+
+            pos = gridToWorldPosition(currI - 1, currJ);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(1));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+
+            pos = gridToWorldPosition(currI - 1, (currI % 2 == 0) ? currJ - 1 : currJ + 1);
+            pos.x += 0.5f;
+            graphics.setColor(BallColors.getColor(1));
+            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
         }
     }
 

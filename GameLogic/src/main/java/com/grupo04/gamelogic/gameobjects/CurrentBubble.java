@@ -34,7 +34,7 @@ public class CurrentBubble extends GameObject {
         this.wallThickness = wallThickness;
 
         // La posicion inicial sera en el centro del mundo y por debajo del limite vertical
-        initPos = new Vector((w - r) / 2.0f, (1.5f + rows) * this.r * 2);
+        initPos = new Vector(w / 2.0f, (1.5f + rows) * this.r * 2);
 
         reset();
     }
