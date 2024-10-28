@@ -42,6 +42,18 @@ public abstract class Scene {
         return handlers.get(handler);
     }
 
+    public void onResume() {
+        for (GameObject gameObject : gameObjects) {
+            gameObject.onResume();
+        }
+    }
+
+    public void onPause() {
+        for (GameObject gameObject : gameObjects) {
+            gameObject.onResume();
+        }
+    }
+
     public void handleInput(List<TouchEvent> touchEvent) {
         for (GameObject gameObject : gameObjects) {
             gameObject.handleInput(touchEvent);
