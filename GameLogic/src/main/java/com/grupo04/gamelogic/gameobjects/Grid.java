@@ -87,6 +87,7 @@ public class Grid extends GameObject {
         // Se generan initRows filas iniciales
         this.totalBubbles = 0;
         this.colorCount = new int[BallColors.getColorCount()];
+        BallColors.reset();
         for (int i = 0; i < initRows; i++) {
             // En las filas impares hay una bola menos
             int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
@@ -326,11 +327,11 @@ public class Grid extends GameObject {
     private boolean manageCollision(int i, int j) {
         // El valor por defecto de un booleano es false
         boolean[][] visited = new boolean[this.rows][this.cols];
-        int col = this.bubbles[i][j];
+        int color = this.bubbles[i][j];
         List<Pair<Integer, Integer>> bubblesToErase = new ArrayList<>();
         List<Pair<Integer, Integer>> bubblesToFall = new ArrayList<>();
 
-        dfs(visited, i, j, col, bubblesToErase, bubblesToFall);
+        dfs(visited, i, j, color, bubblesToErase, bubblesToFall);
 
         // Numero de bolas del grupo
         int bubblesToEraseSize = bubblesToErase.size();
@@ -346,7 +347,10 @@ public class Grid extends GameObject {
             this.totalBubbles -= bubblesToEraseSize;
             System.out.println(this.totalBubbles);
             // Se actualiza el numero de bolas que hay de cada color
-            this.colorCount[col] -= bubblesToEraseSize;
+            this.colorCount[color] -= bubblesToEraseSize;
+            if (this.colorCount[color] <= 0) {
+                BallColors.removeColor(color);
+            }
             // Se actualiza el mapa
             for (Pair<Integer, Integer> bubble : bubblesToErase) {
                 int bubbleI = bubble.getFirst();
@@ -383,7 +387,11 @@ public class Grid extends GameObject {
                         int wX = w.getFirst();
                         int wY = w.getSecond();
                         Vector worldPos = gridToWorldPosition(wX, wY);
-                        this.fallingBubbles.add(new Pair<>(worldPos, this.bubbles[wX][wY]));
+                        int color = this.bubbles[wX][wY];
+                        if (--this.colorCount[color] <= 0) {
+                            BallColors.removeColor(color);
+                        }
+                        this.fallingBubbles.add(new Pair<>(worldPos, color));
                         // Se quitan del grid
                         this.bubbles[wX][wY] = -1;
                     }

@@ -7,10 +7,10 @@ import java.util.Random;
 
 public class BallColors {
     private static final Color[] colors = {
-            new Color(245, 75, 100),
-            new Color(105, 245, 85),
-            new Color(135, 150, 235),
-            new Color(245, 225, 85)
+            new Color(245, 75, 100),    // Rojo
+            new Color(105, 245, 85),    // Verde
+            new Color(135, 150, 235),   // Azul
+            new Color(245, 225, 85)     // Amarillo
     };
     private static final Random randomNumbers = new Random();
     private static final HashMap<Integer, Color> availableColors = new HashMap<Integer, Color>();
@@ -20,7 +20,13 @@ public class BallColors {
     }
 
     public static int getRandomColor() {
-        return randomNumbers.nextInt(colors.length);
+        // Si esta vacio (no hay mas bolas) devuelve "sin color"
+        if (availableColors.isEmpty()) {
+            return -1;
+        }
+        // Coge las claves disponibles del hashmap
+        Integer[] keys = availableColors.keySet().toArray(new Integer[0]);
+        return keys[randomNumbers.nextInt(keys.length)];
     }
 
     public static Color getColor(int i) {
@@ -28,6 +34,7 @@ public class BallColors {
     }
 
     public static void reset() {
+        availableColors.clear();
         for (int i = 0; i < colors.length; i++) {
             availableColors.put(i, colors[i]);
         }
