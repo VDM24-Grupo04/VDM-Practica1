@@ -19,6 +19,7 @@ public class BallColors {
         return colors.length;
     }
 
+    // Obtiene un color aleatorio de entre los que hay actualmente en el mapa
     public static int getRandomColor() {
         // Si esta vacio (no hay mas bolas) devuelve "sin color"
         if (availableColors.isEmpty()) {
@@ -29,18 +30,18 @@ public class BallColors {
         return keys[randomNumbers.nextInt(keys.length)];
     }
 
-    public static Color getColor(int i) {
-        return colors[i];
+    // Genera un color aleatorio de entre todos los colores posibles
+    public static int generateRandomColor() {
+        return randomNumbers.nextInt(colors.length);
     }
 
-    public static void reset() {
-        availableColors.clear();
-        for (int i = 0; i < colors.length; i++) {
-            availableColors.put(i, colors[i]);
-        }
-    }
+    public static void reset() { availableColors.clear(); }
 
+    public static Color getColor(int i) { return colors[i]; }
     public static void removeColor(int i) {
         availableColors.remove(i);
+    }
+    public static void addColor(int i) {
+        availableColors.put(i, colors[i]);
     }
 }

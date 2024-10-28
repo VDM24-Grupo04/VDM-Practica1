@@ -26,15 +26,16 @@ public class CurrentBubble extends GameObject {
 
     Sound onBounceSound = null;
 
-    public CurrentBubble(int w, int r, int wallThickness, int rows) {
+    public CurrentBubble(int w, int wallThickness, int headerOffset,  int r, int bubbleOffset, int rows) {
         super();
         dir = new Vector(0, 0);
         worldWidth = w;
         this.r = r;
         this.wallThickness = wallThickness;
 
-        // La posicion inicial sera en el centro del mundo y por debajo del limite vertical
-        initPos = new Vector(w / 2.0f, (1.5f + rows) * this.r * 2);
+        // La posicion inicial sera en el centro del mundo por debajo del limite vertical
+        int initY = (int) ((this.r * 2 - bubbleOffset) * (rows + 2));
+        initPos = new Vector(w / 2.0f, wallThickness + headerOffset + initY);
 
         reset();
     }
@@ -56,15 +57,15 @@ public class CurrentBubble extends GameObject {
         super.render(graphics);
 
         // Se dibuja la bola
-        graphics.setColor(BallColors.getColor(color));
-        graphics.fillCircle(pos, r);
+        if (color >= 0) {
+            graphics.setColor(BallColors.getColor(color));
+            graphics.fillCircle(pos, r);
 
-//        graphics.fillCircle(pos.plus(dir.times(-this.r * 2)), r);
-
-        // Si se esta manteniendo pulsado, se dibuja la linea en direccion al lugar que se pulsa
-        if (dragging) {
-            graphics.setColor(lineColor);
-            graphics.drawLine(pos, pos.plus(dir.getNormalized().times(lineLength)), lineThickness);
+            // Si se esta manteniendo pulsado, se dibuja la linea en direccion al lugar que se pulsa
+            if (dragging) {
+                graphics.setColor(lineColor);
+                graphics.drawLine(pos, pos.plus(dir.getNormalized().times(lineLength)), lineThickness);
+            }
         }
     }
 
@@ -74,7 +75,7 @@ public class CurrentBubble extends GameObject {
 
         // Si se ha disparado, se normaliza la direccion y se mueve
         // la pelota en esa direccion a la velocidad establecida
-        if (shot) {
+        if (shot && color >= 0) {
             // Si choca con las paredes laterales, se coloca al limite y
             // se pone la dir horizontal hacia el sentido contrario
             // Pared derecha
@@ -111,7 +112,7 @@ public class CurrentBubble extends GameObject {
         super.handleInput(touchEvents);
 
         // Si no se ha disparado, gestiona los eventos
-        if (!shot) {
+        if (!shot && color >= 0) {
             for (TouchEvent event : touchEvents) {
 //            System.out.println(event.getPos().x + " " + event.getPos().y);
                 // Si no se esta manteniendo pulsado y se presiona, se empieza a mantener pulsado

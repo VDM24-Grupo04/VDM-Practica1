@@ -62,6 +62,7 @@ public class Grid extends GameObject {
 
     private float fallingSpeed;
     private List<Pair<Vector, Integer>> fallingBubbles;
+    private boolean won;
 
     private Engine engine;
     private Sound attachSound;
@@ -69,7 +70,7 @@ public class Grid extends GameObject {
     // DEBUG DE LAS CELDAS
     private int currI = -1, currJ = -1;
 
-    public Grid(int width, int wallThickness, int headerOffset, int r, int rows, int cols, int initRows,
+    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
                 int bubblesToExplode, int greatScore, int smallScore, float fallingSpeed) {
         super();
         this.cols = cols;
@@ -83,7 +84,7 @@ public class Grid extends GameObject {
         this.hexagonRadius = (float) Math.ceil((this.r / (Math.sqrt(3) / 2.0f)));
         this.offsetX = wallThickness;
         this.offsetY = wallThickness + headerOffset;
-        this.bubbleOffset = (int) (this.r * 0.3);
+        this.bubbleOffset = bubbleOffset;
 
         // Se generan initRows filas iniciales
         this.totalBubbles = 0;
@@ -96,13 +97,14 @@ public class Grid extends GameObject {
 
             // Se generan las burbujas de la fila
             for (int j = 0; j < bPerRow; ++j) {
-                int color = BallColors.getRandomColor();
+                int color = BallColors.generateRandomColor();
+                BallColors.addColor(color);
                 this.bubbles[i][j] = color;
                 this.colorCount[color]++;
             }
         }
 
-        int lineY = (int) (this.r * 2 * (this.rows - 1)) - this.bubbleOffset * (this.rows - 1) + this.bubbleOffset;
+        int lineY = (int) (this.r * 2 * (this.rows - 1)) - this.bubbleOffset * (this.rows - 2);
         this.lineInit = new Vector(this.offsetX, this.offsetY + lineY);
         this.lineEnd = new Vector(width - this.offsetX, this.offsetY + lineY);
 
@@ -130,14 +132,15 @@ public class Grid extends GameObject {
 
         this.fallingSpeed = fallingSpeed;
         this.fallingBubbles = new ArrayList<>();
+        this.won = false;
 
         this.engine = null;
         this.attachSound = null;
     }
 
-    public Grid(int width, int wallThickness, int headerOffset, int r, int rows, int cols, int initRows,
+    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
                 int bubblesToExplode, int greatScore, int smallScore) {
-        this(width, wallThickness, headerOffset, r, rows, cols, initRows,
+        this(width, wallThickness, headerOffset, r, bubbleOffset, rows, cols, initRows,
                 bubblesToExplode, greatScore, smallScore, 300.0f);
     }
 
@@ -210,6 +213,10 @@ public class Grid extends GameObject {
                     iterator.remove();
                 }
             }
+        }
+        else if (this.won) {
+            this.won = false;
+            this.engine.changeScene(new VictoryScene(this.engine, this.score));
         }
     }
 
@@ -304,7 +311,7 @@ public class Grid extends GameObject {
 
             playAttachSound();
             if (manageCollision(i, j)) {
-                engine.changeScene(new VictoryScene(engine, score));
+                this.won = true;
             }
             // Condicion de derrota
             else if (this.bubbles[i][j] != -1 && gridToWorldPosition(i, j).y + this.r > lineEnd.y) {
