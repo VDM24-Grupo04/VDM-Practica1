@@ -25,28 +25,14 @@ public class DesktopEngine extends Engine {
             }
         }
         if (attempts == 0) {
-            System.err.println("No pude crear la BufferStrategy");
+            System.err.println("BufferStrategy could not be created");
             return;
         } else {
-            System.out.println("BufferStrategy affter " + (100 - attempts) + " attempts");
+            System.out.println("BufferStrategy after " + (100 - attempts) + " attempts");
         }
 
         this.bufferStrategy = window.getBufferStrategy();
         this.graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
-
-        // Para poder hacer resize de la ventana
-        /*
-        window.addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent evt) {
-                //Component c = (Component)evt.getSource();
-                System.out.println("componentResized: " + evt.getSource());
-                graphics2D.dispose();
-
-                bufferStrategy.show();
-                graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
-            }
-        });
-        */
 
         DesktopGraphics desktopGraphics = new DesktopGraphics(window, this.graphics2D, this.bufferStrategy);
         DesktopAudio desktopAudio = new DesktopAudio(5);

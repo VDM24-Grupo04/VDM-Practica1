@@ -9,6 +9,7 @@ import com.grupo04.engine.Pair;
 import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.BallColors;
+import com.grupo04.gamelogic.scenes.GameOverScene;
 import com.grupo04.gamelogic.scenes.VictoryScene;
 
 import java.util.ArrayList;
@@ -304,6 +305,10 @@ public class Grid extends GameObject {
             playAttachSound();
             if (manageCollision(i, j)) {
                 engine.changeScene(new VictoryScene(engine, score));
+            }
+            // Condicion de derrota
+            else if (this.bubbles[i][j] != -1 && gridToWorldPosition(i, j).y + this.r > lineEnd.y) {
+                engine.changeScene(new GameOverScene(engine));
             }
         }
 
