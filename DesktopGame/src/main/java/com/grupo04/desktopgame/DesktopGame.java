@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 public class DesktopGame {
     public static void main(String[] args) {
         // Creacion de la ventana desktop
-        JFrame window = new JFrame("Puzzle Bubble");
+        JFrame window = new JFrame("Puzzle Bobble");
         ImageIcon icon = new ImageIcon("./assets/PuzzleBubbleIcon.png");
         window.setIconImage(icon.getImage());
         window.setSize(500, 900);
