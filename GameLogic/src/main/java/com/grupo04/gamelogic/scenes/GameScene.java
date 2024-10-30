@@ -18,7 +18,7 @@ public class GameScene extends Scene {
 
     public GameScene(Engine engine) {
         //super(engine, 400, 600, new Color(255, 255, 255));
-        super(engine, 400, 600, "cat.jpg");
+        super(engine, 400, 600, "background.jpg");
         // Al iniciar la escena se hace un fade out
         super.setFade(FADE.OUT, 0.25);
 
