@@ -1,16 +1,12 @@
 package com.grupo04.androidgame;
 
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.SurfaceView;
-import android.media.SoundPool;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.grupo04.engine.Audio;
-import com.grupo04.androidengine.AndroidAudio;
 import com.grupo04.androidengine.AndroidEngine;
 import com.grupo04.gamelogic.scenes.TitleScene;
 
@@ -36,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
         // Creacion de la escena
         TitleScene testScene = new TitleScene(this.androidEngine);
         this.androidEngine.pushScene(testScene);
+
+        // Bloquear la orientacion
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     @Override

@@ -33,4 +33,3 @@ public class DesktopImage implements Image {
         return this.img.getHeight();
     }
 }
-

@@ -39,6 +39,4 @@ public class Input {
     public synchronized void addEvent(TouchEvent e) {
         touchEvents.add(e);
     }
-
-
 }

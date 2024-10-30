@@ -36,6 +36,5 @@ public class GameScene extends Scene {
         CurrentBubble currentBubble = new CurrentBubble(worldWidth, WALL_THICKNESS, HEADER_WIDTH,
                 (int) r, bubbleOffset, rows);
         addGameObject(currentBubble, "currentBubble");
-
     }
 }
