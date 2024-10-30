@@ -42,7 +42,15 @@ public class VictoryScene extends Scene {
         Button tryAgainButton = new Button(tryAgainButtonPos,
                 BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_ARC, BUTTON_BASE_COLOR, BUTTON_OVER_COLOR,
                 "Play again", BUTTON_FONT,
-                () -> engine.changeScene(new GameScene(engine)));
+                () -> {
+                    // Al pulsar el boton se hace un fade in y cuando
+                    // acaba la animacion se cambia a la escena de juego
+                    this.setFade(FADE.IN, 0.25);
+                    this.setFadeCallback(() -> {
+                        engine.changeScene(new GameScene(engine));
+                    });
+                }
+        );
         addGameObject(tryAgainButton);
 
         Vector menuButtonPos = new Vector(tryAgainButtonPos);
@@ -50,15 +58,28 @@ public class VictoryScene extends Scene {
         Button menuButton = new Button(menuButtonPos,
                 BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_ARC, BUTTON_BASE_COLOR, BUTTON_OVER_COLOR,
                 "Menu", BUTTON_FONT,
-                () -> engine.changeScene(new TitleScene(engine)));
+                () -> {
+                    // Al pulsar el boton se hace un fade in y cuando
+                    // acaba la animacion se cambia al menu principal
+                    // con animacion de fade out
+                    this.setFade(FADE.IN, 0.25);
+                    this.setFadeCallback(() -> {
+                        TitleScene scene = new TitleScene(engine);
+                        scene.setFade(FADE.OUT, 0.25);
+                        engine.changeScene(scene);
+                    });
+                }
+        );
         addGameObject(menuButton);
 
         winSound = engine.getAudio().newSound("win.wav");
-    }
 
-    public void onResume() {
-        if (winSound != null) {
-            winSound.play();
-        }
+        // Al iniciar la escena se hace un fade out y al terminar la animacion se reproduce el sonido de victoria
+        super.setFade(FADE.OUT, 0.25);
+        super.setFadeCallback(() -> {
+            if (winSound != null) {
+                winSound.play();
+            }
+        });
     }
 }

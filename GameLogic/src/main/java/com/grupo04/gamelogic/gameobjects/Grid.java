@@ -6,6 +6,7 @@ import com.grupo04.engine.Engine;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Pair;
+import com.grupo04.engine.Scene;
 import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.BallColors;
@@ -194,8 +195,6 @@ public class Grid extends GameObject {
                 graphics.fillCircle(bPos, this.r);
             }
         }
-
-        // NOTA: NO SE PUEDEN CREAR ARCHIVOS EN EL BUCLE DE JUEGO
     }
 
     @Override
@@ -216,7 +215,12 @@ public class Grid extends GameObject {
         }
         else if (this.won) {
             this.won = false;
-            this.engine.changeScene(new VictoryScene(this.engine, this.score));
+
+            // Se hace un fade in y cuando acaba la animacion se cambia a la escena de victoria
+            this.scene.setFade(Scene.FADE.IN, 0.25);
+            this.scene.setFadeCallback(() -> {
+                engine.changeScene(new VictoryScene(this.engine, this.score));
+            });
         }
     }
 
@@ -315,7 +319,11 @@ public class Grid extends GameObject {
             }
             // Condicion de derrota
             else if (this.bubbles[i][j] != -1 && gridToWorldPosition(i, j).y + this.r > lineEnd.y) {
-                engine.changeScene(new GameOverScene(engine));
+                // Se hace un fade in y cuando acaba la animacion se cambia a la escena de game over
+                this.scene.setFade(Scene.FADE.IN, 0.25);
+                this.scene.setFadeCallback(() -> {
+                    engine.changeScene(new GameOverScene(engine));
+                });
             }
         }
 

@@ -21,8 +21,8 @@ public class DesktopGame {
         DesktopEngine engine = new DesktopEngine(window);
 
         // Creacion de la escena
-        TitleScene testScene = new TitleScene(engine);
-        engine.pushScene(testScene);
+        TitleScene scene = new TitleScene(engine);
+        engine.pushScene(scene);
 
         engine.onResume();
     }

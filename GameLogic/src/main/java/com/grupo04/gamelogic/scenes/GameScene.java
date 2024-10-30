@@ -18,6 +18,8 @@ public class GameScene extends Scene {
 
     public GameScene(Engine engine) {
         super(engine, 400, 600, new Color(255, 255, 255));
+        // Al iniciar la escena se hace un fade out
+        super.setFade(FADE.OUT, 0.25);
 
         // Radio de las burbujas en el mapa
         float r = (((float) worldWidth - (WALL_THICKNESS * 2)) / N_COLS) / 2;

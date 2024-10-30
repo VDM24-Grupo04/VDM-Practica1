@@ -5,6 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 
 public abstract class Scene {
+    public enum FADE {NONE, IN, OUT}
+    private FADE fade;
+    private double fadeDuration;
+    private double fadeTimer;
+    private Color fadeColor;
+    private Vector fadePos;
+    private Callback onFadeEnd;
+
     private boolean alive;
     private HashSet<GameObject> gameObjects;
     private HashMap<String, GameObject> handlers;
@@ -22,7 +30,49 @@ public abstract class Scene {
         this.worldHeight = worldHeight;
         this.engine.setWorldSize(this.worldWidth, this.worldHeight);
         this.bgColor = bgColor;
+
+        this.fade = FADE.NONE;
+        this.fadeDuration = 0;
+        this.fadeTimer = 0;
+        this.fadeColor = new Color(0, 0, 0, 255);
+        fadePos = new Vector(worldWidth / 2, worldHeight / 2);
+        this.onFadeEnd = null;
     }
+
+
+    // Hacer que la escena comience con un fade. Se le puede pasar solo el tipo de fade,
+    // solo el tipo y la duracion, o el tipo, la duracion y el color del fade.
+    // ** fadeDuration tiene que ir en segundos
+    public void setFade(FADE fade) {
+        this.fade = fade;
+        this.fadeDuration = 0.2;
+        this.fadeTimer = 0;
+    }
+    public void setFade(FADE fade, double fadeDuration) {
+        this.fade = fade;
+        this.fadeDuration = fadeDuration;
+        this.fadeTimer = 0;
+    }
+    public void setFade(FADE fade, double fadeDuration, Color fadeColor) {
+        setFade(fade, fadeDuration);
+        this.fadeColor = fadeColor;
+
+        if (this.fade == FADE.IN) {
+            fadeColor.alpha = 0;
+        } 
+        else if (this.fade == FADE.OUT) {
+            fadeColor.alpha = 0;
+        }
+    }
+    public void setFade(FADE fade, Color fadeColor) {
+        setFade(fade);
+        this.fadeColor = fadeColor;
+    }
+
+    public void setFadeCallback(Callback onFadeEnd) {
+        this.onFadeEnd = onFadeEnd;
+    }
+
 
     public void addGameObject(GameObject gameObject) {
         gameObjects.add(gameObject);
@@ -55,14 +105,29 @@ public abstract class Scene {
     }
 
     public void handleInput(List<TouchEvent> touchEvent) {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.handleInput(touchEvent);
+        if (fadeTimer >= fadeDuration) {
+            for (GameObject gameObject : gameObjects) {
+                gameObject.handleInput(touchEvent);
+            }
         }
+
     }
 
     public void update(double deltaTime) {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.update(deltaTime);
+        // Si ya se ha terminado de reproducir el fade, permite que se actualicen los objetos
+        if (fadeTimer >= fadeDuration) {
+            for (GameObject gameObject : gameObjects) {
+                gameObject.update(deltaTime);
+            }
+        }
+        // Si no, actualiza el contador del fade
+        else {
+            fadeTimer += deltaTime;
+
+            // Si el fade justo se ha acabado y hay un callback al acabar, se llama
+            if (fadeTimer >= fadeDuration && onFadeEnd != null) {
+                onFadeEnd.call();
+            }
         }
     }
 
@@ -84,9 +149,12 @@ public abstract class Scene {
     }
 
     public void fixedUpdate(double fixedDeltaTime) {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.fixedUpdate(fixedDeltaTime);
+        if (fadeTimer >= fadeDuration) {
+            for (GameObject gameObject : gameObjects) {
+                gameObject.fixedUpdate(fixedDeltaTime);
+            }
         }
+
     }
 
     public void render(Graphics graphics) {
@@ -94,6 +162,27 @@ public abstract class Scene {
         for (GameObject gameObject : gameObjects) {
             gameObject.render(graphics);
         }
+
+        // Si no se ha terminado de reproducir el fade
+        if (this.fadeTimer < this.fadeDuration) {
+            // Se calcula el alpha del fondo en base al tiempo que dura la animacion y al tiempo que lleva reproducido
+            int alpha = (int) ((255.0f * this.fadeTimer) / this.fadeDuration);
+
+            // Si es un fade out, se hace a la inversa
+            if (this.fade == FADE.OUT) {
+                alpha = 255 - alpha;
+            }
+
+            // Si el alpha es mayor que 0, se cambia el color del fondo
+            // y se pinta un rectangulo que ocupa toda la pantalla
+            if (alpha > 0) {
+                this.fadeColor.alpha = alpha;
+                graphics.setColor(this.fadeColor);
+                graphics.fillRectangle(this.fadePos, worldWidth, worldHeight);
+            }
+        }
+
+
     }
 
     // El recolector de basura elimina un objeto cuando no hay mas punteros hacia ese objeto.

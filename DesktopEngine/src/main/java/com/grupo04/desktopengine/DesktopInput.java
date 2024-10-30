@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
 import javax.swing.JFrame;
 
@@ -66,6 +67,20 @@ public class DesktopInput extends Input {
         window.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 System.exit(0);
+            }
+        });
+
+        // Se anade al JFrame un listener de foco de la ventana
+        window.addWindowFocusListener(new WindowFocusListener() {
+            // Si se pierde el foco, se pausa el hilo que ejecuta el juego
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                engine.onPause();
+            }
+            // Si se recupera el foco, se reanuda el hilo que ejecuta el juego
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                engine.onResume();
             }
         });
     }
