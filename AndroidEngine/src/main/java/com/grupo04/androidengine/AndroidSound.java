@@ -15,28 +15,48 @@ public class AndroidSound extends Sound {
     // Referencias
     private SoundPool soundPool = null;
 
-    AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
-        super(fileName, priority, leftVolume, rightVolume, loop, rate);
+    private boolean isLoaded    = false; // Para reproducir cuando cargue la escena
+
+    AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority,
+                 float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad) {
+        super(fileName, priority, leftVolume, rightVolume, loop, rate, playOnLoad);
 
         this.soundPool = soundPool;
 
         try {
-            AssetFileDescriptor audioFile = assetManager.openFd(fileName);
+            AssetFileDescriptor audioFile = assetManager.openFd("sounds/" + fileName);
             if (audioFile != null) {
                 this.soundId = this.soundPool.load(audioFile, this.priority);
-                super.isValid = true;
+                if (this.playOnLoad) {
+                    this.soundPool.setOnLoadCompleteListener((sp, sampleId, status) -> {
+                        if (this.soundId == sampleId && status == 0) {
+                            if (!this.isLoaded) {
+                                play();
+                                this.isLoaded = true;
+                            }
+                        }
+                    });
+                }
             }
         } catch (IOException e) {
-            System.err.printf("Couldn't load sound (\"%s\")%n", soundName);
+            System.err.printf("Couldn't load sound (\"%s\")%n", fileName);
         }
     }
 
+    AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, int loop, float rate, boolean playOnLoad) {
+        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, loop, rate, playOnLoad);
+    }
+
     AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, int loop, float rate) {
-        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, loop, rate);
+        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, loop, rate, false);
+    }
+
+    AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, boolean playOnLoad) {
+        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, 0, 1.0f, playOnLoad);
     }
 
     AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority) {
-        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, 0, 1.0f);
+        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, 0, 1.0f, false);
     }
 
     @Override
@@ -160,4 +180,6 @@ public class AndroidSound extends Sound {
         this.soundPool.setRate(this.streamId, this.rate);
         return true;
     }
+
+    public int getSoundId() { return this.soundId; }
 }

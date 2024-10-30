@@ -24,27 +24,37 @@ public class DesktopSound extends Sound {
     private AudioFormat audioFormat = null;
     private boolean isPlaying       = false;
 
-    DesktopSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
-        super(fileName, priority, leftVolume, rightVolume, loop, rate);
+    DesktopSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad) {
+        super(fileName, priority, leftVolume, rightVolume, loop, rate, playOnLoad);
 
         this.clips = new ArrayList<>();
 
         try {
-            this.audioFile = new File("./assets/" + this.soundName);
+            this.audioFile = new File("./assets/sounds/" + fileName);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(this.audioFile);
             this.audioFormat = audioStream.getFormat();
-            super.isValid = true;
+            if (this.playOnLoad) {
+                play();
+            }
         } catch (Exception e) {
             System.err.printf("Couldn't load audio file (\"%s\")%n", fileName);
         }
     }
 
-    DesktopSound(String fileName, int priority) {
-        this(fileName, priority, 1.0f, 1.0f, 0, 1.0f);
+    DesktopSound(String fileName, int priority, int loop, float rate, boolean playOnLoad) {
+        this(fileName, priority, 1.0f, 1.0f, loop, rate, playOnLoad);
     }
 
     DesktopSound(String fileName, int priority, int loop, float rate) {
-        this(fileName, priority, 1.0f, 1.0f, loop, rate);
+        this(fileName, priority, 1.0f, 1.0f, loop, rate, false);
+    }
+
+    DesktopSound(String fileName, int priority, boolean playOnLoad) {
+        this(fileName, priority, 1.0f, 1.0f, 0, 1.0f, playOnLoad);
+    }
+
+    DesktopSound(String fileName, int priority) {
+        this(fileName, priority, 1.0f, 1.0f, 0, 1.0f, false);
     }
 
     @Override

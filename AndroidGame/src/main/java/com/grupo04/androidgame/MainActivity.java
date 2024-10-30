@@ -33,18 +33,6 @@ public class MainActivity extends AppCompatActivity {
         // Creacion del motor
         this.androidEngine = new AndroidEngine(window, assetManager);
 
-        Audio audio = this.androidEngine.getAudio();
-        if (audio instanceof AndroidAudio) {
-            SoundPool soundPool = ((AndroidAudio) audio).getSoundPool();
-            // Añadir un listener para saber si cargó la SoundPool
-            soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-                @Override
-                public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                    MainActivity.this.audioLoaded = true;
-                }
-            });
-        }
-
         // Creacion de la escena
         TitleScene testScene = new TitleScene(this.androidEngine);
         this.androidEngine.pushScene(testScene);
@@ -53,28 +41,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkAndResumeEngine();
+        this.androidEngine.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         this.androidEngine.onPause();
-    }
-
-    private void checkAndResumeEngine() {
-        // Si ya cargó, realiza el onResume de las escenas
-        if (this.audioLoaded) {
-            this.androidEngine.onResume();
-        } else {
-            // Realizar un chequeo retrasado de 100ms hasta que cargue la SoundPool
-            final Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    checkAndResumeEngine();
-                }
-            }, 100);
-        }
     }
 }

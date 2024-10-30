@@ -22,6 +22,15 @@ public abstract class Scene {
     protected Color bgColor;
 
     protected Scene(Engine engine, int worldWidth, int worldHeight, Color bgColor) {
+        this(engine, worldWidth, worldHeight);
+        this.bgColor = bgColor;
+    }
+
+    protected Scene(Engine engine, int worldWidth, int worldHeight, String bgImageFileName) {
+        this(engine, worldWidth, worldHeight);
+    }
+
+    protected Scene(Engine engine, int worldWidth, int worldHeight) {
         this.alive = true;
         this.gameObjects = new HashSet<GameObject>();
         this.handlers = new HashMap<String, GameObject>();
@@ -90,18 +99,6 @@ public abstract class Scene {
 
     public GameObject getHandler(String handler) {
         return handlers.get(handler);
-    }
-
-    public void onResume() {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.onResume();
-        }
-    }
-
-    public void onPause() {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.onResume();
-        }
     }
 
     public void handleInput(List<TouchEvent> touchEvent) {
@@ -181,8 +178,6 @@ public abstract class Scene {
                 graphics.fillRectangle(this.fadePos, worldWidth, worldHeight);
             }
         }
-
-
     }
 
     // El recolector de basura elimina un objeto cuando no hay mas punteros hacia ese objeto.

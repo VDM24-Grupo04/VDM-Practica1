@@ -67,6 +67,7 @@ public class Grid extends GameObject {
 
     private Engine engine;
     private Sound attachSound;
+    private Sound explosionSound;
 
     // DEBUG DE LAS CELDAS
     private int currI = -1, currJ = -1;
@@ -137,6 +138,7 @@ public class Grid extends GameObject {
 
         this.engine = null;
         this.attachSound = null;
+        this.explosionSound = null;
     }
 
     public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
@@ -150,6 +152,7 @@ public class Grid extends GameObject {
         this.engine = this.scene.getEngine();
         Audio audio = engine.getAudio();
         this.attachSound = audio.newSound("ballAttach.wav");
+        this.explosionSound = audio.newSound("ballExplosion.wav");
     }
 
     @Override
@@ -313,7 +316,6 @@ public class Grid extends GameObject {
             ++this.colorCount[color];
             this.bubbles[i][j] = color;
 
-            playAttachSound();
             if (manageCollision(i, j)) {
                 this.won = true;
             }
@@ -361,6 +363,8 @@ public class Grid extends GameObject {
         int bubblesToEraseSize = bubblesToErase.size();
         // Si se supera el limite establecido, se eliminan
         if (bubblesToEraseSize >= this.bubblesToExplode) {
+            playExplosionSound();
+
             // Si el grupo es mayor que el limite establecido, la puntuacion es mayor
             if (bubblesToEraseSize >= this.bubblesToExplode + 1) {
                 this.score += bubblesToEraseSize * this.greatScore;
@@ -369,7 +373,6 @@ public class Grid extends GameObject {
             }
             // Se actualiza el numero de bolas totales
             this.totalBubbles -= bubblesToEraseSize;
-            System.out.println(this.totalBubbles);
             // Se actualiza el numero de bolas que hay de cada color
             this.colorCount[color] -= bubblesToEraseSize;
             if (this.colorCount[color] <= 0) {
@@ -387,6 +390,8 @@ public class Grid extends GameObject {
             }
             // Si siguen quedando bolas, se comprueba si hay bolas que se pueden caer
             return manageFall(bubblesToFall);
+        } else {
+            playAttachSound();
         }
         return false;
     }
@@ -486,6 +491,12 @@ public class Grid extends GameObject {
     private void playAttachSound() {
         if (this.attachSound != null) {
             this.attachSound.play();
+        }
+    }
+
+    private void playExplosionSound() {
+        if (this.explosionSound != null) {
+            this.explosionSound.play();
         }
     }
 }

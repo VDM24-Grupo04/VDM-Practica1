@@ -24,7 +24,8 @@ public class CurrentBubble extends GameObject {
 
     Grid grid;
 
-    Sound onBounceSound = null;
+    Sound throwSound = null;
+    Sound bounceSound = null;
 
     public CurrentBubble(int w, int wallThickness, int headerOffset,  int r, int bubbleOffset, int rows) {
         super();
@@ -44,7 +45,8 @@ public class CurrentBubble extends GameObject {
     public void init() {
         grid = (Grid) scene.getHandler("grid");
         Engine engine = this.scene.getEngine();
-        this.onBounceSound = engine.getAudio().newSound("ballAttach.wav"); // Cambiar por otro
+        this.throwSound = engine.getAudio().newSound("ballThrow.wav");
+        this.bounceSound = engine.getAudio().newSound("ballBounce.wav");
     }
 
     @Override
@@ -126,6 +128,7 @@ public class CurrentBubble extends GameObject {
                     if (event.getType() == TouchEvent.TouchEventType.RELEASE) {
                         dragging = false;
                         if (event.getPos().y < pos.y) {
+                            playThrowSound();
                             shot = true;
                         }
                     }
@@ -134,7 +137,6 @@ public class CurrentBubble extends GameObject {
                     else if (event.getType() == TouchEvent.TouchEventType.DRAG || event.getType() == TouchEvent.TouchEventType.PRESS) {
                         dir = event.getPos().minus(pos);
                     }
-
                 }
             }
         }
@@ -150,9 +152,15 @@ public class CurrentBubble extends GameObject {
         shot = false;
     }
 
+    private void playThrowSound() {
+        if (this.throwSound != null) {
+            this.throwSound.play();
+        }
+    }
+
     private void playBounceSound() {
-        if (onBounceSound != null) {
-            onBounceSound.play();
+        if (this.bounceSound != null) {
+            this.bounceSound.play();
         }
     }
 }

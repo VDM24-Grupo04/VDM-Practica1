@@ -25,7 +25,7 @@ public class VictoryScene extends Scene {
     final String BUTTON_FONT = "kimberley.ttf";
     final float BUTTON_OFFSET_Y = 25f;
 
-    private Sound winSound;
+    Sound winSound;
 
     public VictoryScene(Engine engine, int score) {
         super(engine, 400, 600, new Color(255, 255, 255));
@@ -50,7 +50,7 @@ public class VictoryScene extends Scene {
                         engine.changeScene(new GameScene(engine));
                     });
                 }
-        );
+        , "button.wav");
         addGameObject(tryAgainButton);
 
         Vector menuButtonPos = new Vector(tryAgainButtonPos);
@@ -69,17 +69,21 @@ public class VictoryScene extends Scene {
                         engine.changeScene(scene);
                     });
                 }
-        );
+        , "button.wav");
         addGameObject(menuButton);
 
-        winSound = engine.getAudio().newSound("win.wav");
-
-        // Al iniciar la escena se hace un fade out y al terminar la animacion se reproduce el sonido de victoria
         super.setFade(FADE.OUT, 0.25);
-        super.setFadeCallback(() -> {
-            if (winSound != null) {
-                winSound.play();
-            }
-        });
+
+        // Se reproduce una vez cargado el sonido
+        winSound = engine.getAudio().newSound("win.wav", true);
+
+        // Se intenta reproducir una vez realizado la animación (no está asegurado
+        // que se reproduzca si no se ha cargado el sonido)
+//        winSound = engine.getAudio().newSound("win.wav");
+//        super.setFadeCallback(() -> {
+//            if (winSound != null) {
+//                winSound.play();
+//            }
+//        });
     }
 }

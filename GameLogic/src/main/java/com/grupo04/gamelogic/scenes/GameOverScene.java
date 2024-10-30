@@ -3,6 +3,7 @@ package com.grupo04.gamelogic.scenes;
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.Scene;
+import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.gamelogic.gameobjects.Button;
 import com.grupo04.gamelogic.gameobjects.Text;
@@ -21,6 +22,8 @@ public class GameOverScene extends Scene {
     final Color BUTTON_OVER_COLOR = new Color(203, 10, 38);
     final String BUTTON_FONT = "kimberley.ttf";
     final float BUTTON_OFFSET_Y = 25f;
+
+    Sound loseSound;
 
     public GameOverScene(Engine engine) {
         super(engine, 400, 600, new Color(255, 255, 255));
@@ -42,7 +45,7 @@ public class GameOverScene extends Scene {
                         engine.changeScene(new GameScene(engine));
                     });
                 }
-        );
+        , "button.wav");
         addGameObject(tryAgainButton);
 
         Vector menuButtonPos = new Vector(tryAgainButtonPos);
@@ -61,17 +64,21 @@ public class GameOverScene extends Scene {
                         engine.changeScene(scene);
                     });
                 }
-        );
+        , "button.wav");
         addGameObject(menuButton);
 
-        // Al iniciar la escena se hace un fade out y al terminar la animacion se reproduce el sonido de derrota
-        super.setFade(FADE.OUT, 0.25);
-        /*
-        super.setFadeCallback(() -> {
-            if (winSound != null) {
-                winSound.play();
-            }
-        });
-        */
+        super.setFade(FADE.OUT, 0.0);
+
+        // Se reproduce una vez cargado el sonido
+        loseSound = engine.getAudio().newSound("lose.wav", true);
+
+        // Se intenta reproducir una vez realizado la animación (no está asegurado
+        // que se reproduzca si no se ha cargado el sonido)
+//        winSound = engine.getAudio().newSound("lose.wav");
+//        super.setFadeCallback(() -> {
+//            if (loseSound != null) {
+//                loseSound.play();
+//            }
+//        });
     }
 }

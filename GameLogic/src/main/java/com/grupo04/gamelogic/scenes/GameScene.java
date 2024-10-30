@@ -9,7 +9,7 @@ import com.grupo04.gamelogic.gameobjects.Walls;
 
 public class GameScene extends Scene {
     private final int N_COLS = 10;
-    private final int INIT_ROWS = 1;
+    private final int INIT_ROWS = 5;
     private final int BUBBLES_TO_EXPLODE = 3;
     private final int GREAT_SCORE = 10;
     private final int SMALL_SCORE = 5;

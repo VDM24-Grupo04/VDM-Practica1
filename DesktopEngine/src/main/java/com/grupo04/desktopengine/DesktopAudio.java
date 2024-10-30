@@ -14,14 +14,14 @@ public class DesktopAudio implements Audio {
     }
 
     @Override
-    public DesktopSound newSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
+    public DesktopSound newSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad) {
         if (this.soundPool.size() >= this.maxStreams) {
             throw new IllegalStateException("Maximum number of streams exceeded.");
         }
 
         if (!fileName.isEmpty() && !fileName.isBlank()) {
-            DesktopSound newSound = new DesktopSound(fileName, priority);
-            if (newSound.isValid()) {
+            DesktopSound newSound = new DesktopSound(fileName, priority, leftVolume, rightVolume, loop, rate, playOnLoad);
+            if (newSound != null) {
                 this.soundPool.put(fileName, newSound);
                 ++this.maxStreams;
                 return newSound;
@@ -31,18 +31,23 @@ public class DesktopAudio implements Audio {
     }
 
     @Override
-    public DesktopSound newSound(String fileName, int priority, int loop, float rate) {
-        return newSound(fileName, priority, 1.0f, 1.0f, loop, rate);
+    public DesktopSound newSound(String fileName, int priority, int loop, float rate, boolean playOnLoad) {
+        return newSound(fileName, priority, 1.0f, 1.0f, loop, rate, playOnLoad);
     }
 
     @Override
-    public DesktopSound newSound(String fileName, int priority) {
-        return newSound(fileName, priority, 1.0f, 1.0f, 0, 0.0f);
+    public DesktopSound newSound(String fileName, int priority, boolean playOnLoad) {
+        return newSound(fileName, priority, 1.0f, 1.0f, 0, 0.0f, playOnLoad);
+    }
+
+    @Override
+    public DesktopSound newSound(String fileName, boolean playOnLoad) {
+        return newSound(fileName, 0, playOnLoad);
     }
 
     @Override
     public DesktopSound newSound(String fileName) {
-        return newSound(fileName, 0);
+        return newSound(fileName, false);
     }
 
     @Override

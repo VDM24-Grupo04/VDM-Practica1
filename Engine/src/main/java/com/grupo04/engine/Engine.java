@@ -189,24 +189,15 @@ public abstract class Engine implements Runnable {
     public void onResume() {
         if (!this.isRunning) {
             this.isRunning = true;
-
             // Se crea un nuevo hilo y se inicia
             this.mainLoopThread = new Thread(this);
             // El hilo tiene que estar sincronizado con el de android studio
             this.mainLoopThread.start();
-
-            for (Scene scene : scenes) {
-                scene.onResume();
-            }
         }
     }
 
     public void onPause() {
         if (this.isRunning) {
-            for (Scene scene : scenes) {
-                scene.onPause();
-            }
-
             // Se pone isRunning a false y se intenta esperar a que termine el hilo
             this.isRunning = false;
             while (true) {
@@ -230,7 +221,5 @@ public abstract class Engine implements Runnable {
         return this.graphics;
     }
 
-    public Audio getAudio() {
-        return this.audio;
-    }
+    public Audio getAudio() { return this.audio; }
 }
