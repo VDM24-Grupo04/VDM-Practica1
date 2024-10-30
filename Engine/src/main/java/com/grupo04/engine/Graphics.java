@@ -38,9 +38,7 @@ public abstract class Graphics {
         this.worldHeight = worldHeight;
     }
 
-    public void setBgColor(Color bgColor) {
-        this.bgColor = bgColor;
-    }
+    public void setBgColor(Color bgColor) { this.bgColor = bgColor; }
 
     public abstract void clear(com.grupo04.engine.Color color);
 

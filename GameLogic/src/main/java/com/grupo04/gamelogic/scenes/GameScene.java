@@ -17,7 +17,8 @@ public class GameScene extends Scene {
     private final int WALL_THICKNESS = 20;
 
     public GameScene(Engine engine) {
-        super(engine, 400, 600, new Color(255, 255, 255));
+        //super(engine, 400, 600, new Color(255, 255, 255));
+        super(engine, 400, 600, "cat.jpg");
         // Al iniciar la escena se hace un fade out
         super.setFade(FADE.OUT, 0.25);
 

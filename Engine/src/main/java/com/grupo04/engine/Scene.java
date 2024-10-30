@@ -20,14 +20,21 @@ public abstract class Scene {
     protected int worldWidth;
     protected int worldHeight;
     protected Color bgColor;
+    protected Image bgImage;
 
     protected Scene(Engine engine, int worldWidth, int worldHeight, Color bgColor) {
         this(engine, worldWidth, worldHeight);
         this.bgColor = bgColor;
     }
 
+    protected Scene(Engine engine, int worldWidth, int worldHeight, Image bgImage) {
+        this(engine, worldWidth, worldHeight);
+        this.bgImage = bgImage;
+    }
+
     protected Scene(Engine engine, int worldWidth, int worldHeight, String bgImageFileName) {
         this(engine, worldWidth, worldHeight);
+        this.bgImage = this.engine.getGraphics().newImage(bgImageFileName);
     }
 
     protected Scene(Engine engine, int worldWidth, int worldHeight) {
@@ -38,7 +45,7 @@ public abstract class Scene {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
         this.engine.setWorldSize(this.worldWidth, this.worldHeight);
-        this.bgColor = bgColor;
+        this.bgColor = new Color(255, 255, 255);
 
         this.fade = FADE.NONE;
         this.fadeDuration = 0;
@@ -156,6 +163,13 @@ public abstract class Scene {
 
     public void render(Graphics graphics) {
         graphics.setBgColor(this.bgColor);
+        if (this.bgImage != null) {
+            float width = getWorldWidth();
+            float height = getWorldHeight();
+            float posX = width / 2;
+            float posY = height / 2;
+            graphics.drawImage(this.bgImage, new Vector(posX, posY), (int)(width), (int)(height));
+        }
         for (GameObject gameObject : gameObjects) {
             gameObject.render(graphics);
         }
@@ -211,9 +225,7 @@ public abstract class Scene {
         }
     }
 
-    public int getWorldWidth() {
-        return worldWidth;
-    }
+    public int getWorldWidth() { return worldWidth; }
 
     public int getWorldHeight() {
         return worldHeight;
