@@ -58,7 +58,7 @@ public class DesktopInput extends Input {
             public void mouseMoved(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
                 TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos, 0);
-                //touchEvents.add(evt);
+                touchEvents.add(evt);
             }
         });
 
