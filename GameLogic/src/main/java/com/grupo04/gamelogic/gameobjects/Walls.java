@@ -24,10 +24,6 @@ public class Walls extends GameObject {
     }
 
     @Override
-    public void init() {
-    }
-
-    @Override
     public void render(Graphics graphics) {
         super.render(graphics);
         graphics.setColor(color);

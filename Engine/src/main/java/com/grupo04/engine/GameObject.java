@@ -43,15 +43,14 @@ public abstract class GameObject {
     // Cuando se llama a esta metodo, la escena ya esta completamente creada y el gameobjet tiene una referencia a ella
     // Por lo tanto, el procedimiento de uso es utilizar la constructora para inicializar los atributos del gameobject
     // y este metodo para coger referencias a otros gameobjects de la escena y acceder al motor
-    public abstract void init();
+    public void init() {
+    }
 
     public void setAlive(boolean alive) {
         this.alive = alive;
     }
 
-    public boolean isAlive() {
-        return this.alive;
-    }
+    public boolean isAlive() { return this.alive; }
 
     public void setId(String id) {
         this.id = id;
