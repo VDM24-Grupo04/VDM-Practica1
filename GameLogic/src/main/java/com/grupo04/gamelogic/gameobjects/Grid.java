@@ -1,6 +1,6 @@
 package com.grupo04.gamelogic.gameobjects;
 
-import com.grupo04.engine.Audio;
+import com.grupo04.engine.interfaces.Audio;
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.GameObject;

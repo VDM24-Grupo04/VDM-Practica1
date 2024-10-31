@@ -1,5 +1,7 @@
 package com.grupo04.engine;
 
+import com.grupo04.engine.interfaces.Image;
+
 public abstract class Graphics {
     protected int worldWidth;
     protected int worldHeight;

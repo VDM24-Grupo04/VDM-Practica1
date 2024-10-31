@@ -1,6 +1,6 @@
 package com.grupo04.desktopengine;
 
-import com.grupo04.engine.Image;
+import com.grupo04.engine.interfaces.Image;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

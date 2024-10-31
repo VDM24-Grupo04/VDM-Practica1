@@ -1,14 +1,14 @@
 package com.grupo04.gamelogic.gameobjects;
 
-import com.grupo04.engine.Callback;
+import com.grupo04.engine.interfaces.Callback;
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.Font;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Sound;
-import com.grupo04.engine.TouchEvent;
 import com.grupo04.engine.Vector;
+import com.grupo04.engine.interfaces.ITouchEvent;
 
 import java.util.List;
 
@@ -92,16 +92,16 @@ public class Button extends GameObject {
     }
 
     @Override
-    public void handleInput(List<TouchEvent> touchEvents) {
-        for (TouchEvent touchEvent : touchEvents) {
-            if (touchEvent.getType() == TouchEvent.TouchEventType.PRESS) {
+    public void handleInput(List<ITouchEvent> touchEvents) {
+        for (ITouchEvent touchEvent : touchEvents) {
+            if (touchEvent.getType() == ITouchEvent.TouchEventType.PRESS) {
                 if (withinArea(touchEvent.getPos())) {
                     if (this.onClickSound != null) {
                         this.onClickSound.play();
                     }
                     this.onClick.call();
                 }
-            } else if (touchEvent.getType() == TouchEvent.TouchEventType.MOTION) {
+            } else if (touchEvent.getType() == ITouchEvent.TouchEventType.MOTION) {
                 if (withinArea(touchEvent.getPos())) {
                     this.bgCol = this.pointerOverCol;
                 } else {

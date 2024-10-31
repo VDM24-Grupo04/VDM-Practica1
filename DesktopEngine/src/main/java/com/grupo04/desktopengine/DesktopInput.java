@@ -4,7 +4,8 @@ import com.grupo04.engine.Engine;
 import com.grupo04.engine.Input;
 import com.grupo04.engine.TouchEvent;
 import com.grupo04.engine.Vector;
-
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -24,7 +25,7 @@ public class DesktopInput extends Input {
             public void mousePressed(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
                 TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.PRESS, pos, 0);
-                touchEvents.add(evt);
+                addEvent(evt);
             }
 
             // Se sobrescribe el evento de soltar el raton
@@ -32,7 +33,7 @@ public class DesktopInput extends Input {
             public void mouseReleased(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
                 TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.RELEASE, pos, 0);
-                touchEvents.add(evt);
+                addEvent(evt);
             }
         });
 
@@ -43,7 +44,7 @@ public class DesktopInput extends Input {
             public void mouseDragged(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
                 TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.DRAG, pos, 0);
-                touchEvents.add(evt);
+                addEvent(evt);
             }
 
             // Se sobrescribe el evento de que ha entrado el raton en el componente, en este caso en la ventana
@@ -51,7 +52,7 @@ public class DesktopInput extends Input {
             public void mouseEntered(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
                 TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos, 0);
-                touchEvents.add(evt);
+                addEvent(evt);
             }
 
             // Se sobrescribe el evento de que se ha movido el raton
@@ -59,7 +60,7 @@ public class DesktopInput extends Input {
             public void mouseMoved(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
                 TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos, 0);
-                touchEvents.add(evt);
+                addEvent(evt);
             }
         });
 
@@ -67,6 +68,26 @@ public class DesktopInput extends Input {
         window.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 System.exit(0);
+            }
+        });
+
+        // Se anade al JFrame un listener de eventos de teclado
+        window.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent keyEvent) { }
+
+            // Pulsar tecla
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+                // Si se pulsa el escape
+                if (keyEvent.getKeyCode() == 27) {
+                    System.exit(0);
+                }
+            }
+
+            // Soltar tecla
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
             }
         });
 

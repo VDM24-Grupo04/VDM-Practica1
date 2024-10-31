@@ -11,7 +11,7 @@ import android.view.SurfaceView;
 
 import com.grupo04.engine.Font;
 import com.grupo04.engine.Graphics;
-import com.grupo04.engine.Image;
+import com.grupo04.engine.interfaces.Image;
 import com.grupo04.engine.Scene;
 import com.grupo04.engine.Vector;
 

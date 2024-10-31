@@ -1,5 +1,9 @@
 package com.grupo04.engine;
 
+import com.grupo04.engine.interfaces.Callback;
+import com.grupo04.engine.interfaces.ITouchEvent;
+import com.grupo04.engine.interfaces.Image;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -108,7 +112,7 @@ public abstract class Scene {
         return handlers.get(handler);
     }
 
-    public void handleInput(List<TouchEvent> touchEvent) {
+    public void handleInput(List<ITouchEvent> touchEvent) {
         if (fadeTimer >= fadeDuration) {
             for (GameObject gameObject : gameObjects) {
                 gameObject.handleInput(touchEvent);

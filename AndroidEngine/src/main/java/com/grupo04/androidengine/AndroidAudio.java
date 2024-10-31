@@ -3,7 +3,7 @@ package com.grupo04.androidengine;
 import android.content.res.AssetManager;
 import android.media.SoundPool;
 
-import com.grupo04.engine.Audio;
+import com.grupo04.engine.interfaces.Audio;
 
 import java.util.HashMap;
 

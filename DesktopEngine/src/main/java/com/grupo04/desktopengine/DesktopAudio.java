@@ -1,6 +1,6 @@
 package com.grupo04.desktopengine;
 
-import com.grupo04.engine.Audio;
+import com.grupo04.engine.interfaces.Audio;
 
 import java.util.HashMap;
 

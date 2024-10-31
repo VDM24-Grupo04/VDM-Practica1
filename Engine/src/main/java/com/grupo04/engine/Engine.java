@@ -1,5 +1,8 @@
 package com.grupo04.engine;
 
+import com.grupo04.engine.interfaces.Audio;
+import com.grupo04.engine.interfaces.ITouchEvent;
+
 import java.util.List;
 import java.util.Stack;
 
@@ -123,9 +126,9 @@ public abstract class Engine implements Runnable {
     }
 
     private void handleInput() {
-        List<TouchEvent> sceneTouchEvents = input.getTouchEvents();
+        List<ITouchEvent> sceneTouchEvents = input.getTouchEvents();
         if (!scenes.empty()) {
-            for (TouchEvent event : sceneTouchEvents) {
+            for (ITouchEvent event : sceneTouchEvents) {
                 Vector worldPoint = graphics.screenToWorldPoint(event.getPos());
                 event.setPos(worldPoint);
             }

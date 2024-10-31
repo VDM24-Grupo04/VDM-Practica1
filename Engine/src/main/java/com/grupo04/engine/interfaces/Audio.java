@@ -1,4 +1,6 @@
-package com.grupo04.engine;
+package com.grupo04.engine.interfaces;
+
+import com.grupo04.engine.Sound;
 
 public interface Audio {
     Sound newSound(String soundName);

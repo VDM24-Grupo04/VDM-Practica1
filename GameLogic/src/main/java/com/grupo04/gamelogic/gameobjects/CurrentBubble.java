@@ -5,8 +5,8 @@ import com.grupo04.engine.Engine;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Sound;
-import com.grupo04.engine.TouchEvent;
 import com.grupo04.engine.Vector;
+import com.grupo04.engine.interfaces.ITouchEvent;
 import com.grupo04.gamelogic.BallColors;
 
 import java.util.List;
@@ -110,21 +110,21 @@ public class CurrentBubble extends GameObject {
     }
 
     @Override
-    public void handleInput(List<TouchEvent> touchEvents) {
+    public void handleInput(List<ITouchEvent> touchEvents) {
         super.handleInput(touchEvents);
 
         // Si no se ha disparado, gestiona los eventos
         if (!shot && color >= 0) {
-            for (TouchEvent event : touchEvents) {
+            for (ITouchEvent event : touchEvents) {
                 // Si no se esta manteniendo pulsado y se presiona, se empieza a mantener pulsado
-                if (!dragging && event.getType() == TouchEvent.TouchEventType.PRESS) {
+                if (!dragging && event.getType() == ITouchEvent.TouchEventType.PRESS) {
                     dragging = true;
                 }
 
                 // Si se esta manteniendo pulsado
                 if (dragging) {
                     // Si se suelta, deja de mantener pulsado y si no se lanza la pelota hacia abajo, se dispara
-                    if (event.getType() == TouchEvent.TouchEventType.RELEASE) {
+                    if (event.getType() == ITouchEvent.TouchEventType.RELEASE) {
                         dragging = false;
                         if (event.getPos().y < pos.y) {
                             playThrowSound();
@@ -133,7 +133,7 @@ public class CurrentBubble extends GameObject {
                     }
                     // Si no, si se mantiene pulsado o se presiona, cambia la direccion
                     // de la bola al lugar en el que se produce la pulsacion
-                    else if (event.getType() == TouchEvent.TouchEventType.DRAG || event.getType() == TouchEvent.TouchEventType.PRESS) {
+                    else if (event.getType() == ITouchEvent.TouchEventType.DRAG || event.getType() == ITouchEvent.TouchEventType.PRESS) {
                         dir = event.getPos().minus(pos);
                     }
                 }

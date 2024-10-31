@@ -1,5 +1,7 @@
 package com.grupo04.engine;
 
+import com.grupo04.engine.interfaces.ITouchEvent;
+
 import java.util.List;
 
 public abstract class GameObject {
@@ -13,7 +15,7 @@ public abstract class GameObject {
         this.scene = null;
     }
 
-    public void handleInput(List<TouchEvent> touchEvents) {
+    public void handleInput(List<ITouchEvent> touchEvents) {
     }
 
     public void render(Graphics graphics) {
