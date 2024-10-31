@@ -11,11 +11,10 @@ import java.io.IOException;
 public class AndroidSound extends Sound {
     private int soundId         = 0; // returned by the load function (0 if failed)
     private int streamId        = 0; // returned by the play function (0 if failed)
+    private boolean isLoaded    = false; // Para reproducir cuando cargue la escena
 
     // Referencias
     private SoundPool soundPool = null;
-
-    private boolean isLoaded    = false; // Para reproducir cuando cargue la escena
 
     AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority,
                  float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad) {
@@ -80,6 +79,9 @@ public class AndroidSound extends Sound {
                     this.soundPool.stop(this.streamId);
                     break;
                 case 2:
+                    this.soundPool.pause(this.streamId);
+                    break;
+                case 3:
                     this.soundPool.resume(this.streamId);
                     break;
                 default:
@@ -96,6 +98,9 @@ public class AndroidSound extends Sound {
                     System.err.println("Failed to stop the clip");
                     break;
                 case 2:
+                    System.err.println("Failed to pause the clip");
+                    break;
+                case 3:
                     System.err.println("Failed to resume the clip");
                     break;
             }
@@ -127,24 +132,9 @@ public class AndroidSound extends Sound {
             return false;
         }
 
-        if (this.streamId == 0) {
-            System.err.println("Sound has not been played.");
-            return false;
-        }
-
         super.setVolume(leftVolume, rightVolume);
         this.soundPool.setVolume(this.streamId, this.leftVolume, this.rightVolume);
         return true;
-    }
-
-    @Override
-    public boolean setLeftVolume(float leftVolume) {
-        return setVolume(leftVolume, this.rightVolume);
-    }
-
-    @Override
-    public boolean setRightVolume(float rightVolume) {
-        return setVolume(this.leftVolume, rightVolume);
     }
 
     @Override

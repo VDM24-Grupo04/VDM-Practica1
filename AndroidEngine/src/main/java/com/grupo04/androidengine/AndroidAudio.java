@@ -23,7 +23,7 @@ public class AndroidAudio implements Audio {
         if (!fileName.isBlank() && !fileName.isEmpty()) {
             AndroidSound newSound = new AndroidSound(this.assetManager, this.soundPool, fileName, priority, leftVolume, rightVolume, loop, rate, playOnLoad);
             if (newSound != null) {
-                sounds.put(fileName, newSound);
+                this.sounds.put(fileName, newSound);
                 return newSound;
             }
         }
@@ -50,7 +50,8 @@ public class AndroidAudio implements Audio {
         return newSound(fileName, false);
     }
 
-    private boolean perfomAudioAction(String soundName, int option) {
+    @Override
+    public boolean performAudioAction(String soundName, int option) {
         AndroidSound sound = this.sounds.get(soundName);
         if (sound == null) {
             System.err.printf("Cannot find %s in sounds.%n", soundName);
@@ -58,30 +59,14 @@ public class AndroidAudio implements Audio {
         }
 
         switch (option) {
-            case 0:
-                return sound.play();
-            case 1:
-                return sound.stop();
-            case 2:
-                return sound.resume();
+            case 0: return sound.play();
+            case 1: return sound.stop();
+            case 2: return sound.pause();
+            case 3: return sound.resume();
             default:
-                System.err.println("No action was taken with the sound");
-                return false;
+                System.err.println("No action was taken.");
+                break;
         }
-    }
-
-    @Override
-    public boolean playSound(String soundName) {
-        return perfomAudioAction(soundName, 0);
-    }
-
-    @Override
-    public boolean stopSound(String soundName) {
-        return perfomAudioAction(soundName, 1);
-    }
-
-    @Override
-    public boolean resumeSound(String soundName) {
-        return perfomAudioAction(soundName, 2);
+        return true;
     }
 }

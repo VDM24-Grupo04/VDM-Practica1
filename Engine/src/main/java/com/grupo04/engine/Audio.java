@@ -1,19 +1,23 @@
 package com.grupo04.engine;
 
 public interface Audio {
-    public Sound newSound(String soundName);
+    Sound newSound(String soundName);
 
-    public Sound newSound(String soundName, boolean playOnLoad);
+    Sound newSound(String soundName, boolean playOnLoad);
 
-    public Sound newSound(String soundName, int priority, float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad);
+    Sound newSound(String soundName, int priority, float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad);
 
-    public Sound newSound(String soundName, int priority, int loop, float rate, boolean playOnLoad);
+    Sound newSound(String soundName, int priority, int loop, float rate, boolean playOnLoad);
 
-    public Sound newSound(String soundName, int priority, boolean playOnLoad);
+    Sound newSound(String soundName, int priority, boolean playOnLoad);
 
-    public boolean playSound(String soundName);
+    boolean performAudioAction(String soundName, int option);
 
-    public boolean stopSound(String soundName);
+    private boolean playSound(String soundName) { return performAudioAction(soundName, 0); }
 
-    public boolean resumeSound(String soundName);
+    private boolean stopSound(String soundName) { return performAudioAction(soundName, 1); }
+
+    private boolean pauseSound(String soundName) { return performAudioAction(soundName, 2); }
+
+    private boolean resumeSound(String soundName) { return performAudioAction(soundName, 3); }
 }

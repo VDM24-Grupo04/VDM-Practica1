@@ -116,7 +116,6 @@ public class CurrentBubble extends GameObject {
         // Si no se ha disparado, gestiona los eventos
         if (!shot && color >= 0) {
             for (TouchEvent event : touchEvents) {
-//            System.out.println(event.getPos().x + " " + event.getPos().y);
                 // Si no se esta manteniendo pulsado y se presiona, se empieza a mantener pulsado
                 if (!dragging && event.getType() == TouchEvent.TouchEventType.PRESS) {
                     dragging = true;

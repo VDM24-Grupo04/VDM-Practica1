@@ -5,25 +5,23 @@ import com.grupo04.engine.Audio;
 import java.util.HashMap;
 
 public class DesktopAudio implements Audio {
-    private int maxStreams = 0;
-    final private HashMap<String, DesktopSound> soundPool;
+    final private int maxStreams;
+    private int currentStreams = 0;
+    final private HashMap<String, DesktopSound> sounds;
 
     public DesktopAudio(int maxStreams) {
         this.maxStreams = maxStreams;
-        this.soundPool = new HashMap<>();
+        this.sounds = new HashMap<>();
     }
 
     @Override
     public DesktopSound newSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad) {
-        if (this.soundPool.size() >= this.maxStreams) {
-            throw new IllegalStateException("Maximum number of streams exceeded.");
-        }
-
         if (!fileName.isEmpty() && !fileName.isBlank()) {
             DesktopSound newSound = new DesktopSound(fileName, priority, leftVolume, rightVolume, loop, rate, playOnLoad);
+            newSound.setAudio(this);
+            newSound.playOnLoad();
             if (newSound != null) {
-                this.soundPool.put(fileName, newSound);
-                ++this.maxStreams;
+                this.sounds.put(fileName, newSound);
                 return newSound;
             }
         }
@@ -51,38 +49,36 @@ public class DesktopAudio implements Audio {
     }
 
     @Override
-    public boolean playSound(String soundName) {
-        return performAudioAction(soundName, 0);
-    }
-
-    @Override
-    public boolean stopSound(String soundName) {
-        return performAudioAction(soundName, 1);
-    }
-
-    @Override
-    public boolean resumeSound(String soundName) {
-        return performAudioAction(soundName, 2);
-    }
-
-    private boolean performAudioAction(String soundName, int option) {
-        DesktopSound sound = this.soundPool.get(soundName);
+    public boolean performAudioAction(String soundName, int option) {
+        DesktopSound sound = this.sounds.get(soundName);
         if (sound == null) {
-            System.err.printf("Cannot find %s in soundPool.%n", soundName);
+            System.err.printf("Cannot find %s in sounds.%n", soundName);
             return false;
         }
 
         switch (option) {
-            case 0:
-                return sound.play();
-            case 1:
-                return sound.stop();
-            case 2:
-                return sound.resume();
+            case 0: return sound.play();
+            case 1: return sound.stop();
+            case 2: return sound.pause();
+            case 3: return sound.resume();
             default:
                 System.err.println("No action was taken.");
                 break;
         }
         return true;
+    }
+
+    public void decreaseCurrentStreams() {
+        if (this.currentStreams > 0) {
+            --this.currentStreams;
+        }
+    }
+
+    public void increaseCurrentStreams() {
+        ++this.currentStreams;
+    }
+
+    public boolean canPlaySound() {
+        return this.currentStreams < this.maxStreams;
     }
 }

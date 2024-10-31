@@ -23,13 +23,11 @@ public abstract class Sound {
 
     public boolean play() { return performSoundAction(0); }
 
-    public boolean stop() {
-        return performSoundAction(1);
-    }
+    public boolean stop() { return performSoundAction(1); }
 
-    public boolean resume() {
-        return performSoundAction(2);
-    }
+    public boolean pause() { return performSoundAction(2); }
+
+    public boolean resume() { return performSoundAction(3); }
 
     public void setSoundName(String fileName) {
         this.soundName = fileName;
@@ -47,13 +45,11 @@ public abstract class Sound {
     }
 
     public boolean setLeftVolume(float leftVolume) {
-        setVolume(leftVolume, this.rightVolume);
-        return true;
+        return setVolume(leftVolume, this.rightVolume);
     }
 
     public boolean setRightVolume(float rightVolume) {
-        setVolume(this.leftVolume, rightVolume);
-        return true;
+        return setVolume(this.leftVolume, rightVolume);
     }
 
     public boolean setLoop(int loop) {

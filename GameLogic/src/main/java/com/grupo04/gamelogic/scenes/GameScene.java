@@ -17,8 +17,11 @@ public class GameScene extends Scene {
     private final int WALL_THICKNESS = 20;
 
     public GameScene(Engine engine) {
+        // En caso de dejar un color de fondo
         //super(engine, 400, 600, new Color(255, 255, 255));
+        // En caso de dejar una imagen de fondo
         super(engine, 400, 600, "background.jpg");
+
         // Al iniciar la escena se hace un fade out
         super.setFade(FADE.OUT, 0.25);
 

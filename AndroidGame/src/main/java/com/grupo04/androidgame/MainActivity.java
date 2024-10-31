@@ -13,8 +13,6 @@ import com.grupo04.gamelogic.scenes.TitleScene;
 public class MainActivity extends AppCompatActivity {
     private AndroidEngine androidEngine;
 
-    private boolean audioLoaded = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

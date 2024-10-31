@@ -76,14 +76,5 @@ public class VictoryScene extends Scene {
 
         // Se reproduce una vez cargado el sonido
         winSound = engine.getAudio().newSound("win.wav", true);
-
-        // Se intenta reproducir una vez realizado la animación (no está asegurado
-        // que se reproduzca si no se ha cargado el sonido)
-//        winSound = engine.getAudio().newSound("win.wav");
-//        super.setFadeCallback(() -> {
-//            if (winSound != null) {
-//                winSound.play();
-//            }
-//        });
     }
 }

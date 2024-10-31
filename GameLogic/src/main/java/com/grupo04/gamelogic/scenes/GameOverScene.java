@@ -71,14 +71,5 @@ public class GameOverScene extends Scene {
 
         // Se reproduce una vez cargado el sonido
         loseSound = engine.getAudio().newSound("lose.wav", true);
-
-        // Se intenta reproducir una vez realizado la animación (no está asegurado
-        // que se reproduzca si no se ha cargado el sonido)
-//        winSound = engine.getAudio().newSound("lose.wav");
-//        super.setFadeCallback(() -> {
-//            if (loseSound != null) {
-//                loseSound.play();
-//            }
-//        });
     }
 }
