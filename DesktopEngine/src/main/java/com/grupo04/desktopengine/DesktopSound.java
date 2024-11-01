@@ -43,6 +43,7 @@ public class DesktopSound extends Sound {
     @Override
     protected boolean play() {
         try {
+            this.currentFrame = -1;
             for (int i = 0; i < this.clips.size(); ++i) {
                 Clip clip = this.clips.get(i);
                 if (!clip.isOpen()) {
@@ -112,10 +113,6 @@ public class DesktopSound extends Sound {
     @Override
     protected boolean resume() {
         try {
-            if (this.clips.isEmpty()) {
-                System.err.println("Sound " + this.soundName + " did not resume because it was not pause.");
-                return true;
-            }
             for (int i = 0; i < this.clips.size(); ++i) {
                 // Resumimos el sonido desde donde lo dejamos
                 // en el pause

@@ -84,7 +84,10 @@ public class DesktopAudio extends Audio {
     @Override
     public boolean resumeSound(ISound sound) {
         DesktopSound s = (DesktopSound) sound;
-        this.pausedPool.remove(s);
+        if (!this.pausedPool.remove(s)) {
+            System.err.println("Sound " + sound.getSoundName() + " did not resume because it was not paused.");
+            return true;
+        }
         Clip clip = getAvailableClip();
         if (clip == null) {
             System.err.printf("Maximum number of streams exceeded, not playing sound: %s%n", sound.getSoundName());
