@@ -1,6 +1,6 @@
 package com.grupo04.engine;
 
-import com.grupo04.engine.interfaces.Audio;
+import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ITouchEvent;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public abstract class Engine implements Runnable {
 
     // Modulos
     private Graphics graphics;
-    private Audio audio;
+    private IAudio audio;
     private Input input;
 
     // Escenas
@@ -224,5 +224,5 @@ public abstract class Engine implements Runnable {
         return this.graphics;
     }
 
-    public Audio getAudio() { return this.audio; }
+    public IAudio getAudio() { return this.audio; }
 }

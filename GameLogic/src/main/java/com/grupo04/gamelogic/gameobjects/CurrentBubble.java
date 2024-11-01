@@ -1,11 +1,11 @@
 package com.grupo04.gamelogic.gameobjects;
 
 import com.grupo04.engine.Color;
-import com.grupo04.engine.Engine;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
+import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ITouchEvent;
 import com.grupo04.gamelogic.BallColors;
 
@@ -24,8 +24,9 @@ public class CurrentBubble extends GameObject {
 
     Grid grid;
 
-    Sound throwSound = null;
-    Sound bounceSound = null;
+    IAudio audio;
+    Sound throwSound    = null;
+    Sound bounceSound   = null;
 
     public CurrentBubble(int w, int wallThickness, int headerOffset,  int r, int bubbleOffset, int rows) {
         super();
@@ -44,9 +45,9 @@ public class CurrentBubble extends GameObject {
     @Override
     public void init() {
         grid = (Grid) scene.getHandler("grid");
-        Engine engine = this.scene.getEngine();
-        this.throwSound = engine.getAudio().newSound("ballThrow.wav");
-        this.bounceSound = engine.getAudio().newSound("ballBounce.wav");
+        this.audio = this.scene.getEngine().getAudio();
+        this.throwSound = this.audio.newSound("ballThrow.wav");
+        this.bounceSound = this.audio.newSound("ballBounce.wav");
     }
 
     @Override
@@ -84,13 +85,13 @@ public class CurrentBubble extends GameObject {
             if (dir.x > 0 && (pos.x + r) >= worldWidth - wallThickness) {
                 pos.x = worldWidth - wallThickness - r;
                 dir.x *= -1;
-                playBounceSound();
+                this.audio.playSound(this.bounceSound);
             }
             // Pared izquierda
             else if (dir.x < 0 && (pos.x - r) <= wallThickness) {
                 pos.x = wallThickness + r;
                 dir.x *= -1;
-                playBounceSound();
+                this.audio.playSound(this.bounceSound);
             }
 
             // Aumenta la velocidad en vertical si es demasiado pequena
@@ -127,7 +128,7 @@ public class CurrentBubble extends GameObject {
                     if (event.getType() == ITouchEvent.TouchEventType.RELEASE) {
                         dragging = false;
                         if (event.getPos().y < pos.y) {
-                            playThrowSound();
+                            this.audio.playSound(this.throwSound);
                             shot = true;
                         }
                     }
@@ -149,17 +150,5 @@ public class CurrentBubble extends GameObject {
         color = BallColors.getRandomColor();
         dragging = false;
         shot = false;
-    }
-
-    private void playThrowSound() {
-        if (this.throwSound != null) {
-            this.throwSound.play();
-        }
-    }
-
-    private void playBounceSound() {
-        if (this.bounceSound != null) {
-            this.bounceSound.play();
-        }
     }
 }

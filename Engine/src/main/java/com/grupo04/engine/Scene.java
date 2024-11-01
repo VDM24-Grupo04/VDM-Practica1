@@ -113,8 +113,8 @@ public abstract class Scene {
     }
 
     public void handleInput(List<ITouchEvent> touchEvent) {
-        if (fadeTimer >= fadeDuration) {
-            for (GameObject gameObject : gameObjects) {
+        if (this.fadeTimer >= this.fadeDuration) {
+            for (GameObject gameObject : this.gameObjects) {
                 gameObject.handleInput(touchEvent);
             }
         }
@@ -123,42 +123,42 @@ public abstract class Scene {
 
     public void update(double deltaTime) {
         // Si ya se ha terminado de reproducir el fade, permite que se actualicen los objetos
-        if (fadeTimer >= fadeDuration) {
-            for (GameObject gameObject : gameObjects) {
+        if (this.fadeTimer >= this.fadeDuration) {
+            for (GameObject gameObject : this.gameObjects) {
                 gameObject.update(deltaTime);
             }
         }
         // Si no, actualiza el contador del fade
         else {
-            fadeTimer += deltaTime;
+            this.fadeTimer += deltaTime;
 
             // Si el fade justo se ha acabado y hay un callback al acabar, se llama
-            if (fadeTimer >= fadeDuration && onFadeEnd != null) {
-                onFadeEnd.call();
+            if (this.fadeTimer >= this.fadeDuration && this.onFadeEnd != null) {
+                this.onFadeEnd.call();
             }
         }
     }
 
     public void refresh() {
         HashSet<GameObject> deadGameObjects = new HashSet<GameObject>();
-        for (GameObject gameObject : gameObjects) {
+        for (GameObject gameObject : this.gameObjects) {
             if (!gameObject.isAlive()) {
                 deadGameObjects.add(gameObject);
             }
         }
         for (GameObject deletedGameObject : deadGameObjects) {
-            gameObjects.remove(deletedGameObject);
+            this.gameObjects.remove(deletedGameObject);
             // Elimina el objeto que corresponde con la clave y además,
             // devuelve true o false si existe o no, respectivamente
-            handlers.remove(deletedGameObject.getId());
+            this.handlers.remove(deletedGameObject.getId());
             deletedGameObject.dereference();
         }
         deadGameObjects.clear();
     }
 
     public void fixedUpdate(double fixedDeltaTime) {
-        if (fadeTimer >= fadeDuration) {
-            for (GameObject gameObject : gameObjects) {
+        if (this.fadeTimer >= this.fadeDuration) {
+            for (GameObject gameObject : this.gameObjects) {
                 gameObject.fixedUpdate(fixedDeltaTime);
             }
         }
@@ -174,7 +174,7 @@ public abstract class Scene {
             float posY = height / 2;
             graphics.drawImage(this.bgImage, new Vector(posX, posY), (int)(width), (int)(height));
         }
-        for (GameObject gameObject : gameObjects) {
+        for (GameObject gameObject : this.gameObjects) {
             gameObject.render(graphics);
         }
 
@@ -193,7 +193,7 @@ public abstract class Scene {
             if (alpha > 0) {
                 this.fadeColor.alpha = alpha;
                 graphics.setColor(this.fadeColor);
-                graphics.fillRectangle(this.fadePos, worldWidth, worldHeight);
+                graphics.fillRectangle(this.fadePos, this.worldWidth, this.worldHeight);
             }
         }
     }
@@ -206,12 +206,12 @@ public abstract class Scene {
     // Si la escena o el gameobject hijos tienen mas referencias a otros objetos, debe hacerse override
     // de este metodo y poner esas referencias tambien a null
     public void dereference() {
-        for (GameObject gameObject : gameObjects) {
+        for (GameObject gameObject : this.gameObjects) {
             gameObject.dereference();
         }
-        engine = null;
-        gameObjects.clear();
-        handlers.clear();
+        this.engine = null;
+        this.gameObjects.clear();
+        this.handlers.clear();
     }
 
     public void setAlive(boolean alive) {
@@ -224,15 +224,15 @@ public abstract class Scene {
 
     // Coger las diferentes referencias
     public void init() {
-        for (GameObject gameObject : gameObjects) {
+        for (GameObject gameObject : this.gameObjects) {
             gameObject.init();
         }
     }
 
-    public int getWorldWidth() { return worldWidth; }
+    public int getWorldWidth() { return this.worldWidth; }
 
     public int getWorldHeight() {
-        return worldHeight;
+        return this.worldHeight;
     }
 
     public Engine getEngine() {

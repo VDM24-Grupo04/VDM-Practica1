@@ -8,6 +8,7 @@ import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
+import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ITouchEvent;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class Button extends GameObject {
 
     private Vector topLeft;
 
+    private IAudio audio;
     private String onClickSoundPath;
     private Sound onClickSound;
 
@@ -87,8 +89,9 @@ public class Button extends GameObject {
     public void init() {
         Engine engine = this.scene.getEngine();
         Graphics graphics = engine.getGraphics();
+        this.audio = engine.getAudio();
         this.font = graphics.newFont(fontName, this.height / 1.7f, false, false);
-        this.onClickSound = engine.getAudio().newSound(this.onClickSoundPath);
+        this.onClickSound = this.audio.newSound(this.onClickSoundPath);
     }
 
     @Override
@@ -96,15 +99,15 @@ public class Button extends GameObject {
         for (ITouchEvent touchEvent : touchEvents) {
             if (touchEvent.getType() == ITouchEvent.TouchEventType.PRESS) {
                 if (withinArea(touchEvent.getPos())) {
-                    if (this.onClickSound != null) {
-                        this.onClickSound.play();
-                    }
+                    this.audio.playSound(this.onClickSound);
                     this.onClick.call();
                 }
             } else if (touchEvent.getType() == ITouchEvent.TouchEventType.MOTION) {
                 if (withinArea(touchEvent.getPos())) {
+                    // Se podria añadir un sonido cuando este encima
                     this.bgCol = this.pointerOverCol;
                 } else {
+                    // Se podria añadir un sonido cuando no este encima
                     this.bgCol = this.baseCol;
                 }
             }

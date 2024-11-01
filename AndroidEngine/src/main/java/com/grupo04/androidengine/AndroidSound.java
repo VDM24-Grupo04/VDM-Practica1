@@ -17,95 +17,76 @@ public class AndroidSound extends Sound {
     private SoundPool soundPool = null;
 
     AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority,
-                 float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad) {
-        super(fileName, priority, leftVolume, rightVolume, loop, rate, playOnLoad);
+                 float leftVolume, float rightVolume, int loop, float rate) {
+        super(fileName, priority, leftVolume, rightVolume, loop, rate);
 
         this.soundPool = soundPool;
 
         try {
             AssetFileDescriptor audioFile = assetManager.openFd("sounds/" + fileName);
-            if (audioFile != null) {
-                this.soundId = this.soundPool.load(audioFile, this.priority);
-                if (this.playOnLoad) {
-                    this.soundPool.setOnLoadCompleteListener((sp, sampleId, status) -> {
-                        if (this.soundId == sampleId && status == 0) {
-                            if (!this.isLoaded) {
-                                play();
-                                this.isLoaded = true;
-                            }
-                        }
-                    });
-                }
-            }
+            this.soundId = this.soundPool.load(audioFile, this.priority);
         } catch (IOException e) {
             System.err.printf("Couldn't load sound (\"%s\")%n", fileName);
         }
     }
 
-    AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, int loop, float rate, boolean playOnLoad) {
-        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, loop, rate, playOnLoad);
-    }
-
-    AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, int loop, float rate) {
-        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, loop, rate, false);
-    }
-
-    AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority, boolean playOnLoad) {
-        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, 0, 1.0f, playOnLoad);
-    }
-
-    AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority) {
-        this(assetManager, soundPool, fileName, priority, 1.0f, 1.0f, 0, 1.0f, false);
-    }
-
     @Override
-    public boolean performSoundAction(int option) {
+    protected boolean play() {
         if (this.soundPool == null) {
             System.err.println("SoundPool not initialized.");
             return false;
         }
 
-        if (option != 0 && this.streamId == 0) {
+        this.streamId = this.soundPool.play(this.soundId, this.leftVolume, this.rightVolume, this.priority, this.loop, this.rate);
+        return true;
+    }
+
+    @Override
+    protected boolean stop() {
+        if (this.soundPool == null) {
+            System.err.println("SoundPool not initialized.");
+            return false;
+        }
+
+        if (this.streamId == 0) {
             System.err.println("Sound has not been played.");
             return false;
         }
 
-        try {
-            switch (option) {
-                case 0:
-                    this.streamId = this.soundPool.play(this.soundId, this.leftVolume, this.rightVolume, this.priority, this.loop, this.rate);
-                    break;
-                case 1:
-                    this.soundPool.stop(this.streamId);
-                    break;
-                case 2:
-                    this.soundPool.pause(this.streamId);
-                    break;
-                case 3:
-                    this.soundPool.resume(this.streamId);
-                    break;
-                default:
-                    System.err.println("No action was taken with the sound");
-                    break;
-            }
-            return true;
-        } catch (Exception e) {
-            switch (option) {
-                case 0:
-                    System.err.println("Failed to play the clip");
-                    break;
-                case 1:
-                    System.err.println("Failed to stop the clip");
-                    break;
-                case 2:
-                    System.err.println("Failed to pause the clip");
-                    break;
-                case 3:
-                    System.err.println("Failed to resume the clip");
-                    break;
-            }
+        this.soundPool.stop(this.streamId);
+        return true;
+    }
+
+    @Override
+    protected boolean pause() {
+        if (this.soundPool == null) {
+            System.err.println("SoundPool not initialized.");
             return false;
         }
+
+        if (this.streamId == 0) {
+            System.err.println("Sound has not been played.");
+            return false;
+        }
+
+        this.soundPool.pause(this.streamId);
+        return true;
+    }
+
+    @Override
+    protected boolean resume() {
+        if (this.soundPool == null) {
+            System.err.println("SoundPool not initialized.");
+            return false;
+        }
+
+        if (this.streamId == 0) {
+            System.err.println("Sound has not been played.");
+            return false;
+        }
+
+        this.soundPool.resume(this.streamId);
+        return true;
     }
 
     @Override
@@ -172,4 +153,8 @@ public class AndroidSound extends Sound {
     }
 
     public int getSoundId() { return this.soundId; }
+
+    public boolean getLoaded() { return this.isLoaded; }
+
+    public void setLoaded(boolean isLoaded) { this.isLoaded = isLoaded; }
 }

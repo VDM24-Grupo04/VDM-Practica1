@@ -1,84 +1,95 @@
 package com.grupo04.desktopengine;
 
-import com.grupo04.engine.interfaces.Audio;
+import com.grupo04.engine.Sound;
+import com.grupo04.engine.Audio;
 
-import java.util.HashMap;
+import java.util.HashSet;
 
-public class DesktopAudio implements Audio {
-    final private int maxStreams;
-    private int currentStreams = 0;
-    final private HashMap<String, DesktopSound> sounds;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
+public class DesktopAudio extends Audio {
+    final private HashSet<Clip> playingPool;
+    final private HashSet<DesktopSound> pausedPool;
 
     public DesktopAudio(int maxStreams) {
-        this.maxStreams = maxStreams;
-        this.sounds = new HashMap<>();
+        this.playingPool = new HashSet<>(maxStreams);
+        for (int i = 0; i < maxStreams; i++) {
+            try {
+                Clip clip = AudioSystem.getClip();
+                this.playingPool.add(clip);
+            } catch (Exception e) {
+                System.err.println("Error getting clips: " + e.getMessage());
+            }
+        }
+        this.pausedPool = new HashSet<>();
     }
 
     @Override
     public DesktopSound newSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad) {
         if (!fileName.isEmpty() && !fileName.isBlank()) {
-            DesktopSound newSound = new DesktopSound(fileName, priority, leftVolume, rightVolume, loop, rate, playOnLoad);
-            newSound.setAudio(this);
-            newSound.playOnLoad();
-            if (newSound != null) {
-                this.sounds.put(fileName, newSound);
-                return newSound;
+            DesktopSound newSound = new DesktopSound(fileName, priority, leftVolume, rightVolume, loop, rate);
+            if (playOnLoad) {
+                Clip clip = getAvailableClip();
+                if (clip == null) {
+                    System.err.printf("Maximum number of streams exceeded, not playing sound: %s%n", fileName);
+                }
+                else {
+                    newSound.addClip(clip);
+                    newSound.play();
+                }
             }
+            return newSound;
         }
         return null;
     }
 
-    @Override
-    public DesktopSound newSound(String fileName, int priority, int loop, float rate, boolean playOnLoad) {
-        return newSound(fileName, priority, 1.0f, 1.0f, loop, rate, playOnLoad);
+    private Clip getAvailableClip() {
+        for (Clip clip : this.playingPool) {
+            if (!clip.isRunning()) {
+                return clip;
+            }
+        }
+        System.err.println("No clips available.");
+        return null;
     }
 
     @Override
-    public DesktopSound newSound(String fileName, int priority, boolean playOnLoad) {
-        return newSound(fileName, priority, 1.0f, 1.0f, 0, 0.0f, playOnLoad);
-    }
-
-    @Override
-    public DesktopSound newSound(String fileName, boolean playOnLoad) {
-        return newSound(fileName, 0, playOnLoad);
-    }
-
-    @Override
-    public DesktopSound newSound(String fileName) {
-        return newSound(fileName, false);
-    }
-
-    @Override
-    public boolean performAudioAction(String soundName, int option) {
-        DesktopSound sound = this.sounds.get(soundName);
-        if (sound == null) {
-            System.err.printf("Cannot find %s in sounds.%n", soundName);
+    public boolean playSound(Sound sound) {
+        Clip clip = getAvailableClip();
+        if (clip == null) {
+            System.err.printf("Maximum number of streams exceeded, not playing sound: %s%n", sound.getSoundName());
             return false;
         }
 
-        switch (option) {
-            case 0: return sound.play();
-            case 1: return sound.stop();
-            case 2: return sound.pause();
-            case 3: return sound.resume();
-            default:
-                System.err.println("No action was taken.");
-                break;
+        DesktopSound s = (DesktopSound) sound;
+        s.addClip(clip);
+        return s.play();
+    }
+
+    @Override
+    public boolean stopSound(Sound sound) {
+        DesktopSound s = (DesktopSound) sound;
+        return s.stop();
+    }
+
+    @Override
+    public boolean pauseSound(Sound sound) {
+        DesktopSound s = (DesktopSound) sound;
+        this.pausedPool.add(s);
+        return s.pause();
+    }
+
+    @Override
+    public boolean resumeSound(Sound sound) {
+        DesktopSound s = (DesktopSound) sound;
+        this.pausedPool.remove(s);
+        Clip clip = getAvailableClip();
+        if (clip == null) {
+            System.err.printf("Maximum number of streams exceeded, not playing sound: %s%n", sound.getSoundName());
+            return false;
         }
-        return true;
-    }
-
-    public void decreaseCurrentStreams() {
-        if (this.currentStreams > 0) {
-            --this.currentStreams;
-        }
-    }
-
-    public void increaseCurrentStreams() {
-        ++this.currentStreams;
-    }
-
-    public boolean canPlaySound() {
-        return this.currentStreams < this.maxStreams;
+        s.addClip(clip);
+        return s.resume();
     }
 }

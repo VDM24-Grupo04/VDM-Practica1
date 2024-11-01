@@ -1,6 +1,5 @@
 package com.grupo04.gamelogic.gameobjects;
 
-import com.grupo04.engine.interfaces.Audio;
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.GameObject;
@@ -9,6 +8,7 @@ import com.grupo04.engine.Pair;
 import com.grupo04.engine.Scene;
 import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
+import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.gamelogic.BallColors;
 import com.grupo04.gamelogic.scenes.GameOverScene;
 import com.grupo04.gamelogic.scenes.VictoryScene;
@@ -66,6 +66,7 @@ public class Grid extends GameObject {
     private boolean won;
 
     private Engine engine;
+    private IAudio audio;
     private Sound attachSound;
     private Sound explosionSound;
 
@@ -137,6 +138,7 @@ public class Grid extends GameObject {
         this.won = false;
 
         this.engine = null;
+        this.audio = null;
         this.attachSound = null;
         this.explosionSound = null;
     }
@@ -150,7 +152,7 @@ public class Grid extends GameObject {
     @Override
     public void init() {
         this.engine = this.scene.getEngine();
-        Audio audio = engine.getAudio();
+        this.audio = this.engine.getAudio();
         this.attachSound = audio.newSound("ballAttach.wav");
         this.explosionSound = audio.newSound("ballExplosion.wav");
     }
@@ -222,37 +224,40 @@ public class Grid extends GameObject {
             // Se hace un fade in y cuando acaba la animacion se cambia a la escena de victoria
             this.scene.setFade(Scene.FADE.IN, 0.25);
             this.scene.setFadeCallback(() -> {
-                engine.changeScene(new VictoryScene(this.engine, this.score));
+                // Se paran los sonidos por si acaso
+                this.audio.stopSound(this.attachSound);
+                this.audio.stopSound(this.explosionSound);
+                this.engine.changeScene(new VictoryScene(this.engine, this.score));
             });
         }
     }
 
     private void debugCollisions(Graphics graphics) {
-        if (currI >= 0 && currJ >= 0) {
-            Vector pos = gridToWorldPosition(currI, currJ);
+        if (this.currI >= 0 && this.currJ >= 0) {
+            Vector pos = gridToWorldPosition(this.currI, this.currJ);
             pos.x += 0.5f;
             graphics.setColor(BallColors.getColor(0));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
-            pos = gridToWorldPosition(currI, currJ - 1);
+            pos = gridToWorldPosition(this.currI, this.currJ - 1);
             pos.x += 0.5f;
             graphics.setColor(BallColors.getColor(1));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
-            pos = gridToWorldPosition(currI, currJ + 1);
+            pos = gridToWorldPosition(this.currI, this.currJ + 1);
             pos.x += 0.5f;
             graphics.setColor(BallColors.getColor(1));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
-            pos = gridToWorldPosition(currI - 1, currJ);
+            pos = gridToWorldPosition(this.currI - 1, this.currJ);
             pos.x += 0.5f;
             graphics.setColor(BallColors.getColor(1));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
-            pos = gridToWorldPosition(currI - 1, (currI % 2 == 0) ? currJ - 1 : currJ + 1);
+            pos = gridToWorldPosition(this.currI - 1, (this.currI % 2 == 0) ? this.currJ - 1 : this.currJ + 1);
             pos.x += 0.5f;
             graphics.setColor(BallColors.getColor(1));
-            graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness * 2);
+            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
         }
     }
 
@@ -285,7 +290,6 @@ public class Grid extends GameObject {
     public boolean checkCollision(Vector pos, Vector dir, int color) {
         boolean hasCollided = false;
         Pair<Integer, Integer> rowCol = worldToGridPosition(pos);
-        //System.out.println(rowCol.x + " " + rowCol.y);
 
         int i = rowCol.getFirst();
         int j = rowCol.getSecond();
@@ -297,8 +301,8 @@ public class Grid extends GameObject {
         hasCollided |= cellOccupied(pos, i, j + 1);
 
         // DEBUG DE LAS CELDAS
-        currI = i;
-        currJ = j;
+        this.currI = i;
+        this.currJ = j;
 
         // Si no ha colisionado tras comprobar las casillas contiguas, habra
         // colisionado con la pared superior si llega a la primera fila
@@ -309,8 +313,8 @@ public class Grid extends GameObject {
         // Si ha colisionado
         if (hasCollided && i >= 0 && j >= 0 && i < this.rows && j < ((i % 2 == 0) ? this.cols : this.cols - 1)) {
             // DEBUG DE LAS CELDAS
-            currI = -1;
-            currJ = -1;
+            this.currI = -1;
+            this.currJ = -1;
 
             this.totalBubbles += 1;
             ++this.colorCount[color];
@@ -320,11 +324,11 @@ public class Grid extends GameObject {
                 this.won = true;
             }
             // Condicion de derrota
-            else if (this.bubbles[i][j] != -1 && gridToWorldPosition(i, j).y + this.r > lineEnd.y) {
+            else if (this.bubbles[i][j] != -1 && gridToWorldPosition(i, j).y + this.r > this.lineEnd.y) {
                 // Se hace un fade in y cuando acaba la animacion se cambia a la escena de game over
                 this.scene.setFade(Scene.FADE.IN, 0.25);
                 this.scene.setFadeCallback(() -> {
-                    engine.changeScene(new GameOverScene(engine));
+                    this.engine.changeScene(new GameOverScene(this.engine));
                 });
             }
         }
@@ -363,7 +367,7 @@ public class Grid extends GameObject {
         int bubblesToEraseSize = bubblesToErase.size();
         // Si se supera el limite establecido, se eliminan
         if (bubblesToEraseSize >= this.bubblesToExplode) {
-            playExplosionSound();
+            this.audio.playSound(this.explosionSound);
 
             // Si el grupo es mayor que el limite establecido, la puntuacion es mayor
             if (bubblesToEraseSize >= this.bubblesToExplode + 1) {
@@ -391,7 +395,7 @@ public class Grid extends GameObject {
             // Si siguen quedando bolas, se comprueba si hay bolas que se pueden caer
             return manageFall(bubblesToFall);
         } else {
-            playAttachSound();
+            this.audio.playSound(this.attachSound);
         }
         return false;
     }
@@ -486,17 +490,5 @@ public class Grid extends GameObject {
             }
         }
         return false;
-    }
-
-    private void playAttachSound() {
-        if (this.attachSound != null) {
-            this.attachSound.play();
-        }
-    }
-
-    private void playExplosionSound() {
-        if (this.explosionSound != null) {
-            this.explosionSound.play();
-        }
     }
 }
