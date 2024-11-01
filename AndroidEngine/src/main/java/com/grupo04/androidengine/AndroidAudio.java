@@ -3,8 +3,8 @@ package com.grupo04.androidengine;
 import android.content.res.AssetManager;
 import android.media.SoundPool;
 
-import com.grupo04.engine.Sound;
 import com.grupo04.engine.Audio;
+import com.grupo04.engine.interfaces.ISound;
 
 public class AndroidAudio extends Audio {
     private AssetManager assetManager               = null;
@@ -35,25 +35,25 @@ public class AndroidAudio extends Audio {
     }
 
     @Override
-    public boolean playSound(Sound sound) {
+    public boolean playSound(ISound sound) {
         AndroidSound s = (AndroidSound) sound;
         return s.play();
     }
 
     @Override
-    public boolean stopSound(Sound sound) {
+    public boolean stopSound(ISound sound) {
         AndroidSound s = (AndroidSound) sound;
         return s.stop();
     }
 
     @Override
-    public boolean pauseSound(Sound sound) {
+    public boolean pauseSound(ISound sound) {
         AndroidSound s = (AndroidSound) sound;
         return s.pause();
     }
 
     @Override
-    public boolean resumeSound(Sound sound) {
+    public boolean resumeSound(ISound sound) {
         AndroidSound s = (AndroidSound) sound;
         return s.resume();
     }

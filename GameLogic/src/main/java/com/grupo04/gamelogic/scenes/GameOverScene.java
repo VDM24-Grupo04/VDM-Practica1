@@ -3,8 +3,8 @@ package com.grupo04.gamelogic.scenes;
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.Scene;
-import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
+import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.gamelogic.gameobjects.Button;
 import com.grupo04.gamelogic.gameobjects.Text;
 
@@ -23,7 +23,7 @@ public class GameOverScene extends Scene {
     final String BUTTON_FONT = "kimberley.ttf";
     final float BUTTON_OFFSET_Y = 25f;
 
-    Sound loseSound;
+    ISound loseSound;
 
     public GameOverScene(Engine engine) {
         super(engine, 400, 600, new Color(255, 255, 255));
@@ -70,6 +70,6 @@ public class GameOverScene extends Scene {
         super.setFade(FADE.OUT, 0.0);
 
         // Se reproduce una vez cargado el sonido
-        loseSound = engine.getAudio().newSound("lose.wav", true);
+        this.loseSound = engine.getAudio().newSound("lose.wav", true);
     }
 }

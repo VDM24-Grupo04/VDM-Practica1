@@ -6,9 +6,9 @@ import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.Pair;
 import com.grupo04.engine.Scene;
-import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.engine.interfaces.IAudio;
+import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.gamelogic.BallColors;
 import com.grupo04.gamelogic.scenes.GameOverScene;
 import com.grupo04.gamelogic.scenes.VictoryScene;
@@ -67,8 +67,8 @@ public class Grid extends GameObject {
 
     private Engine engine;
     private IAudio audio;
-    private Sound attachSound;
-    private Sound explosionSound;
+    private ISound attachSound;
+    private ISound explosionSound;
 
     // DEBUG DE LAS CELDAS
     private int currI = -1, currJ = -1;

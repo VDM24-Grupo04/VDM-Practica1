@@ -6,9 +6,9 @@ import com.grupo04.engine.Engine;
 import com.grupo04.engine.Font;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
-import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.engine.interfaces.IAudio;
+import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.engine.interfaces.ITouchEvent;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class Button extends GameObject {
 
     private IAudio audio;
     private String onClickSoundPath;
-    private Sound onClickSound;
+    private ISound onClickSound;
 
     private boolean withinArea(Vector pos) {
         return pos.x > this.topLeft.x && pos.x < this.topLeft.x + width &&

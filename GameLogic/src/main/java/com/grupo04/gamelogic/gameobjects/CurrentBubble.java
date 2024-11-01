@@ -3,9 +3,9 @@ package com.grupo04.gamelogic.gameobjects;
 import com.grupo04.engine.Color;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.Graphics;
-import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
 import com.grupo04.engine.interfaces.IAudio;
+import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.engine.interfaces.ITouchEvent;
 import com.grupo04.gamelogic.BallColors;
 
@@ -25,8 +25,8 @@ public class CurrentBubble extends GameObject {
     Grid grid;
 
     IAudio audio;
-    Sound throwSound    = null;
-    Sound bounceSound   = null;
+    ISound throwSound    = null;
+    ISound bounceSound   = null;
 
     public CurrentBubble(int w, int wallThickness, int headerOffset,  int r, int bubbleOffset, int rows) {
         super();

@@ -3,8 +3,8 @@ package com.grupo04.gamelogic.scenes;
 import com.grupo04.engine.Color;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.Scene;
-import com.grupo04.engine.Sound;
 import com.grupo04.engine.Vector;
+import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.gamelogic.gameobjects.Button;
 import com.grupo04.gamelogic.gameobjects.Text;
 
@@ -25,7 +25,7 @@ public class VictoryScene extends Scene {
     final String BUTTON_FONT = "kimberley.ttf";
     final float BUTTON_OFFSET_Y = 25f;
 
-    Sound winSound;
+    ISound winSound;
 
     public VictoryScene(Engine engine, int score) {
         super(engine, 400, 600, new Color(255, 255, 255));
@@ -75,6 +75,6 @@ public class VictoryScene extends Scene {
         super.setFade(FADE.OUT, 0.25);
 
         // Se reproduce una vez cargado el sonido
-        winSound = engine.getAudio().newSound("win.wav", true);
+        this.winSound = engine.getAudio().newSound("win.wav", true);
     }
 }

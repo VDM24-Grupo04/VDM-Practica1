@@ -2,6 +2,7 @@ package com.grupo04.desktopengine;
 
 import com.grupo04.engine.Sound;
 import com.grupo04.engine.Audio;
+import com.grupo04.engine.interfaces.ISound;
 
 import java.util.HashSet;
 
@@ -55,7 +56,7 @@ public class DesktopAudio extends Audio {
     }
 
     @Override
-    public boolean playSound(Sound sound) {
+    public boolean playSound(ISound sound) {
         Clip clip = getAvailableClip();
         if (clip == null) {
             System.err.printf("Maximum number of streams exceeded, not playing sound: %s%n", sound.getSoundName());
@@ -68,20 +69,20 @@ public class DesktopAudio extends Audio {
     }
 
     @Override
-    public boolean stopSound(Sound sound) {
+    public boolean stopSound(ISound sound) {
         DesktopSound s = (DesktopSound) sound;
         return s.stop();
     }
 
     @Override
-    public boolean pauseSound(Sound sound) {
+    public boolean pauseSound(ISound sound) {
         DesktopSound s = (DesktopSound) sound;
         this.pausedPool.add(s);
         return s.pause();
     }
 
     @Override
-    public boolean resumeSound(Sound sound) {
+    public boolean resumeSound(ISound sound) {
         DesktopSound s = (DesktopSound) sound;
         this.pausedPool.remove(s);
         Clip clip = getAvailableClip();
