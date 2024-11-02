@@ -22,6 +22,7 @@ public class ImageButton extends Button {
 
     @Override
     public void init() {
+        super.init();
         IEngine engine = this.scene.getEngine();
         IGraphics graphics = engine.getGraphics();
         this.image = graphics.newImage(imagePath);

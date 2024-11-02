@@ -15,9 +15,9 @@ import com.grupo04.gamelogic.scenes.VictoryScene;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Arrays;
 
 public class Grid extends GameObject {
     // Linea del final del nivel
@@ -87,6 +87,90 @@ public class Grid extends GameObject {
 
     // DEBUG DE LAS CELDAS
     private int currI = -1, currJ = -1;
+
+    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
+                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors, float fallingSpeed, float shrinkSpeed) {
+        super();
+        this.cols = cols;
+        this.rows = rows;
+        this.bubbles = new int[this.rows][this.cols];
+        for (int[] row : this.bubbles) {
+            Arrays.fill(row, -1);
+        }
+
+        this.r = r;
+        this.hexagonRadius = (float) Math.ceil((this.r / (Math.sqrt(3) / 2.0f)));
+        this.offsetX = wallThickness;
+        this.offsetY = wallThickness + headerOffset;
+        this.bubbleOffset = bubbleOffset;
+
+        // Se generan initRows filas iniciales
+        this.totalBubbles = 0;
+        this.colorCount = new int[ballColors.getColorCount()];
+        ballColors.reset();
+        for (int i = 0; i < initRows; i++) {
+            // En las filas impares hay una bola menos
+            int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
+            this.totalBubbles += bPerRow;
+
+            // Se generan las burbujas de la fila
+            for (int j = 0; j < bPerRow; ++j) {
+                int color = ballColors.generateRandomColor();
+                ballColors.addColor(color);
+                this.bubbles[i][j] = color;
+                this.colorCount[color]++;
+            }
+        }
+
+        int lineY = (int) (this.r * 2 * (this.rows - 1)) - this.bubbleOffset * (this.rows - 2);
+        this.lineInit = new Vector(this.offsetX, this.offsetY + lineY);
+        this.lineEnd = new Vector(width - this.offsetX, this.offsetY + lineY);
+
+        // Creamos la lista de celdas adyacentes a cada posicion
+        this.oddAdjacentCells = new ArrayList<>();
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));    // Arriba izquierda
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(-1, 1));    // Arriba derecha
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(1, 0));     // Abajo izquierda
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(1, 1));     // Abajo derecha
+
+        this.evenAdjacentCells = new ArrayList<>();
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, -1));     // Arriba izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));      // Arriba derecha
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));      // Izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));       // Derecha
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, -1));      // Abajo izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));       // Abajo derecha
+
+        this.bubblesToExplode = bubblesToExplode;
+        this.score = 0;
+        this.greatScore = greatScore;
+        this.smallScore = smallScore;
+
+        this.fallingSpeed = fallingSpeed;
+        this.fallingBubbles = new ArrayList<>();
+        this.won = false;
+
+        this.collidedBubbles = new ArrayList<>();
+        this.shrinkSpeed = shrinkSpeed;
+
+        this.engine = null;
+        this.audio = null;
+        this.attachSound = null;
+        this.explosionSound = null;
+
+        this.ballColors = ballColors;
+
+        this.scoreText = null;
+        this.showGridButton = null;
+    }
+
+    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
+                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors) {
+        this(width, wallThickness, headerOffset, r, bubbleOffset, rows, cols, initRows,
+                bubblesToExplode, greatScore, smallScore, ballColors, 350f, 60f);
+    }
 
     private void debugCollisions(IGraphics graphics) {
         if (this.currI >= 0 && this.currJ >= 0) {
@@ -362,90 +446,6 @@ public class Grid extends GameObject {
             }
         }
         return false;
-    }
-
-    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
-                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors, float fallingSpeed, float shrinkSpeed) {
-        super();
-        this.cols = cols;
-        this.rows = rows;
-        this.bubbles = new int[this.rows][this.cols];
-        for (int[] row : this.bubbles) {
-            Arrays.fill(row, -1);
-        }
-
-        this.r = r;
-        this.hexagonRadius = (float) Math.ceil((this.r / (Math.sqrt(3) / 2.0f)));
-        this.offsetX = wallThickness;
-        this.offsetY = wallThickness + headerOffset;
-        this.bubbleOffset = bubbleOffset;
-
-        // Se generan initRows filas iniciales
-        this.totalBubbles = 0;
-        this.colorCount = new int[ballColors.getColorCount()];
-        ballColors.reset();
-        for (int i = 0; i < initRows; i++) {
-            // En las filas impares hay una bola menos
-            int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
-            this.totalBubbles += bPerRow;
-
-            // Se generan las burbujas de la fila
-            for (int j = 0; j < bPerRow; ++j) {
-                int color = ballColors.generateRandomColor();
-                ballColors.addColor(color);
-                this.bubbles[i][j] = color;
-                this.colorCount[color]++;
-            }
-        }
-
-        int lineY = (int) (this.r * 2 * (this.rows - 1)) - this.bubbleOffset * (this.rows - 2);
-        this.lineInit = new Vector(this.offsetX, this.offsetY + lineY);
-        this.lineEnd = new Vector(width - this.offsetX, this.offsetY + lineY);
-
-        // Creamos la lista de celdas adyacentes a cada posicion
-        this.oddAdjacentCells = new ArrayList<>();
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));    // Arriba izquierda
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(-1, 1));    // Arriba derecha
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(1, 0));     // Abajo izquierda
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(1, 1));     // Abajo derecha
-
-        this.evenAdjacentCells = new ArrayList<>();
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, -1));     // Arriba izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));      // Arriba derecha
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));      // Izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));       // Derecha
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, -1));      // Abajo izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));       // Abajo derecha
-
-        this.bubblesToExplode = bubblesToExplode;
-        this.score = 0;
-        this.greatScore = greatScore;
-        this.smallScore = smallScore;
-
-        this.fallingSpeed = fallingSpeed;
-        this.fallingBubbles = new ArrayList<>();
-        this.won = false;
-
-        this.collidedBubbles = new ArrayList<>();
-        this.shrinkSpeed = shrinkSpeed;
-
-        this.engine = null;
-        this.audio = null;
-        this.attachSound = null;
-        this.explosionSound = null;
-
-        this.ballColors = ballColors;
-
-        this.scoreText = null;
-        this.showGridButton = null;
-    }
-
-    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
-                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors) {
-        this(width, wallThickness, headerOffset, r, bubbleOffset, rows, cols, initRows,
-                bubblesToExplode, greatScore, smallScore, ballColors, 350f, 60f);
     }
 
     @Override

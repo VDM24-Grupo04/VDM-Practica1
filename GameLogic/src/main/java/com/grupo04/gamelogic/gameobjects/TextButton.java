@@ -63,6 +63,7 @@ public class TextButton extends Button {
 
     @Override
     public void init() {
+        super.init();
         IEngine engine = this.scene.getEngine();
         IGraphics graphics = engine.getGraphics();
         this.font = graphics.newFont(fontName, this.height / 1.7f, this.bold, false);

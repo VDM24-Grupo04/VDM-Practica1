@@ -35,6 +35,7 @@ public class ImageToggleButton extends ToggleButton {
 
     @Override
     public void init() {
+        super.init();
         IEngine engine = this.scene.getEngine();
         IGraphics graphics = engine.getGraphics();
         this.uncheckedImage = graphics.newImage(uncheckedImagePath);
