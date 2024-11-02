@@ -29,12 +29,12 @@ public class GameOverScene extends Scene {
     public GameOverScene(IEngine engine) {
         super(engine, 400, 600, new Color(255, 255, 255));
 
-        Text title = new Text(new Vector(worldWidth / 2f, worldHeight / 4f), new String[]{"Game", "Over!"},
+        Text title = new Text(new Vector(this.worldWidth / 2f, this.worldHeight / 4f), new String[]{"Game", "Over!"},
                 TEXT_FONT, TEXT_SIZE, false, false, TEXT_COLOR,
                 TEXT_INDENTING, TEXT_LINE_SPACING);
         addGameObject(title);
 
-        Vector tryAgainButtonPos = new Vector(worldWidth / 2f, 4f * worldHeight / 6f);
+        Vector tryAgainButtonPos = new Vector(this.worldWidth / 2f, 4f * this.worldHeight / 6f);
         TextButton tryAgainButton = new TextButton(tryAgainButtonPos,
                 BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_ARC, BUTTON_BASE_COLOR, BUTTON_OVER_COLOR,
                 "Try again", BUTTON_FONT, BUTTON_SOUND,
@@ -43,7 +43,8 @@ public class GameOverScene extends Scene {
                     // acaba la animacion se cambia a la escena de juego
                     this.setFade(FADE.IN, 0.25);
                     this.setFadeCallback(() -> {
-                        engine.changeScene(new GameScene(engine));
+                        this.engine.getAudio().stopSound(this.loseSound);
+                        this.engine.changeScene(new GameScene(this.engine));
                     });
                 });
         addGameObject(tryAgainButton);
@@ -59,9 +60,10 @@ public class GameOverScene extends Scene {
                     // con animacion de fade out
                     this.setFade(FADE.IN, 0.25);
                     this.setFadeCallback(() -> {
-                        TitleScene scene = new TitleScene(engine);
+                        TitleScene scene = new TitleScene(this.engine);
                         scene.setFade(FADE.OUT, 0.25);
-                        engine.changeScene(scene);
+                        this.engine.getAudio().stopSound(this.loseSound);
+                        this.engine.changeScene(scene);
                     });
                 });
         addGameObject(menuButton);

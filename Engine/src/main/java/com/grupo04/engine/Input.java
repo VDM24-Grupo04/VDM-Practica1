@@ -13,8 +13,8 @@ public class Input {
     // distintos, por lo que se puede estar recibiendo input a la vez que se esta gestionando,
 
     public Input() {
-        touchEvents = new ArrayList<ITouchEvent>();
-        sceneTouchEvents = new ArrayList<ITouchEvent>();
+        this.touchEvents = new ArrayList<ITouchEvent>();
+        this.sceneTouchEvents = new ArrayList<ITouchEvent>();
     }
 
     // Obtiene los TouchEvents que le va a mandar a la escena
@@ -23,22 +23,22 @@ public class Input {
     // se asegura que la lista no pueda ser modificada por 2 hilos al mismo tiempo
     public synchronized List<ITouchEvent> getTouchEvents() {
         // Se reinicia la lista de elementos que enviar a la escena
-        sceneTouchEvents.clear();
+        this.sceneTouchEvents.clear();
 
         // Si hay eventos de input
-        if (!touchEvents.isEmpty()) {
+        if (!this.touchEvents.isEmpty()) {
             // addAll clona en aux los elementos de touchEvents
-            sceneTouchEvents.addAll(touchEvents);
+            this.sceneTouchEvents.addAll(this.touchEvents);
 
             // Limpia los eventos porque ya se los ha pasado a la escena
             this.touchEvents.clear();
         }
 
         // Devuelve los TouchEvents de la escena
-        return sceneTouchEvents;
+        return this.sceneTouchEvents;
     }
 
     protected synchronized void addEvent(ITouchEvent e) {
-        touchEvents.add(e);
+        this.touchEvents.add(e);
     }
 }

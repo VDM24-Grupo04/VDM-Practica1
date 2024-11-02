@@ -7,8 +7,7 @@ public interface ISound {
     float getRightVolume();
     int getLoop();
     float getRate();
-    boolean setPriority(int priority);
-    boolean setVolume(float leftVolume, float rightVolume);
-    boolean setLoop(int loop);
-    boolean setRate(float rate);
+    void setPriority(int priority);
+    void setVolume(float leftVolume, float rightVolume);
+    void setLoop(int loop);
 }

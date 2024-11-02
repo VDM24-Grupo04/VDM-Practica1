@@ -40,7 +40,7 @@ public abstract class GameObject {
     //
     // }
     public void dereference() {
-        scene = null;
+        this.scene = null;
     }
 
     // Cuando se llama a esta metodo, la escena ya esta completamente creada y el gameobjet tiene una referencia a ella

@@ -5,29 +5,29 @@ import com.grupo04.engine.Sound;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.SourceDataLine;
 
 public class DesktopSound extends Sound {
-    private File audioFile          = null;
-    private long currentFrame       = -1;   // Para el resume()
-    private SourceDataLine dataLine = null;
-    private AudioFormat audioFormat = null;
+    private File audioFile                      = null;
+    private long currentFrame                   = -1;   // Para el resume()
+    private AudioFormat audioFormat             = null;
+    private List<DesktopAudio.ClipEntry> clips  = null;
 
     // Referencias
-    private List<Clip> clips        = null;
+    private PriorityQueue<DesktopAudio.ClipEntry> playingPool = null;
 
-    DesktopSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
+    DesktopSound(PriorityQueue<DesktopAudio.ClipEntry> playingPool, String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         super(fileName, priority, leftVolume, rightVolume, loop, rate);
 
         this.clips = new ArrayList<>();
+        this.playingPool = playingPool;
 
         try {
             this.audioFile = new File("./assets/sounds/" + fileName);
@@ -38,14 +38,15 @@ public class DesktopSound extends Sound {
         }
     }
 
-    public void addClip(Clip clip) { this.clips.add(clip); }
+    public void addClip(DesktopAudio.ClipEntry clipEntry) { this.clips.add(clipEntry); }
 
     @Override
-    protected boolean play() {
+    protected void play() {
         try {
             this.currentFrame = -1;
             for (int i = 0; i < this.clips.size(); ++i) {
-                Clip clip = this.clips.get(i);
+                DesktopAudio.ClipEntry clipEntry = this.clips.get(i);
+                Clip clip = clipEntry.getClip();
                 if (!clip.isOpen()) {
                     clip.open(AudioSystem.getAudioInputStream(this.audioFile));
                 }
@@ -59,71 +60,98 @@ public class DesktopSound extends Sound {
                     if (event.getType() == LineEvent.Type.STOP) {
                         clip.stop();
                         clip.close();
-                        this.clips.remove(clip);
+                        this.clips.remove(clipEntry);
                     }
                 });
             }
-            return true;
         } catch (Exception e) {
             System.err.println("Failed to play the clip: " + e.getMessage());
-            return false;
         }
     }
 
     @Override
-    protected boolean stop() {
+    protected void stop() {
         try {
             if (this.clips.isEmpty()) {
-                System.err.println("Sound " + this.soundName + " did not stop because it was not played.");
-                return true;
+                System.out.println("Sound " + this.soundName + " did not stop because it was not played.");
+                return;
             }
             for (int i = 0; i < this.clips.size(); ++i) {
-                Clip clip = this.clips.get(i);
+                DesktopAudio.ClipEntry clipEntry = this.clips.get(i);
+                Clip clip = clipEntry.getClip();
                 if (clip.isRunning()) {
                     clip.stop();
                 }
                 clip.close();
             }
             this.clips.clear();
-            return true;
         } catch (Exception e) {
             System.err.println("Failed to stop the clip: " + e.getMessage());
-            return false;
         }
     }
 
     @Override
-    protected boolean pause() {
+    protected void pause() {
         try {
             if (this.clips.isEmpty()) {
-                System.err.println("Sound " + this.soundName + " did not pause because it was not played.");
-                return true;
+                System.out.println("Sound " + this.soundName + " did not stop because it has not been played.");
+                return;
             }
-            Clip lastClip = this.clips.get(this.clips.size() - 1);
+            DesktopAudio.ClipEntry clipEntry = this.clips.get(this.clips.size() - 1);
+            Clip lastClip = clipEntry.getClip();
             if (lastClip.isRunning()) {
                 this.currentFrame = lastClip.getMicrosecondPosition();
             }
-            return stop();
+            stop();
         } catch (Exception e) {
             System.err.println("Failed to pause the clip: " + e.getMessage());
-            return false;
         }
     }
 
     @Override
-    protected boolean resume() {
+    protected void resume() {
         try {
             for (int i = 0; i < this.clips.size(); ++i) {
                 // Resumimos el sonido desde donde lo dejamos
                 // en el pause
-                Clip clip = this.clips.get(i);
+                DesktopAudio.ClipEntry clipEntry = this.clips.get(i);
+                Clip clip = clipEntry.getClip();
                 clip.setMicrosecondPosition(this.currentFrame);
             }
-            return play();
+            play();
         } catch (Exception e) {
             System.err.println("Failed to resume the clip: " + e.getMessage());
-            return false;
         }
+    }
+
+    @Override
+    public void setPriority(int priority) {
+        if (this.clips.isEmpty()) {
+            System.out.println("Sound " + this.soundName + " could not set priority because it has not been played.");
+            return;
+        }
+
+        super.setPriority(priority);
+
+        // Para actualizar la prioridad de los clips del mismo sonido.
+        // Si coincide que es el mismo clip de mi lista de clips,
+        // actualiza la prioridad
+        // Si no, no hace nada
+        // Al final, se reinserta todos los clips con la prioridad
+        // modificada para el mismo sonido
+        List<DesktopAudio.ClipEntry> updatedEntries = new ArrayList<>();
+        List<DesktopAudio.ClipEntry> otherEntries = new ArrayList<>();
+        while (!this.playingPool.isEmpty()) {
+            DesktopAudio.ClipEntry clipEntry = this.playingPool.poll();
+            if (this.clips.contains(clipEntry)) {
+                clipEntry.setPriority(priority);
+                updatedEntries.add(clipEntry);
+            } else {
+                otherEntries.add(clipEntry);
+            }
+        }
+        this.playingPool.addAll(updatedEntries);
+        this.playingPool.addAll(otherEntries);
     }
 
     private boolean setClipVolume(Clip clip) {
@@ -132,13 +160,6 @@ public class DesktopSound extends Sound {
             FloatControl balanceControl = (FloatControl) clip.getControl(FloatControl.Type.BALANCE);
             float balance = this.rightVolume - this.leftVolume;
             balanceControl.setValue(balance);
-
-            // Ajuste del volumen general
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            float averageVolume = (this.leftVolume + this.rightVolume) / 2;
-            float range = gainControl.getMaximum() - gainControl.getMinimum();
-            float gain = gainControl.getMinimum() + range * averageVolume;
-            gainControl.setValue(gain);
             return true;
         } catch (Exception e) {
             System.err.println("Error setting volume: " + e.getMessage());
@@ -147,60 +168,32 @@ public class DesktopSound extends Sound {
     }
 
     @Override
-    public boolean setVolume(float leftVolume, float rightVolume) {
+    public void setVolume(float leftVolume, float rightVolume) {
+        if (this.clips.isEmpty()) {
+            System.out.println("Sound " + this.soundName + " could not set volume because it has not been played.");
+            return;
+        }
+
         super.setVolume(leftVolume, rightVolume);
         for (int i = 0; i < this.clips.size(); ++i) {
-            if (!setClipVolume(this.clips.get(i))) {
-                return false;
+            if (!setClipVolume(this.clips.get(i).getClip())) {
+                return;
             }
         }
-        return true;
     }
 
     @Override
-    public boolean setLoop(int loop) {
-        super.setLoop(loop);
-        for (int i = 0; i < this.clips.size(); ++i) {
-            this.clips.get(i).loop(this.loop);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean setRate(float rate) {
-        if (rate <= 0) {
-            System.err.println("New rate should be bigger than 0.0f");
-            return false;
+    public void setLoop(int loop) {
+        if (this.clips.isEmpty()) {
+            System.out.println("Sound " + this.soundName + " could not set loop because it has not been played.");
+            return;
         }
 
-        super.setRate(rate);
-
-        // Calcular la nueva tasa de muestreo
-        float newRate = this.audioFormat.getSampleRate() * rate;
-        // Crear un nuevo formato de audio modificando la tasa de muestreo
-        AudioFormat newFormat = new AudioFormat(
-                newRate,
-                this.audioFormat.getSampleSizeInBits(),
-                this.audioFormat.getChannels(),
-                this.audioFormat.isBigEndian(),
-                this.audioFormat.isBigEndian()
-        );
-
-        // Paramos y cerramos la linea de datos si esta abierta
-        if (this.dataLine != null && this.dataLine.isOpen()) {
-            this.dataLine.stop();
-            this.dataLine.close();
-        }
-
-        try {
-            // Creamos una nueva linea de datos con el nuevo formato
-            DataLine.Info info = new DataLine.Info(SourceDataLine.class, newFormat);
-            this.dataLine = (SourceDataLine) AudioSystem.getLine(info);
-            this.dataLine.open(newFormat);
-            return true;
-        } catch (Exception e) {
-            System.err.println("Error setting rate: " + e.getMessage());
-            return false;
+        if (this.loop != loop) {
+            super.setLoop(loop);
+            for (int i = 0; i < this.clips.size(); ++i) {
+                this.clips.get(i).getClip().loop(this.loop);
+            }
         }
     }
 }

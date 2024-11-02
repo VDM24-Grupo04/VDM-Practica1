@@ -11,7 +11,7 @@ public class DesktopEngine extends Engine {
     private Graphics2D graphics2D;
     private BufferStrategy bufferStrategy;
 
-    public DesktopEngine(JFrame window) {
+    public DesktopEngine(JFrame window, int maxStreams) {
         super();
 
         // Intentamos crear el buffer strategy con 2 buffers.
@@ -35,7 +35,7 @@ public class DesktopEngine extends Engine {
         this.graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
 
         DesktopGraphics desktopGraphics = new DesktopGraphics(window, this.graphics2D, this.bufferStrategy);
-        DesktopAudio desktopAudio = new DesktopAudio(5);
+        DesktopAudio desktopAudio = new DesktopAudio(maxStreams);
         DesktopInput desktopInput = new DesktopInput(window, this);
         this.initModules(desktopGraphics, desktopAudio, desktopInput);
     }

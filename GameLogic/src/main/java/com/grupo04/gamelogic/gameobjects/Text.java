@@ -9,7 +9,7 @@ import com.grupo04.engine.utilities.Vector;
 
 public class Text extends GameObject {
     private Vector pos;
-    private String[] texts;
+    private final String[] texts;
     private String fontName;
     private float size;
     private boolean bold;
@@ -19,9 +19,9 @@ public class Text extends GameObject {
     // Indentancion de las lineas de texto
     // Hay que tener en cuenta que inicialmente todo el texto esta alineado a la izquierda
     //  respecto a la primera linea de texto
-    private float[] indentation;
+    private final float[] indentation;
     // Espacio entre las diferentes lineas
-    private float lineSpacing;
+    private final float lineSpacing;
 
     // Ancho del primer texto
     private float firstTextWidth;
@@ -41,12 +41,12 @@ public class Text extends GameObject {
         this.fullHeight = 0f;
 
         // Se establece la fuente para poder calcular los tamanos de los textos
-        graphics.setFont(font);
+        this.graphics.setFont(this.font);
         // Guardar en arrays ancho y alto de los textos para no tener que calcularlos todo el rato
-        for (int i = 0; i < texts.length; ++i) {
-            String text = texts[i];
-            this.textsWidths[i] = graphics.getTextWidth(text);
-            this.textsHeights[i] = graphics.getTextHeight(text);
+        for (int i = 0; i < this.texts.length; ++i) {
+            String text = this.texts[i];
+            this.textsWidths[i] = this.graphics.getTextWidth(text);
+            this.textsHeights[i] = this.graphics.getTextHeight(text);
 
             this.fullHeight += this.textsHeights[i];
             if (i > 0) {
@@ -68,11 +68,11 @@ public class Text extends GameObject {
         this.color = color;
 
         this.firstTextWidth = 0f;
-        this.textsWidths = new float[texts.length];
-        this.textsHeights = new float[texts.length];
+        this.textsWidths = new float[this.texts.length];
+        this.textsHeights = new float[this.texts.length];
         this.fullHeight = 0f;
 
-        paramsToBeCalculated = true;
+        this.paramsToBeCalculated = true;
         this.graphics = null;
     }
 
@@ -111,44 +111,43 @@ public class Text extends GameObject {
 
     @Override
     public void init() {
-        IEngine engine = scene.getEngine();
+        IEngine engine = this.scene.getEngine();
         this.graphics = engine.getGraphics();
-        this.font = this.graphics.newFont(fontName, size, bold, italic);
+        this.font = this.graphics.newFont(this.fontName, this.size, this.bold, this.italic);
     }
 
     @Override
     public void render(IGraphics graphics) {
-        if (paramsToBeCalculated) {
+        if (this.paramsToBeCalculated) {
             calculateParams();
-            paramsToBeCalculated = false;
+            this.paramsToBeCalculated = false;
         }
 
-        graphics.setColor(color);
-        graphics.setFont(font);
+        graphics.setColor(this.color);
+        graphics.setFont(this.font);
 
         Vector textPos = new Vector();
         // Centrar el texto horziontalmente
-        textPos.y = pos.y + firstTextHeight / 2f - fullHeight / 2f;
-        for (int i = 0; i < texts.length; ++i) {
-            String currentText = texts[i];
-            textPos.x = pos.x;
+        textPos.y = this.pos.y + this.firstTextHeight / 2f - this.fullHeight / 2f;
+        for (int i = 0; i < this.texts.length; ++i) {
+            String currentText = this.texts[i];
+            textPos.x = this.pos.x;
             // Para textos que que no sean el de la primera linea...
             if (i > 0) {
                 // Se alinea a la izquiera con el texto de la primera linea...
-                float widthDiff = textsWidths[i] - firstTextWidth;
+                float widthDiff = this.textsWidths[i] - this.firstTextWidth;
                 textPos.x += widthDiff / 2f;
 
                 // Se coloca en otra linea con un interlineado...
-                float textHeight = textsHeights[i - 1];
-                textPos.y += textHeight + lineSpacing;
+                float textHeight = this.textsHeights[i - 1];
+                textPos.y += textHeight + this.lineSpacing;
             }
             // Se indenta si fuera necesario
-            if (i < indentation.length) {
-                textPos.x += indentation[i];
+            if (i < this.indentation.length) {
+                textPos.x += this.indentation[i];
             }
 
             graphics.drawText(currentText, textPos);
-            //graphics.drawRectangle(textPos, textsWidths[i], textsHeights[i], 2f);
         }
     }
 

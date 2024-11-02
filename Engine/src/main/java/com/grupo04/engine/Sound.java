@@ -7,8 +7,8 @@ public abstract class Sound implements ISound {
     protected int priority      = 0;
     protected float leftVolume  = 1.0f;
     protected float rightVolume = 1.0f;
-    protected int loop          = 0;
-    protected float rate        = 0.0f;
+    protected int loop          = 0;    // 0 = no loop, -1 = loop infinito
+    protected float rate        = 1.0f; // 1.0 = normal
 
     public Sound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         this.soundName = fileName;
@@ -19,10 +19,10 @@ public abstract class Sound implements ISound {
         this.rate = rate;
     }
 
-    protected abstract boolean play();
-    protected abstract boolean stop();
-    protected abstract boolean pause();
-    protected abstract boolean resume();
+    protected abstract void play();
+    protected abstract void stop();
+    protected abstract void pause();
+    protected abstract void resume();
 
     @Override
     public String getSoundName() { return this.soundName; }
@@ -38,27 +38,16 @@ public abstract class Sound implements ISound {
     public float getRate() { return this.rate; }
 
     @Override
-    public boolean setPriority(int priority) {
+    public void setPriority(int priority) {
         this.priority = priority;
-        return true;
     }
 
     @Override
-    public boolean setVolume(float leftVolume, float rightVolume) {
+    public void setVolume(float leftVolume, float rightVolume) {
         this.leftVolume = leftVolume;
         this.rightVolume = rightVolume;
-        return true;
     }
 
     @Override
-    public boolean setLoop(int loop) {
-        this.loop = loop;
-        return true;
-    }
-
-    @Override
-    public boolean setRate(float rate) {
-        this.rate = rate;
-        return true;
-    }
+    public void setLoop(int loop) { this.loop = loop; }
 }

@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(window);
 
         // Creacion del motor
-        this.androidEngine = new AndroidEngine(window, assetManager);
+        this.androidEngine = new AndroidEngine(window, assetManager, 5);
 
         // Creacion de la escena
         TitleScene testScene = new TitleScene(this.androidEngine);

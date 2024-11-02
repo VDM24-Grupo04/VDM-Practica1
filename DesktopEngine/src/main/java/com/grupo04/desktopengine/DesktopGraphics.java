@@ -18,10 +18,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 
 public class DesktopGraphics extends Graphics {
-    private JFrame window;
+    private final JFrame window;
     private Graphics2D graphics2D;
-    private BufferStrategy bufferStrategy;
-    private AffineTransform affineTransform;
+    private final BufferStrategy bufferStrategy;
+    private final AffineTransform affineTransform;
 
     public DesktopGraphics(JFrame window, Graphics2D graphics2D, BufferStrategy bufferStrategy) {
         this.window = window;
@@ -65,7 +65,7 @@ public class DesktopGraphics extends Graphics {
     @Override
     protected void prepareFrame() {
         this.graphics2D = (Graphics2D) this.bufferStrategy.getDrawGraphics();
-        this.graphics2D.setTransform(affineTransform);
+        this.graphics2D.setTransform(this.affineTransform);
 
         this.clear(this.bgColor);
 
@@ -105,7 +105,7 @@ public class DesktopGraphics extends Graphics {
         int windowWidth = this.getWindowWidthWithoutInsets();
         int windowHeight = this.getWindowHeightWithoutInsets();
 
-        Insets insets = window.getInsets();
+        Insets insets = this.window.getInsets();
 
         // Se divide el offset entre 2 porque hay que dejar el mismo espacio a ambos lados
         worldPoint.x = ((point.x - insets.left) - (windowWidth - this.worldWidth * this.scale) / 2.0f) / this.scale;
@@ -237,7 +237,7 @@ public class DesktopGraphics extends Graphics {
     @Override
     public void drawImage(IImage img, Vector position, int w, int h) {
         DesktopImage desktopImage = (DesktopImage) img;
-        graphics2D.drawImage(desktopImage.getImg(),
+        this.graphics2D.drawImage(desktopImage.getImg(),
                 (int) (position.x - w / 2f),
                 (int) (position.y - h / 2f), w, h, null);
         this.graphics2D.setPaintMode();

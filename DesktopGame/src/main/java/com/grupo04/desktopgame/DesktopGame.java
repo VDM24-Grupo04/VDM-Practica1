@@ -24,7 +24,7 @@ public class DesktopGame {
         window.setVisible(true);
 
         // Creacion del motor
-        DesktopEngine engine = new DesktopEngine(window);
+        DesktopEngine engine = new DesktopEngine(window, 5);
 
         // Creacion de la escena
         TitleScene scene = new TitleScene(engine);

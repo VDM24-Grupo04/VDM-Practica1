@@ -16,8 +16,8 @@ public abstract class Scene {
     public enum FADE {NONE, IN, OUT}
 
     private boolean alive;
-    private HashSet<GameObject> gameObjects;
-    private HashMap<String, GameObject> handlers;
+    private final HashSet<GameObject> gameObjects;
+    private final HashMap<String, GameObject> handlers;
     protected IEngine engine;
     protected int worldWidth;
     protected int worldHeight;
@@ -28,8 +28,27 @@ public abstract class Scene {
     private double fadeDuration;
     private double fadeTimer;
     private Color fadeColor;
-    private Vector fadePos;
+    private final Vector fadePos;
     private Callback onFadeEnd;
+
+    protected Scene(IEngine engine, int worldWidth, int worldHeight) {
+        this.alive = true;
+        this.gameObjects = new HashSet<GameObject>();
+        this.handlers = new HashMap<String, GameObject>();
+        this.engine = engine;
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+
+        this.engine.setWorldSize(this.worldWidth, this.worldHeight);
+        this.bgImage = null;
+
+        this.fade = FADE.NONE;
+        this.fadeDuration = 0;
+        this.fadeTimer = 0;
+        this.fadeColor = new Color(0, 0, 0, 255);
+        this.fadePos = new Vector(worldWidth / 2.0f, worldHeight / 2.0f);
+        this.onFadeEnd = null;
+    }
 
     // Color del fondo de la ventana
     protected Scene(IEngine engine, int worldWidth, int worldHeight, Color bgColor) {
@@ -62,26 +81,6 @@ public abstract class Scene {
         this.engine.getGraphics().setClearColor(bgColor);
         this.bgImage = this.engine.getGraphics().newImage(bgImageFileName);
     }
-
-    protected Scene(IEngine engine, int worldWidth, int worldHeight) {
-        this.alive = true;
-        this.gameObjects = new HashSet<GameObject>();
-        this.handlers = new HashMap<String, GameObject>();
-        this.engine = engine;
-        this.worldWidth = worldWidth;
-        this.worldHeight = worldHeight;
-
-        this.engine.setWorldSize(this.worldWidth, this.worldHeight);
-        this.bgImage = null;
-
-        this.fade = FADE.NONE;
-        this.fadeDuration = 0;
-        this.fadeTimer = 0;
-        this.fadeColor = new Color(0, 0, 0, 255);
-        fadePos = new Vector(worldWidth / 2.0f, worldHeight / 2.0f);
-        this.onFadeEnd = null;
-    }
-
 
     // Hacer que la escena comience con un fade. Se le puede pasar solo el tipo de fade,
     // solo el tipo y la duracion, o el tipo, la duracion y el color del fade.
@@ -119,12 +118,12 @@ public abstract class Scene {
     }
 
     public void addGameObject(GameObject gameObject) {
-        gameObjects.add(gameObject);
+        this.gameObjects.add(gameObject);
         gameObject.setScene(this);
     }
 
     public void addGameObject(GameObject gameObject, String handler) {
-        gameObjects.add(gameObject);
+        this.gameObjects.add(gameObject);
         if (!handlers.containsKey(handler)) {
             handlers.put(handler, gameObject);
             gameObject.setId(handler);
@@ -185,7 +184,6 @@ public abstract class Scene {
                 gameObject.fixedUpdate(fixedDeltaTime);
             }
         }
-
     }
 
     public void render(IGraphics graphics) {

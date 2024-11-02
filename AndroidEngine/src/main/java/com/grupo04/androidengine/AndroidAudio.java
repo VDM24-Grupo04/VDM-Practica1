@@ -7,8 +7,8 @@ import com.grupo04.engine.Audio;
 import com.grupo04.engine.interfaces.ISound;
 
 public class AndroidAudio extends Audio {
-    private AssetManager assetManager               = null;
-    private SoundPool soundPool                     = null;
+    private AssetManager assetManager   = null;
+    private SoundPool soundPool         = null;
 
     public AndroidAudio(AssetManager assetManager, int maxStreams) {
         this.assetManager = assetManager;
@@ -20,6 +20,7 @@ public class AndroidAudio extends Audio {
         if (!fileName.isBlank() && !fileName.isEmpty()) {
             AndroidSound sound = new AndroidSound(this.assetManager, this.soundPool, fileName, priority, leftVolume, rightVolume, loop, rate);
             if (playOnLoad) {
+                // Añade un listener cuando cargue el audio para reproducirlo a primera instancia
                 this.soundPool.setOnLoadCompleteListener((sp, sampleId, status) -> {
                     if (sound.getSoundId() == sampleId && status == 0) {
                         if (!sound.getLoaded()) {
@@ -35,26 +36,26 @@ public class AndroidAudio extends Audio {
     }
 
     @Override
-    public boolean playSound(ISound sound) {
+    public void playSound(ISound sound) {
         AndroidSound s = (AndroidSound) sound;
-        return s.play();
+        s.play();
     }
 
     @Override
-    public boolean stopSound(ISound sound) {
+    public void stopSound(ISound sound) {
         AndroidSound s = (AndroidSound) sound;
-        return s.stop();
+        s.stop();
     }
 
     @Override
-    public boolean pauseSound(ISound sound) {
+    public void pauseSound(ISound sound) {
         AndroidSound s = (AndroidSound) sound;
-        return s.pause();
+        s.pause();
     }
 
     @Override
-    public boolean resumeSound(ISound sound) {
+    public void resumeSound(ISound sound) {
         AndroidSound s = (AndroidSound) sound;
-        return s.resume();
+        s.resume();
     }
 }

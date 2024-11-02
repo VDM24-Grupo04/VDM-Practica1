@@ -33,7 +33,7 @@ public abstract class Engine implements IEngine, Runnable {
         this.graphics = null;
         this.audio = null;
         this.input = null;
-        scenes = new Stack<Scene>();
+        this.scenes = new Stack<Scene>();
     }
 
     protected void initModules(Graphics graphics, Audio audio, Input input) {
@@ -44,25 +44,25 @@ public abstract class Engine implements IEngine, Runnable {
 
     @Override
     public void popScene() {
-        if (!scenes.empty()) {
-            scenes.peek().setAlive(false);
+        if (!this.scenes.empty()) {
+            this.scenes.peek().setAlive(false);
         }
     }
 
     @Override
     public void pushScene(Scene newScene) {
-        scenes.push(newScene);
+        this.scenes.push(newScene);
         newScene.init();
     }
 
     @Override
     public void changeScene(Scene newScene) {
-        if (!scenes.empty()) {
+        if (!this.scenes.empty()) {
             // Si la escena que se quiere insertar no es la misma que la activa...
-            if (scenes.peek() != newScene) {
-                scenes.peek().setAlive(false);
+            if (this.scenes.peek() != newScene) {
+                this.scenes.peek().setAlive(false);
                 // Se inserta la nueva escena
-                scenes.push(newScene);
+                this.scenes.push(newScene);
                 newScene.init();
             }
         }
@@ -132,66 +132,66 @@ public abstract class Engine implements IEngine, Runnable {
     }
 
     private void handleInput() {
-        List<ITouchEvent> sceneTouchEvents = input.getTouchEvents();
-        if (!scenes.empty()) {
+        List<ITouchEvent> sceneTouchEvents = this.input.getTouchEvents();
+        if (!this.scenes.empty()) {
             for (ITouchEvent event : sceneTouchEvents) {
-                Vector worldPoint = graphics.screenToWorldPoint(event.getPos());
+                Vector worldPoint = this.graphics.screenToWorldPoint(event.getPos());
                 event.setPos(worldPoint);
             }
-            scenes.peek().handleInput(sceneTouchEvents);
+            this.scenes.peek().handleInput(sceneTouchEvents);
         }
     }
 
     private void fixedUpdate() {
-        if (!scenes.empty()) {
-            scenes.peek().fixedUpdate(FIXED_DELTA_TIME);
+        if (!this.scenes.empty()) {
+            this.scenes.peek().fixedUpdate(FIXED_DELTA_TIME);
         }
     }
 
     private void update(double deltaTime) {
-        if (!scenes.empty()) {
-            scenes.peek().update(deltaTime);
+        if (!this.scenes.empty()) {
+            this.scenes.peek().update(deltaTime);
         }
     }
 
     private void refresh() {
-        if (!scenes.empty()) {
-            scenes.peek().refresh();
+        if (!this.scenes.empty()) {
+            this.scenes.peek().refresh();
 
             boolean hasDeadScenes = false;
 
             Stack<Scene> aliveScenes = new Stack<Scene>();
-            while (!scenes.empty()) {
-                Scene scene = scenes.peek();
+            while (!this.scenes.empty()) {
+                Scene scene = this.scenes.peek();
                 if (!scene.isAlive()) {
                     scene.dereference();
                     hasDeadScenes = true;
                 } else {
                     aliveScenes.push(scene);
                 }
-                scenes.pop();
+                this.scenes.pop();
             }
 
             while (!aliveScenes.empty()) {
                 Scene scene = aliveScenes.peek();
-                scenes.push(scene);
+                this.scenes.push(scene);
                 aliveScenes.pop();
             }
 
             // Si se ha eliminado una escena, quiere decir que se vuelve a la anterior y, por lo tanto,
             // hay que actualizar el tam del mundo
-            if (!scenes.empty() && hasDeadScenes) {
-                Scene currentScene = scenes.peek();
+            if (!this.scenes.empty() && hasDeadScenes) {
+                Scene currentScene = this.scenes.peek();
                 this.setWorldSize(currentScene.getWorldWidth(), currentScene.getWorldHeight());
             }
         }
     }
 
     private void render() {
-        if (!scenes.empty()) {
+        if (!this.scenes.empty()) {
             // Si se quedan escenas sin renderizar y se ejecuta el renderizado de un frame,
             // se produce un flickering
-            this.graphics.render(scenes.peek());
+            this.graphics.render(this.scenes.peek());
         }
     }
 
@@ -215,8 +215,8 @@ public abstract class Engine implements IEngine, Runnable {
                     this.mainLoopThread.join();
                     this.mainLoopThread = null;
                     break;
-                } catch (InterruptedException ex) {
-                    System.err.println("Error in the render thread: " + ex.getMessage());
+                } catch (InterruptedException e) {
+                    System.err.println("Error in the render thread: " + e.getMessage());
                 }
             }
         }

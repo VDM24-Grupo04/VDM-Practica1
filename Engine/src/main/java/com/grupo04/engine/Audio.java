@@ -8,8 +8,8 @@ public abstract class Audio implements IAudio {
     public ISound newSound(String soundName, int priority, boolean playOnLoad) { return newSound(soundName, priority, 1.0f, 1.0f, 0, 1.0f, playOnLoad); }
     public ISound newSound(String soundName, boolean playOnLoad) { return newSound(soundName, 0, playOnLoad); }
     public ISound newSound(String soundName) { return newSound(soundName, false); }
-    public abstract boolean playSound(ISound sound);
-    public abstract boolean stopSound(ISound sound);
-    public abstract boolean pauseSound(ISound sound);
-    public abstract boolean resumeSound(ISound sound);
+    public abstract void playSound(ISound sound);
+    public abstract void stopSound(ISound sound);
+    public abstract void pauseSound(ISound sound);
+    public abstract void resumeSound(ISound sound);
 }

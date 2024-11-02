@@ -9,7 +9,7 @@ import com.grupo04.engine.Scene;
 import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ISound;
-import com.grupo04.gamelogic.BallColors;
+import com.grupo04.gamelogic.BubbleColors;
 import com.grupo04.gamelogic.scenes.GameOverScene;
 import com.grupo04.gamelogic.scenes.VictoryScene;
 
@@ -25,62 +25,65 @@ public class Grid extends GameObject {
     final Color lineColor = new Color(0, 0, 0, 255);
 
     // Matriz de burbujas con los colores de las mismas
-    private int[][] bubbles;
+    private final int[][] bubbles;
     // Numero de filas y columnas
-    private int rows, cols;
+    private final int rows;
+    private final int cols;
 
     // Numero total de burbujas
     // Cuando se ha llegado a 0, se gana la partida
     private int totalBubbles;
     // Indica cuantas bolas hay de cada color en el mapa
     // Se usa para saber de que color puede ser la bola que se lanza
-    private int[] colorCount;
+    private final int[] colorCount;
     // 5 puntos por cada burbuja en un grupo de 3 y 10 puntos por cada burbuja en un grupo de 10 o mas
 
     // Radio de las burbujas
     private int r;
     // Radio de los hexagonos de la cuadricula
-    private float hexagonRadius;
+    private final float hexagonRadius;
     // Offsets para las paredes y la cabecera
-    private int offsetX, offsetY;
+    private final int offsetX;
+    private final int offsetY;
     // Offsets para que no haya mucho espacio entre las bolas en y
-    private int bubbleOffset;
+    private final int bubbleOffset;
 
     // Linea del final del nivel
-    private Vector lineInit, lineEnd;
+    private final Vector lineInit;
+    private final Vector lineEnd;
 
     // Posibles posiciones adyacentes a cada bola
-    private List<Pair<Integer, Integer>> oddAdjacentCells;
-    private List<Pair<Integer, Integer>> evenAdjacentCells;
+    private final List<Pair<Integer, Integer>> oddAdjacentCells;
+    private final List<Pair<Integer, Integer>> evenAdjacentCells;
 
     // Bolas necesarias que esten juntas para que se produzca la explosion
-    private int bubblesToExplode;
+    private final int bubblesToExplode;
     // Puntuacion que se otorga si el grupo de bolas que se forma es del tamano bubblesToExplode + 1
-    private int greatScore;
+    private final int greatScore;
     // Puntuacion que se otorga si el grupo de bolas que se forma es del tamano bubblesToExplode
-    private int smallScore;
+    private final int smallScore;
     // Puntuacion actual
     private int score;
 
-    private float fallingSpeed;
-    private List<Pair<Vector, Integer>> fallingBubbles;
+    private final float fallingSpeed;
+    private final List<Pair<Vector, Integer>> fallingBubbles;
     private boolean won;
 
-    class AnimCollidedBubbles {
+    static class AnimCollidedBubbles {
         public Vector pos;
         public int color;
         public float radius;
     }
 
-    private List<AnimCollidedBubbles> collidedBubbles;
-    private float shrinkSpeed;
+    private final List<AnimCollidedBubbles> collidedBubbles;
+    private final float shrinkSpeed;
 
     private IEngine engine;
     private IAudio audio;
     private ISound attachSound;
     private ISound explosionSound;
 
-    private BallColors ballColors;
+    private final BubbleColors bubbleColors;
 
     private WeakReference<Text> scoreText;
     private WeakReference<ImageToggleButton> showGridButton;
@@ -89,7 +92,7 @@ public class Grid extends GameObject {
     private int currI = -1, currJ = -1;
 
     public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
-                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors, float fallingSpeed, float shrinkSpeed) {
+                int bubblesToExplode, int greatScore, int smallScore, BubbleColors bubbleColors, float fallingSpeed, float shrinkSpeed) {
         super();
         this.cols = cols;
         this.rows = rows;
@@ -106,8 +109,8 @@ public class Grid extends GameObject {
 
         // Se generan initRows filas iniciales
         this.totalBubbles = 0;
-        this.colorCount = new int[ballColors.getColorCount()];
-        ballColors.reset();
+        this.colorCount = new int[bubbleColors.getColorCount()];
+        bubbleColors.reset();
         for (int i = 0; i < initRows; i++) {
             // En las filas impares hay una bola menos
             int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
@@ -115,8 +118,8 @@ public class Grid extends GameObject {
 
             // Se generan las burbujas de la fila
             for (int j = 0; j < bPerRow; ++j) {
-                int color = ballColors.generateRandomColor();
-                ballColors.addColor(color);
+                int color = bubbleColors.generateRandomColor();
+                bubbleColors.addColor(color);
                 this.bubbles[i][j] = color;
                 this.colorCount[color]++;
             }
@@ -160,43 +163,43 @@ public class Grid extends GameObject {
         this.attachSound = null;
         this.explosionSound = null;
 
-        this.ballColors = ballColors;
+        this.bubbleColors = bubbleColors;
 
         this.scoreText = null;
         this.showGridButton = null;
     }
 
     public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
-                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors) {
+                int bubblesToExplode, int greatScore, int smallScore, BubbleColors bubbleColors) {
         this(width, wallThickness, headerOffset, r, bubbleOffset, rows, cols, initRows,
-                bubblesToExplode, greatScore, smallScore, ballColors, 350f, 60f);
+                bubblesToExplode, greatScore, smallScore, bubbleColors, 350f, 60f);
     }
 
     private void debugCollisions(IGraphics graphics) {
         if (this.currI >= 0 && this.currJ >= 0) {
             Vector pos = gridToWorldPosition(this.currI, this.currJ);
             pos.x += 0.5f;
-            graphics.setColor(ballColors.getColor(0));
+            graphics.setColor(this.bubbleColors.getColor(0));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
             pos = gridToWorldPosition(this.currI, this.currJ - 1);
             pos.x += 0.5f;
-            graphics.setColor(ballColors.getColor(1));
+            graphics.setColor(this.bubbleColors.getColor(1));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
             pos = gridToWorldPosition(this.currI, this.currJ + 1);
             pos.x += 0.5f;
-            graphics.setColor(ballColors.getColor(1));
+            graphics.setColor(this.bubbleColors.getColor(1));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
             pos = gridToWorldPosition(this.currI - 1, this.currJ);
             pos.x += 0.5f;
-            graphics.setColor(ballColors.getColor(1));
+            graphics.setColor(this.bubbleColors.getColor(1));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
             pos = gridToWorldPosition(this.currI - 1, (this.currI % 2 == 0) ? this.currJ - 1 : this.currJ + 1);
             pos.x += 0.5f;
-            graphics.setColor(ballColors.getColor(1));
+            graphics.setColor(this.bubbleColors.getColor(1));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
         }
     }
@@ -252,9 +255,9 @@ public class Grid extends GameObject {
         } else {
             this.score += bubblesToEraseSize * this.smallScore;
         }
-        Text scoreTextRef = scoreText.get();
+        Text scoreTextRef = this.scoreText.get();
         if (scoreTextRef != null) {
-            scoreTextRef.setTextLine("Score: " + Integer.toString(this.score));
+            scoreTextRef.setTextLine("Score: " + this.score);
         }
     }
 
@@ -295,7 +298,10 @@ public class Grid extends GameObject {
                 this.won = true;
             }
             // Condicion de derrota
-            else if (this.bubbles[i][j] < 0 && gridToWorldPosition(i, j).y + this.r > this.lineEnd.y) {
+            else if (this.bubbles[i][j] >= 0 && gridToWorldPosition(i, j).y + this.r > this.lineEnd.y) {
+                this.audio.stopSound(this.attachSound);
+                this.audio.stopSound(this.explosionSound);
+
                 // Se hace un fade in y cuando acaba la animacion se cambia a la escena de game over
                 this.scene.setFade(Scene.FADE.IN, 0.25);
                 this.scene.setFadeCallback(() -> {
@@ -328,7 +334,7 @@ public class Grid extends GameObject {
             // Se actualiza el numero de bolas que hay de cada color
             this.colorCount[color] -= bubblesToEraseSize;
             if (this.colorCount[color] <= 0) {
-                ballColors.removeColor(color);
+                this.bubbleColors.removeColor(color);
             }
             // Se actualiza el mapa
             for (Pair<Integer, Integer> bubble : bubblesToErase) {
@@ -378,7 +384,7 @@ public class Grid extends GameObject {
                         Vector worldPos = gridToWorldPosition(wX, wY);
                         int color = this.bubbles[wX][wY];
                         if (--this.colorCount[color] <= 0) {
-                            ballColors.removeColor(color);
+                            this.bubbleColors.removeColor(color);
                         }
                         this.fallingBubbles.add(new Pair<>(worldPos, color));
                         // Se quitan del grid
@@ -452,8 +458,8 @@ public class Grid extends GameObject {
     public void init() {
         this.engine = this.scene.getEngine();
         this.audio = this.engine.getAudio();
-        this.attachSound = audio.newSound("ballAttach.wav");
-        this.explosionSound = audio.newSound("ballExplosion.wav");
+        this.attachSound = this.audio.newSound("ballAttach.wav");
+        this.explosionSound = this.audio.newSound("ballExplosion.wav");
         this.scoreText = new WeakReference<Text>((Text) this.scene.getHandler("scoreText"));
         this.showGridButton = new WeakReference<ImageToggleButton>((ImageToggleButton) this.scene.getHandler("showGridButton"));
     }
@@ -467,8 +473,7 @@ public class Grid extends GameObject {
             int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
             for (int j = 0; j < bPerRow; ++j) {
                 if (this.bubbles[i][j] >= 0) {
-                    Vector pos = gridToWorldPosition(i, j);
-                    graphics.setColor(ballColors.getColor(this.bubbles[i][j]));
+                    graphics.setColor(this.bubbleColors.getColor(this.bubbles[i][j]));
                     graphics.fillCircle(gridToWorldPosition(i, j), this.r);
                 }
             }
@@ -476,7 +481,7 @@ public class Grid extends GameObject {
 
         // Recorre la matriz pintando los hexagonos (hay que recorrerla de nuevo
         // para que los hexagonos se pinten por encima de todas las bolas)
-        ImageToggleButton showGridButtonRef = showGridButton.get();
+        ImageToggleButton showGridButtonRef = this.showGridButton.get();
         if (showGridButtonRef != null) {
             if (showGridButtonRef.isCheck()) {
                 for (int i = 0; i < this.rows; i++) {
@@ -484,8 +489,8 @@ public class Grid extends GameObject {
                     for (int j = 0; j < bPerRow; ++j) {
                         Vector pos = gridToWorldPosition(i, j);
                         pos.x += 0.5f;
-                        graphics.setColor(lineColor);
-                        graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness);
+                        graphics.setColor(this.lineColor);
+                        graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness);
                     }
                 }
             }
@@ -495,13 +500,13 @@ public class Grid extends GameObject {
         debugCollisions(graphics);
 
         // Pinta la linea del limite inferior
-        graphics.setColor(lineColor);
-        graphics.drawLine(lineInit, lineEnd, lineThickness);
+        graphics.setColor(this.lineColor);
+        graphics.drawLine(this.lineInit, this.lineEnd, this.lineThickness);
 
         // Recorre las bolas que han colisionado y las pintas
         if (!this.collidedBubbles.isEmpty()) {
             for (AnimCollidedBubbles anim : this.collidedBubbles) {
-                graphics.setColor(ballColors.getColor(anim.color));
+                graphics.setColor(this.bubbleColors.getColor(anim.color));
                 graphics.fillCircle(anim.pos, anim.radius);
             }
         }
@@ -509,7 +514,7 @@ public class Grid extends GameObject {
         // Recorre las bolas caidas y las pinta
         if (!this.fallingBubbles.isEmpty()) {
             for (Pair<Vector, Integer> bubble : this.fallingBubbles) {
-                graphics.setColor(ballColors.getColor(bubble.getSecond()));
+                graphics.setColor(this.bubbleColors.getColor(bubble.getSecond()));
                 Vector bPos = bubble.getFirst();
                 graphics.fillCircle(bPos, this.r);
             }
@@ -525,7 +530,7 @@ public class Grid extends GameObject {
             Iterator<AnimCollidedBubbles> iterator = this.collidedBubbles.iterator();
             while (iterator.hasNext()) {
                 AnimCollidedBubbles anim = iterator.next();
-                anim.radius -= shrinkSpeed * (float) deltaTime;
+                anim.radius -= this.shrinkSpeed * (float) deltaTime;
                 // Si el tamano de bola se se hizo demasiado pequeno, se elimina
                 if (anim.radius <= 0f) {
                     iterator.remove();
@@ -548,13 +553,12 @@ public class Grid extends GameObject {
             }
         } else if (this.won) {
             this.won = false;
+            this.audio.stopSound(this.attachSound);
+            this.audio.stopSound(this.explosionSound);
 
             // Se hace un fade in y cuando acaba la animacion se cambia a la escena de victoria
             this.scene.setFade(Scene.FADE.IN, 0.25);
             this.scene.setFadeCallback(() -> {
-                // Se paran los sonidos por si acaso
-                this.audio.stopSound(this.attachSound);
-                this.audio.stopSound(this.explosionSound);
                 this.engine.changeScene(new VictoryScene(this.engine, this.score));
             });
         }

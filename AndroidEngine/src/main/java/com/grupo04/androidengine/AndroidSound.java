@@ -31,125 +31,104 @@ public class AndroidSound extends Sound {
     }
 
     @Override
-    protected boolean play() {
+    protected void play() {
         if (this.soundPool == null) {
             System.err.println("SoundPool not initialized.");
-            return false;
+            return;
         }
 
         this.streamId = this.soundPool.play(this.soundId, this.leftVolume, this.rightVolume, this.priority, this.loop, this.rate);
-        return true;
     }
 
     @Override
-    protected boolean stop() {
+    protected void stop() {
         if (this.soundPool == null) {
             System.err.println("SoundPool not initialized.");
-            return false;
+            return;
         }
 
         if (this.streamId == 0) {
-            System.err.println("Sound has not been played.");
-            return false;
+            System.out.println("Sound " + this.soundName + " did not stop because it has not been played.");
+            return;
         }
 
         this.soundPool.stop(this.streamId);
-        return true;
     }
 
     @Override
-    protected boolean pause() {
+    protected void pause() {
         if (this.soundPool == null) {
             System.err.println("SoundPool not initialized.");
-            return false;
+            return;
         }
 
         if (this.streamId == 0) {
-            System.err.println("Sound has not been played.");
-            return false;
+            System.out.println("Sound " + this.soundName + " did not pause because it has not been played.");
+            return;
         }
 
         this.soundPool.pause(this.streamId);
-        return true;
     }
 
     @Override
-    protected boolean resume() {
+    protected void resume() {
         if (this.soundPool == null) {
             System.err.println("SoundPool not initialized.");
-            return false;
+            return;
         }
 
         if (this.streamId == 0) {
-            System.err.println("Sound has not been played.");
-            return false;
+            System.out.println("Sound " + this.soundName + " did not resume because it has not been played.");
+            return;
         }
 
         this.soundPool.resume(this.streamId);
-        return true;
     }
 
     @Override
-    public boolean setPriority(int priority) {
+    public void setPriority(int priority) {
         if (this.soundPool == null) {
             System.err.println("SoundPool not initialized");
-            return false;
+            return;
         }
 
         if (this.streamId == 0) {
-            System.err.println("Sound has not been played");
-            return false;
+            System.out.println("Sound " + this.soundName + " could not set priority because it has not been played.");
+            return;
         }
 
         super.setPriority(priority);
         this.soundPool.setPriority(this.streamId, this.priority);
-        return true;
     }
 
     @Override
-    public boolean setVolume(float leftVolume, float rightVolume) {
+    public void setVolume(float leftVolume, float rightVolume) {
         if (this.soundPool == null) {
             System.err.println("SoundPool not initialized");
-            return false;
+            return;
         }
 
         super.setVolume(leftVolume, rightVolume);
         this.soundPool.setVolume(this.streamId, this.leftVolume, this.rightVolume);
-        return true;
     }
 
     @Override
-    public boolean setLoop(int loop) {
+    public void setLoop(int loop) {
         if (this.soundPool == null) {
             System.err.println("SoundPool not initialized.");
-            return false;
+            return;
         }
 
         if (this.streamId == 0) {
-            System.err.println("Sound has not been played.");
-            return false;
+            System.out.println("Sound " + this.soundName + " could not set loop because it has not been played.");
+            return;
         }
 
-        super.setLoop(loop);
-        this.soundPool.setLoop(this.streamId, this.loop);
-        return true;
-    }
-
-    @Override
-    public boolean setRate(float rate) {
-        if (this.soundPool == null) {
-            System.err.println("SoundPool not initialized.");
-            return false;
+        if (this.loop != loop) {
+            super.setLoop(loop);
+            this.soundPool.setLoop(this.streamId, this.loop);
+            play();
         }
-
-        if (this.streamId == 0) {
-            System.err.println("Sound has not been played.");
-            return false;
-        }
-
-        super.setRate(rate);
-        this.soundPool.setRate(this.streamId, this.rate);
-        return true;
     }
 
     public int getSoundId() { return this.soundId; }

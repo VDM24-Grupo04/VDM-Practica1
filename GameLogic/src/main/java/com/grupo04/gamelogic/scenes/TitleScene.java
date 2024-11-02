@@ -25,12 +25,12 @@ public class TitleScene extends Scene {
     public TitleScene(IEngine engine) {
         super(engine, 400, 600, new Color(255, 255, 255));
 
-        Text title = new Text(new Vector(worldWidth / 2f, 2f * worldHeight / 7f), new String[]{"Puzzle", "Booble"},
+        Text title = new Text(new Vector(this.worldWidth / 2f, 2f * this.worldHeight / 7f), new String[]{"Puzzle", "Booble"},
                 TEXT_FONT, TEXT_SIZE, false, false, TEXT_COLOR,
                 TEXT_INDENTING, TEXT_LINE_SPACING);
         addGameObject(title);
 
-        TextButton playButton = new TextButton(new Vector(worldWidth / 2f, 3f * worldHeight / 5f),
+        TextButton playButton = new TextButton(new Vector(this.worldWidth / 2f, 3f * this.worldHeight / 5f),
                 BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_ARC, BUTTON_BASE_COLOR, BUTTON_OVER_COLOR,
                 "Play", BUTTON_FONT, BUTTON_SOUND,
                 () -> {
@@ -38,7 +38,7 @@ public class TitleScene extends Scene {
                     // acaba la animacion se cambia a la escena de juego
                     this.setFade(FADE.IN, 0.25);
                     this.setFadeCallback(() -> {
-                        engine.changeScene(new GameScene(engine));
+                        this.engine.changeScene(new GameScene(this.engine));
                     });
                 });
         addGameObject(playButton);

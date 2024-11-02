@@ -6,11 +6,11 @@ import android.view.SurfaceView;
 import com.grupo04.engine.Engine;
 
 public class AndroidEngine extends Engine {
-    public AndroidEngine(SurfaceView window, AssetManager assetManager) {
+    public AndroidEngine(SurfaceView window, AssetManager assetManager, int maxStreams) {
         super();
 
         AndroidGraphics androidGraphics = new AndroidGraphics(window, assetManager);
-        AndroidAudio androidAudio = new AndroidAudio(assetManager, 5);
+        AndroidAudio androidAudio = new AndroidAudio(assetManager, maxStreams);
         AndroidInput androidInput = new AndroidInput(window, this);
         this.initModules(androidGraphics, androidAudio, androidInput);
     }

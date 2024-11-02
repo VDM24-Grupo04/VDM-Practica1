@@ -4,22 +4,39 @@ import com.grupo04.engine.Audio;
 import com.grupo04.engine.interfaces.ISound;
 
 import java.util.HashSet;
+import java.util.PriorityQueue;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class DesktopAudio extends Audio {
-    final private HashSet<Clip> playingPool;
+    // Para gestionar la prioridad como el SoundPool de Android
+    public static class ClipEntry {
+        private Clip clip;
+        private int priority;
+
+        ClipEntry(Clip clip, int priority) {
+            this.clip = clip;
+            this.priority = priority;
+        }
+        public Clip getClip() { return this.clip; }
+        public int getPriority() { return this.priority; }
+        public void setClip(Clip clip) { this.clip = clip; }
+        public void setPriority(int priority) { this.priority = priority; }
+    }
+
+    final private PriorityQueue<ClipEntry> playingPool;
     final private HashSet<DesktopSound> pausedPool;
 
     public DesktopAudio(int maxStreams) {
-        this.playingPool = new HashSet<>(maxStreams);
+        // La condición de prioridad es el valor del entero de priority en ClipEntry
+        this.playingPool = new PriorityQueue<>(maxStreams, (c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority()));
         for (int i = 0; i < maxStreams; i++) {
             try {
                 Clip clip = AudioSystem.getClip();
-                this.playingPool.add(clip);
+                this.playingPool.add(new ClipEntry(clip, 0));
             } catch (Exception e) {
-                System.err.println("Error getting clips: " + e.getMessage());
+                System.err.println("Error getting clip: " + e.getMessage());
             }
         }
         this.pausedPool = new HashSet<>();
@@ -28,14 +45,14 @@ public class DesktopAudio extends Audio {
     @Override
     public DesktopSound newSound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate, boolean playOnLoad) {
         if (!fileName.isEmpty() && !fileName.isBlank()) {
-            DesktopSound newSound = new DesktopSound(fileName, priority, leftVolume, rightVolume, loop, rate);
+            DesktopSound newSound = new DesktopSound(this.playingPool, fileName, priority, leftVolume, rightVolume, loop, rate);
             if (playOnLoad) {
-                Clip clip = getAvailableClip();
-                if (clip == null) {
-                    System.err.printf("Maximum number of streams exceeded, not playing sound: %s%n", fileName);
+                ClipEntry clipEntry = getAvailableClip();
+                if (clipEntry == null) {
+                    System.out.printf("Maximum number of streams exceeded, not playing sound: %s%n", fileName);
                 }
                 else {
-                    newSound.addClip(clip);
+                    newSound.addClip(clipEntry);
                     newSound.play();
                 }
             }
@@ -44,55 +61,55 @@ public class DesktopAudio extends Audio {
         return null;
     }
 
-    private Clip getAvailableClip() {
-        for (Clip clip : this.playingPool) {
-            if (!clip.isRunning()) {
-                return clip;
+    private ClipEntry getAvailableClip() {
+        for (ClipEntry clipEntry : this.playingPool) {
+            if (!clipEntry.getClip().isRunning()) {
+                return clipEntry;
             }
         }
-        System.err.println("No clips available.");
+        System.out.println("No clips available.");
         return null;
     }
 
     @Override
-    public boolean playSound(ISound sound) {
-        Clip clip = getAvailableClip();
-        if (clip == null) {
-            System.err.printf("Maximum number of streams exceeded, not playing sound: %s%n", sound.getSoundName());
-            return false;
+    public void playSound(ISound sound) {
+        ClipEntry clipEntry = getAvailableClip();
+        if (clipEntry == null) {
+            System.out.printf("Maximum number of streams exceeded, not playing sound: %s%n", sound.getSoundName());
+            return;
         }
 
         DesktopSound s = (DesktopSound) sound;
-        s.addClip(clip);
-        return s.play();
+        s.addClip(clipEntry);
+        s.play();
     }
 
     @Override
-    public boolean stopSound(ISound sound) {
+    public void stopSound(ISound sound) {
         DesktopSound s = (DesktopSound) sound;
-        return s.stop();
+        s.stop();
     }
 
     @Override
-    public boolean pauseSound(ISound sound) {
+    public void pauseSound(ISound sound) {
         DesktopSound s = (DesktopSound) sound;
         this.pausedPool.add(s);
-        return s.pause();
+        s.pause();
     }
 
     @Override
-    public boolean resumeSound(ISound sound) {
+    public void resumeSound(ISound sound) {
         DesktopSound s = (DesktopSound) sound;
         if (!this.pausedPool.remove(s)) {
-            System.err.println("Sound " + sound.getSoundName() + " did not resume because it was not paused.");
-            return true;
+            System.out.println("Sound " + sound.getSoundName() + " did not resume because it has not been played.");
+            return;
         }
-        Clip clip = getAvailableClip();
-        if (clip == null) {
-            System.err.printf("Maximum number of streams exceeded, not playing sound: %s%n", sound.getSoundName());
-            return false;
+        ClipEntry clipEntry = getAvailableClip();
+        if (clipEntry == null) {
+            System.out.printf("Maximum number of streams exceeded, not playing sound: %s%n", sound.getSoundName());
+            return;
         }
-        s.addClip(clip);
-        return s.resume();
+        s.addClip(clipEntry);
+        s.resume();
     }
 }

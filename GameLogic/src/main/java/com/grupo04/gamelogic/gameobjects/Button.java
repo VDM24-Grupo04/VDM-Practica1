@@ -12,12 +12,12 @@ import java.util.List;
 
 public abstract class Button extends GameObject {
     private IAudio audio;
-    private String onClickSoundPath;
+    private final String onClickSoundPath;
     private ISound onClickSound;
 
     private Callback onClick;
 
-    private Vector topLeft;
+    private final Vector topLeft;
 
     protected Vector pos;
     protected float width, height;
@@ -27,6 +27,8 @@ public abstract class Button extends GameObject {
             this.audio.playSound(this.onClickSound);
         }
     }
+
+    public ISound getOnClickSound() { return this.onClickSound; }
 
     protected void setOnClick(Callback callback) {
         this.onClick = callback;

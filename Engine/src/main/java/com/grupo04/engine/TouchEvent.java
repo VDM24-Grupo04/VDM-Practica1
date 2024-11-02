@@ -4,7 +4,7 @@ import com.grupo04.engine.interfaces.ITouchEvent;
 import com.grupo04.engine.utilities.Vector;
 
 public class TouchEvent implements ITouchEvent {
-    private TouchEventType type;        // Tipo del evento producido
+    private final TouchEventType type;  // Tipo del evento producido
     private Vector pos;                 // Posicion (sin escalar) en la que se ha producido el evento
     // private int finger;
 

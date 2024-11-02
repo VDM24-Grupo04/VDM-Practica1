@@ -14,8 +14,8 @@ public class DesktopImage implements IImage {
     DesktopImage(String fileName) {
         try {
             this.img = ImageIO.read(new File("./assets/images/" + fileName));
-        } catch (IOException ex) {
-            System.err.println("Error in the image with name " + fileName + ": " + ex.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error in the image with name " + fileName + ": " + e.getMessage());
         }
     }
 

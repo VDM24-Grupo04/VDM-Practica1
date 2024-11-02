@@ -8,16 +8,16 @@ import com.grupo04.engine.utilities.Vector;
 public class ImageToggleButton extends ToggleButton {
     private IImage image;
     private IImage uncheckedImage;
-    private String uncheckedImagePath;
+    private final String uncheckedImagePath;
     private IImage checkedImage;
-    private String checkedImagePath;
+    private final String checkedImagePath;
 
     @Override
     protected void toggle() {
         super.toggle();
-        this.image = uncheckedImage;
-        if (checked) {
-            this.image = checkedImage;
+        this.image = this.uncheckedImage;
+        if (this.checked) {
+            this.image = this.checkedImage;
         }
     }
 

@@ -5,7 +5,7 @@ import com.grupo04.engine.utilities.Color;
 import java.util.HashMap;
 import java.util.Random;
 
-public class BallColors {
+public class BubbleColors {
     private static final Color[] colors = {
             new Color(245, 75, 100),    // Rojo
             new Color(105, 245, 85),    // Verde

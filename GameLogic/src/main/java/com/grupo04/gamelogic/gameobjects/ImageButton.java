@@ -8,7 +8,7 @@ import com.grupo04.engine.utilities.Vector;
 
 public class ImageButton extends Button {
     private IImage image;
-    private String imagePath;
+    private final String imagePath;
 
     public ImageButton(Vector pos, float width, float height, String imagePath, String onClickSoundPath, Callback onClick) {
         super(pos, width, height, onClickSoundPath, onClick);
@@ -23,6 +23,7 @@ public class ImageButton extends Button {
     @Override
     public void init() {
         super.init();
+        
         IEngine engine = this.scene.getEngine();
         IGraphics graphics = engine.getGraphics();
         this.image = graphics.newImage(imagePath);

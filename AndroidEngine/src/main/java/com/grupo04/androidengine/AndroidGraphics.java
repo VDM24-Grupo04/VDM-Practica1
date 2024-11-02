@@ -16,11 +16,11 @@ import com.grupo04.engine.Scene;
 import com.grupo04.engine.utilities.Vector;
 
 public class AndroidGraphics extends Graphics {
-    private SurfaceView window;
-    private SurfaceHolder holder;
-    private Paint paint;
+    private final SurfaceView window;
+    private final SurfaceHolder holder;
+    private final Paint paint;
     private Canvas canvas;
-    private AssetManager assetManager;
+    private final AssetManager assetManager;
 
     public AndroidGraphics(SurfaceView window, AssetManager assetManager) {
         this.window = window;

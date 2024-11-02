@@ -11,16 +11,16 @@ import com.grupo04.engine.interfaces.ITouchEvent;
 import java.util.List;
 
 public class TextButton extends Button {
-    private float arc;
-    private Color baseCol;
-    private Color pointerOverCol;
+    private final float arc;
+    private final Color baseCol;
+    private final Color pointerOverCol;
     private Color bgCol;
 
     private IFont font;
-    private String text;
-    private String fontName;
-    private Color fontColor;
-    private boolean bold;
+    private final String text;
+    private final String fontName;
+    private final Color fontColor;
+    private final boolean bold;
 
     public TextButton(Vector pos,
                       float width, float height, float arc, Color baseCol, Color pointerOverCol,
@@ -64,9 +64,10 @@ public class TextButton extends Button {
     @Override
     public void init() {
         super.init();
+        
         IEngine engine = this.scene.getEngine();
         IGraphics graphics = engine.getGraphics();
-        this.font = graphics.newFont(fontName, this.height / 1.7f, this.bold, false);
+        this.font = graphics.newFont(this.fontName, this.height / 1.7f, this.bold, false);
     }
 
     @Override
