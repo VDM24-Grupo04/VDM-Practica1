@@ -38,7 +38,7 @@ public class Input {
         return sceneTouchEvents;
     }
 
-    public synchronized void addEvent(ITouchEvent e) {
+    protected synchronized void addEvent(ITouchEvent e) {
         touchEvents.add(e);
     }
 }
