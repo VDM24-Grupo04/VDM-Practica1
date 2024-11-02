@@ -19,7 +19,7 @@ public class CurrentBubble extends GameObject {
     final float spd = 300, minDirY = 0.01f;
 
     private boolean shot = false, dragging = false;
-    int r, wallThickness, worldWidth;
+    int worldWidth, wallThickness, headerOffset, r;
     Vector initPos, pos, dir;
     int color;
 
@@ -35,8 +35,9 @@ public class CurrentBubble extends GameObject {
         super();
         dir = new Vector(0, 0);
         worldWidth = w;
-        this.r = r;
         this.wallThickness = wallThickness;
+        this.headerOffset = headerOffset;
+        this.r = r;
 
         // La posicion inicial sera en el centro del mundo por debajo del limite vertical
         int initY = (this.r * 2 - bubbleOffset) * (rows + 2);
@@ -119,27 +120,30 @@ public class CurrentBubble extends GameObject {
         // Si no se ha disparado, gestiona los eventos
         if (!shot && color >= 0) {
             for (ITouchEvent event : touchEvents) {
-                // Si no se esta manteniendo pulsado y se presiona, se empieza a mantener pulsado
-                if (!dragging && event.getType() == ITouchEvent.TouchEventType.PRESS) {
-                    dragging = true;
-                }
+                if (event.getPos().y > headerOffset + wallThickness) {
+                    // Si no se esta manteniendo pulsado y se presiona, se empieza a mantener pulsado
+                    if (!dragging && event.getType() == ITouchEvent.TouchEventType.PRESS) {
+                        dragging = true;
+                    }
 
-                // Si se esta manteniendo pulsado
-                if (dragging) {
-                    // Si se suelta, deja de mantener pulsado y si no se lanza la pelota hacia abajo, se dispara
-                    if (event.getType() == ITouchEvent.TouchEventType.RELEASE) {
-                        dragging = false;
-                        if (event.getPos().y < pos.y) {
-                            this.audio.playSound(this.throwSound);
-                            shot = true;
+                    // Si se esta manteniendo pulsado
+                    if (dragging) {
+                        // Si se suelta, deja de mantener pulsado y si no se lanza la pelota hacia abajo, se dispara
+                        if (event.getType() == ITouchEvent.TouchEventType.RELEASE) {
+                            dragging = false;
+                            if (event.getPos().y < pos.y) {
+                                this.audio.playSound(this.throwSound);
+                                shot = true;
+                            }
+                        }
+                        // Si no, si se mantiene pulsado o se presiona, cambia la direccion
+                        // de la bola al lugar en el que se produce la pulsacion
+                        else if (event.getType() == ITouchEvent.TouchEventType.DRAG || event.getType() == ITouchEvent.TouchEventType.PRESS) {
+                            dir = event.getPos().minus(pos);
                         }
                     }
-                    // Si no, si se mantiene pulsado o se presiona, cambia la direccion
-                    // de la bola al lugar en el que se produce la pulsacion
-                    else if (event.getType() == ITouchEvent.TouchEventType.DRAG || event.getType() == ITouchEvent.TouchEventType.PRESS) {
-                        dir = event.getPos().minus(pos);
-                    }
                 }
+
             }
         }
     }

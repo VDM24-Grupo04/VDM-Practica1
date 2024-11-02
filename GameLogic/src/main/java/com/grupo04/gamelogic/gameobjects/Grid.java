@@ -384,7 +384,7 @@ public class Grid extends GameObject {
         this.totalBubbles = 0;
         this.colorCount = new int[ballColors.getColorCount()];
         ballColors.reset();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < initRows; i++) {
             // En las filas impares hay una bola menos
             int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
             this.totalBubbles += bPerRow;
