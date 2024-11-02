@@ -31,7 +31,6 @@ public class AndroidInput extends Input {
                 int action = event.getActionMasked();
                 float x = event.getX();
                 float y = event.getY();
-                int i = event.getActionIndex();
                 Vector pos = new Vector(x, y);
                 //Vector pos = engine.worldToScreenPoint(new Vector(x, y));
 
@@ -41,7 +40,7 @@ public class AndroidInput extends Input {
                         // Se produce este evento cuando los siguientes dedos despues del primero
                         // tocan la pantalla
                         // case MotionEvent.ACTION_POINTER_DOWN:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.PRESS, pos, i));
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.PRESS, pos));
                         break;
                     // Se produce este evento cuando un dedo deja de tocar la pantalla,
                     // pero todavia quedan dedos tocandola
@@ -49,11 +48,11 @@ public class AndroidInput extends Input {
                         // Se produce este evento cuando el ultimo dedo que habia en la pantalla
                         // deja de tocarla
                         // case MotionEvent.ACTION_POINTER_UP:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.RELEASE, pos, i));
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.RELEASE, pos));
                         break;
                     case MotionEvent.ACTION_MOVE:
                         // case MotionEvent.ACTION_HOVER_MOVE:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.DRAG, pos, i));
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.DRAG, pos));
                         break;
                 }
 
@@ -82,7 +81,7 @@ public class AndroidInput extends Input {
                     case MotionEvent.ACTION_HOVER_ENTER:
                         // El puntero se ha movido
                     case MotionEvent.ACTION_HOVER_MOVE:
-                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.MOTION, pos, i));
+                        touchEvents.add(new TouchEvent(TouchEvent.TouchEventType.MOTION, pos));
                 }
                 return true;
             }

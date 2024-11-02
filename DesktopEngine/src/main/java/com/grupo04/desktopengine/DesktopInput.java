@@ -24,7 +24,7 @@ public class DesktopInput extends Input {
             @Override
             public void mousePressed(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
-                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.PRESS, pos, 0);
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.PRESS, pos);
                 addEvent(evt);
             }
 
@@ -32,7 +32,7 @@ public class DesktopInput extends Input {
             @Override
             public void mouseReleased(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
-                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.RELEASE, pos, 0);
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.RELEASE, pos);
                 addEvent(evt);
             }
         });
@@ -43,7 +43,7 @@ public class DesktopInput extends Input {
             @Override
             public void mouseDragged(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
-                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.DRAG, pos, 0);
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.DRAG, pos);
                 addEvent(evt);
             }
 
@@ -51,7 +51,7 @@ public class DesktopInput extends Input {
             @Override
             public void mouseEntered(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
-                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos, 0);
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos);
                 addEvent(evt);
             }
 
@@ -59,7 +59,7 @@ public class DesktopInput extends Input {
             @Override
             public void mouseMoved(MouseEvent e) {
                 Vector pos = new Vector(e.getX(), e.getY());
-                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos, 0);
+                TouchEvent evt = new TouchEvent(TouchEvent.TouchEventType.MOTION, pos);
                 addEvent(evt);
             }
         });
