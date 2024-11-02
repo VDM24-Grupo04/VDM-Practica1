@@ -9,7 +9,7 @@ import android.view.View;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.Input;
 import com.grupo04.engine.TouchEvent;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 
 // Al sobrescribir el metodo setOnTouchListener, se pide sobrescribir tambien el metodo performClick()
 // ya que en el caso de que no se pueda usar el input convencion, hay servicios de accesibilidad que invocan

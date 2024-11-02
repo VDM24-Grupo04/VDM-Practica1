@@ -1,11 +1,11 @@
 package com.grupo04.gamelogic.gameobjects;
 
-import com.grupo04.engine.Color;
-import com.grupo04.engine.Engine;
-import com.grupo04.engine.Font;
+import com.grupo04.engine.interfaces.IEngine;
+import com.grupo04.engine.interfaces.IFont;
+import com.grupo04.engine.interfaces.IGraphics;
+import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.GameObject;
-import com.grupo04.engine.Graphics;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 
 public class Text extends GameObject {
     private Vector pos;
@@ -15,7 +15,7 @@ public class Text extends GameObject {
     private boolean bold;
     private boolean italic;
     private Color color;
-    private Font font;
+    private IFont font;
     private float[] indentation;
     private float lineSpacing;
 
@@ -75,8 +75,8 @@ public class Text extends GameObject {
 
     @Override
     public void init() {
-        Engine engine = scene.getEngine();
-        Graphics graphics = engine.getGraphics();
+        IEngine engine = scene.getEngine();
+        IGraphics graphics = engine.getGraphics();
         this.font = graphics.newFont(fontName, size, bold, italic);
 
         // Se establece la fuente para poder calcular los tamanos de los textos
@@ -98,7 +98,7 @@ public class Text extends GameObject {
     }
 
     @Override
-    public void render(Graphics graphics) {
+    public void render(IGraphics graphics) {
         graphics.setColor(color);
         graphics.setFont(font);
         Vector textPos = new Vector();

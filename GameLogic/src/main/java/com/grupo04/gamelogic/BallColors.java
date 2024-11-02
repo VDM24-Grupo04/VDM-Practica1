@@ -1,6 +1,6 @@
 package com.grupo04.gamelogic;
 
-import com.grupo04.engine.Color;
+import com.grupo04.engine.utilities.Color;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -35,12 +35,18 @@ public class BallColors {
         return randomNumbers.nextInt(colors.length);
     }
 
-    public static void reset() { availableColors.clear(); }
+    public static void reset() {
+        availableColors.clear();
+    }
 
-    public static Color getColor(int i) { return colors[i]; }
+    public static Color getColor(int i) {
+        return colors[i];
+    }
+
     public static void removeColor(int i) {
         availableColors.remove(i);
     }
+
     public static void addColor(int i) {
         availableColors.put(i, colors[i]);
     }

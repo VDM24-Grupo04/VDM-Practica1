@@ -1,4 +1,4 @@
-package com.grupo04.engine;
+package com.grupo04.engine.utilities;
 
 public class Vector {
     public float x;

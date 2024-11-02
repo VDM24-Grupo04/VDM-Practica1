@@ -1,10 +1,10 @@
 package com.grupo04.desktopengine;
 
-import com.grupo04.engine.Font;
 import com.grupo04.engine.Graphics;
-import com.grupo04.engine.interfaces.Image;
+import com.grupo04.engine.interfaces.IFont;
+import com.grupo04.engine.interfaces.IImage;
 import com.grupo04.engine.Scene;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 
 import javax.swing.JFrame;
 
@@ -28,6 +28,38 @@ public class DesktopGraphics extends Graphics {
         this.graphics2D = graphics2D;
         this.bufferStrategy = bufferStrategy;
         this.affineTransform = this.graphics2D.getTransform();
+    }
+
+    @Override
+    protected void calculateTransform() {
+        int widthWithoutInsets = this.getWindowWidthWithoutInsets();
+        int heightWithoutInsets = this.getWindowHeightWithoutInsets();
+        float tempScaleX = (float) (widthWithoutInsets) / this.worldWidth;
+        float tempScaleY = (float) (heightWithoutInsets) / this.worldHeight;
+        this.scale = Math.min(tempScaleX, tempScaleY);
+
+        this.offsetX = (widthWithoutInsets - this.worldWidth * this.scale) / 2.0f;
+        this.offsetY = (heightWithoutInsets - this.worldHeight * this.scale) / 2.0f;
+    }
+
+    @Override
+    protected void scale(float scale) {
+        this.graphics2D.scale(scale, scale);
+    }
+
+    @Override
+    protected void translate(float offsetX, float offsetY) {
+        this.graphics2D.translate(offsetX, offsetY);
+    }
+
+    @Override
+    protected int getWindowWidth() {
+        return this.window.getWidth();
+    }
+
+    @Override
+    protected int getWindowHeight() {
+        return this.window.getHeight();
     }
 
     @Override
@@ -55,28 +87,6 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    protected void calculateTransform() {
-        int widthWithoutInsets = this.getWindowWidthWithoutInsets();
-        int heightWithoutInsets = this.getWindowHeightWithoutInsets();
-        float tempScaleX = (float) (widthWithoutInsets) / this.worldWidth;
-        float tempScaleY = (float) (heightWithoutInsets) / this.worldHeight;
-        this.scale = Math.min(tempScaleX, tempScaleY);
-
-        this.offsetX = (widthWithoutInsets - this.worldWidth * this.scale) / 2.0f;
-        this.offsetY = (heightWithoutInsets - this.worldHeight * this.scale) / 2.0f;
-    }
-
-    @Override
-    protected void scale(float scale) {
-        this.graphics2D.scale(scale, scale);
-    }
-
-    @Override
-    protected void translate(float offsetX, float offsetY) {
-        this.graphics2D.translate(offsetX, offsetY);
-    }
-
-    @Override
     public void render(Scene currentScene) {
         // Pintamos el frame
         do {
@@ -89,13 +99,18 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public int getWindowWidth() {
-        return this.window.getWidth();
-    }
+    public Vector screenToWorldPoint(Vector point) {
+        Vector worldPoint = new Vector();
 
-    @Override
-    public int getWindowHeight() {
-        return this.window.getHeight();
+        int windowWidth = this.getWindowWidthWithoutInsets();
+        int windowHeight = this.getWindowHeightWithoutInsets();
+
+        Insets insets = window.getInsets();
+
+        // Se divide el offset entre 2 porque hay que dejar el mismo espacio a ambos lados
+        worldPoint.x = ((point.x - insets.left) - (windowWidth - this.worldWidth * this.scale) / 2.0f) / this.scale;
+        worldPoint.y = ((point.y - insets.top) - (windowHeight - this.worldHeight * this.scale) / 2.0f) / this.scale;
+        return worldPoint;
     }
 
     public int getWindowWidthWithoutInsets() {
@@ -109,7 +124,7 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public void clear(com.grupo04.engine.Color color) {
+    public void clear(com.grupo04.engine.utilities.Color color) {
         this.setColor(color);
         this.graphics2D.fillRect(0, 0, this.getWindowWidth(), this.getWindowHeight());
         // Establece que si ya hay algo dibujado en graphics2D y se vuelve a dibujar en el,
@@ -119,7 +134,7 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public void setColor(com.grupo04.engine.Color color) {
+    public void setColor(com.grupo04.engine.utilities.Color color) {
         Color colorInt = new Color(color.red, color.green, color.blue, color.alpha);
         this.graphics2D.setColor(colorInt);
     }
@@ -206,12 +221,12 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public Image newImage(String name) {
+    public IImage newImage(String name) {
         return new DesktopImage(name);
     }
 
     @Override
-    public void drawImage(Image img, Vector position) {
+    public void drawImage(IImage img, Vector position) {
         DesktopImage desktopImage = (DesktopImage) img;
         this.graphics2D.drawImage(desktopImage.getImg(),
                 (int) (position.x - desktopImage.getWidth() / 2f),
@@ -220,7 +235,7 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public void drawImage(Image img, Vector position, int w, int h) {
+    public void drawImage(IImage img, Vector position, int w, int h) {
         DesktopImage desktopImage = (DesktopImage) img;
         graphics2D.drawImage(desktopImage.getImg(),
                 (int) (position.x - w / 2f),
@@ -229,12 +244,12 @@ public class DesktopGraphics extends Graphics {
     }
 
     @Override
-    public Font newFont(String name, float size, boolean bold, boolean italian) {
+    public IFont newFont(String name, float size, boolean bold, boolean italian) {
         return new DesktopFont(name, size, bold, italian);
     }
 
     @Override
-    public void setFont(Font font) {
+    public void setFont(IFont font) {
         DesktopFont desktopFont = (DesktopFont) font;
         this.graphics2D.setFont(desktopFont.getFont());
     }
@@ -267,20 +282,5 @@ public class DesktopGraphics extends Graphics {
     public int getTextHeight(String text) {
         FontMetrics fontMetrics = this.graphics2D.getFontMetrics();
         return fontMetrics.getHeight();
-    }
-
-    @Override
-    public Vector screenToWorldPoint(Vector point) {
-        Vector worldPoint = new Vector();
-
-        int windowWidth = this.getWindowWidthWithoutInsets();
-        int windowHeight = this.getWindowHeightWithoutInsets();
-
-        Insets insets = window.getInsets();
-
-        // Se divide el offset entre 2 porque hay que dejar el mismo espacio a ambos lados
-        worldPoint.x = ((point.x - insets.left) - (windowWidth - this.worldWidth * this.scale) / 2.0f) / this.scale;
-        worldPoint.y = ((point.y - insets.top) - (windowHeight - this.worldHeight * this.scale) / 2.0f) / this.scale;
-        return worldPoint;
     }
 }

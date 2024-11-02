@@ -1,6 +1,6 @@
 package com.grupo04.desktopengine;
 
-import com.grupo04.engine.interfaces.Image;
+import com.grupo04.engine.interfaces.IImage;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class DesktopImage implements Image {
+public class DesktopImage implements IImage {
     private BufferedImage img;
 
     DesktopImage(String fileName) {

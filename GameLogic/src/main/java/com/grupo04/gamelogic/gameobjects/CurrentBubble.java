@@ -1,9 +1,9 @@
 package com.grupo04.gamelogic.gameobjects;
 
-import com.grupo04.engine.Color;
+import com.grupo04.engine.interfaces.IGraphics;
+import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.GameObject;
-import com.grupo04.engine.Graphics;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.engine.interfaces.ITouchEvent;
@@ -25,10 +25,10 @@ public class CurrentBubble extends GameObject {
     Grid grid;
 
     IAudio audio;
-    ISound throwSound    = null;
-    ISound bounceSound   = null;
+    ISound throwSound = null;
+    ISound bounceSound = null;
 
-    public CurrentBubble(int w, int wallThickness, int headerOffset,  int r, int bubbleOffset, int rows) {
+    public CurrentBubble(int w, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows) {
         super();
         dir = new Vector(0, 0);
         worldWidth = w;
@@ -56,7 +56,7 @@ public class CurrentBubble extends GameObject {
     }
 
     @Override
-    public void render(Graphics graphics) {
+    public void render(IGraphics graphics) {
         super.render(graphics);
 
         // Se dibuja la bola

@@ -1,12 +1,12 @@
 package com.grupo04.gamelogic.gameobjects;
 
-import com.grupo04.engine.Color;
-import com.grupo04.engine.Engine;
+import com.grupo04.engine.interfaces.IEngine;
+import com.grupo04.engine.interfaces.IGraphics;
+import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.GameObject;
-import com.grupo04.engine.Graphics;
-import com.grupo04.engine.Pair;
+import com.grupo04.engine.utilities.Pair;
 import com.grupo04.engine.Scene;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.gamelogic.BallColors;
@@ -65,7 +65,7 @@ public class Grid extends GameObject {
     private List<Pair<Vector, Integer>> fallingBubbles;
     private boolean won;
 
-    private Engine engine;
+    private IEngine engine;
     private IAudio audio;
     private ISound attachSound;
     private ISound explosionSound;
@@ -93,7 +93,7 @@ public class Grid extends GameObject {
         this.totalBubbles = 0;
         this.colorCount = new int[BallColors.getColorCount()];
         BallColors.reset();
-        for (int i = 0; i < initRows; i++) {
+        for (int i = 0; i < 2; i++) {
             // En las filas impares hay una bola menos
             int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
             this.totalBubbles += bPerRow;
@@ -158,7 +158,7 @@ public class Grid extends GameObject {
     }
 
     @Override
-    public void render(Graphics graphics) {
+    public void render(IGraphics graphics) {
         super.render(graphics);
 
         // Recorre la matriz y pinta las bolas si el color en la posicion i,j de la matriz es >= 0
@@ -185,8 +185,8 @@ public class Grid extends GameObject {
             }
         }
 
+        // DEBUG
         debugCollisions(graphics);
-
 
         // Pinta la linea del limite inferior
         graphics.setColor(lineColor);
@@ -217,8 +217,7 @@ public class Grid extends GameObject {
                     iterator.remove();
                 }
             }
-        }
-        else if (this.won) {
+        } else if (this.won) {
             this.won = false;
 
             // Se hace un fade in y cuando acaba la animacion se cambia a la escena de victoria
@@ -232,7 +231,7 @@ public class Grid extends GameObject {
         }
     }
 
-    private void debugCollisions(Graphics graphics) {
+    private void debugCollisions(IGraphics graphics) {
         if (this.currI >= 0 && this.currJ >= 0) {
             Vector pos = gridToWorldPosition(this.currI, this.currJ);
             pos.x += 0.5f;
@@ -311,7 +310,7 @@ public class Grid extends GameObject {
         }
 
         // Si ha colisionado
-        if (hasCollided && i >= 0 && j >= 0 && i < this.rows && j < ((i % 2 == 0) ? this.cols : this.cols - 1)) {
+        if (hasCollided && cellWithinGrid(i, j)) {
             // DEBUG DE LAS CELDAS
             this.currI = -1;
             this.currJ = -1;
@@ -324,7 +323,7 @@ public class Grid extends GameObject {
                 this.won = true;
             }
             // Condicion de derrota
-            else if (this.bubbles[i][j] != -1 && gridToWorldPosition(i, j).y + this.r > this.lineEnd.y) {
+            else if (this.bubbles[i][j] < 0 && gridToWorldPosition(i, j).y + this.r > this.lineEnd.y) {
                 // Se hace un fade in y cuando acaba la animacion se cambia a la escena de game over
                 this.scene.setFade(Scene.FADE.IN, 0.25);
                 this.scene.setFadeCallback(() -> {

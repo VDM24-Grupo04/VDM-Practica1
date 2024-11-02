@@ -9,11 +9,11 @@ import android.graphics.Rect;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.grupo04.engine.Font;
 import com.grupo04.engine.Graphics;
-import com.grupo04.engine.interfaces.Image;
+import com.grupo04.engine.interfaces.IFont;
+import com.grupo04.engine.interfaces.IImage;
 import com.grupo04.engine.Scene;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 
 public class AndroidGraphics extends Graphics {
     private SurfaceView window;
@@ -28,27 +28,6 @@ public class AndroidGraphics extends Graphics {
         this.paint = new Paint();
         this.canvas = null;
         this.assetManager = assetManager;
-    }
-
-    @Override
-    protected void prepareFrame() {
-        // Pintamos el frame
-        while (!this.holder.getSurface().isValid()) ;
-
-        // Se permite editar el canvas
-        this.canvas = this.holder.lockCanvas();
-
-        this.clear(this.bgColor);
-
-        this.calculateTransform();
-        this.translate(this.offsetX, this.offsetY);
-        this.scale(this.scale);
-    }
-
-    @Override
-    protected boolean endFrame() {
-        this.holder.unlockCanvasAndPost(canvas);
-        return true;
     }
 
     @Override
@@ -75,6 +54,37 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
+    protected int getWindowWidth() {
+        return this.window.getWidth();
+    }
+
+    @Override
+    protected int getWindowHeight() {
+        return this.window.getHeight();
+    }
+
+    @Override
+    protected void prepareFrame() {
+        // Pintamos el frame
+        while (!this.holder.getSurface().isValid()) ;
+
+        // Se permite editar el canvas
+        this.canvas = this.holder.lockCanvas();
+
+        this.clear(this.bgColor);
+
+        this.calculateTransform();
+        this.translate(this.offsetX, this.offsetY);
+        this.scale(this.scale);
+    }
+
+    @Override
+    protected boolean endFrame() {
+        this.holder.unlockCanvasAndPost(canvas);
+        return true;
+    }
+
+    @Override
     public void render(Scene currentScene) {
         // Se indica al gestor de renderizado que prepare el frame
         this.prepareFrame();
@@ -85,23 +95,26 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
-    public int getWindowWidth() {
-        return this.window.getWidth();
+    public Vector screenToWorldPoint(Vector point) {
+        Vector worldPoint = new Vector();
+
+        int windowWidth = this.getWindowWidth();
+        int windowHeight = this.getWindowHeight();
+
+        // Se divide el offset entre 2 porque hay que dejar el mismo espacio a ambos lados
+        worldPoint.x = (point.x - (windowWidth - this.worldWidth * this.scale) / 2.0f) / this.scale;
+        worldPoint.y = (point.y - (windowHeight - this.worldHeight * this.scale) / 2.0f) / this.scale;
+        return worldPoint;
     }
 
     @Override
-    public int getWindowHeight() {
-        return this.window.getHeight();
-    }
-
-    @Override
-    public void clear(com.grupo04.engine.Color color) {
+    public void clear(com.grupo04.engine.utilities.Color color) {
         int colorInt = Color.argb(color.alpha, color.red, color.green, color.blue);
         this.canvas.drawColor(colorInt);
     }
 
     @Override
-    public void setColor(com.grupo04.engine.Color color) {
+    public void setColor(com.grupo04.engine.utilities.Color color) {
         int colorInt = Color.argb(color.alpha, color.red, color.green, color.blue);
         this.paint.setColor(colorInt);
     }
@@ -196,12 +209,12 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
-    public Image newImage(String name) {
+    public IImage newImage(String name) {
         return new AndroidImage(name, this.assetManager);
     }
 
     @Override
-    public void drawImage(Image img, Vector position) {
+    public void drawImage(IImage img, Vector position) {
         AndroidImage androidImg = (AndroidImage) img;
         float w = (float) androidImg.getWidth();
         float h = (float) androidImg.getHeight();
@@ -211,7 +224,7 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
-    public void drawImage(Image img, Vector position, int w, int h) {
+    public void drawImage(IImage img, Vector position, int w, int h) {
         AndroidImage androidImg = (AndroidImage) img;
 
         Rect src = new Rect(0, 0, androidImg.getWidth(), androidImg.getHeight());
@@ -222,7 +235,7 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
-    public void setFont(Font font) {
+    public void setFont(IFont font) {
         AndroidFont androidFont = (AndroidFont) font;
         // Se establece el tamano de letra
         this.paint.setTextSize(font.getSize());
@@ -232,7 +245,7 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
-    public Font newFont(String name, float size, boolean bold, boolean italian) {
+    public IFont newFont(String name, float size, boolean bold, boolean italian) {
         return new AndroidFont(name, size, bold, italian, this.assetManager);
     }
 
@@ -257,18 +270,5 @@ public class AndroidGraphics extends Graphics {
     public int getTextHeight(String text) {
         Paint.FontMetrics fontMetrics = this.paint.getFontMetrics();
         return (int) (fontMetrics.bottom - fontMetrics.top);
-    }
-
-    @Override
-    public Vector screenToWorldPoint(Vector point) {
-        Vector worldPoint = new Vector();
-
-        int windowWidth = this.getWindowWidth();
-        int windowHeight = this.getWindowHeight();
-
-        // Se divide el offset entre 2 porque hay que dejar el mismo espacio a ambos lados
-        worldPoint.x = (point.x - (windowWidth - this.worldWidth * this.scale) / 2.0f) / this.scale;
-        worldPoint.y = (point.y - (windowHeight - this.worldHeight * this.scale) / 2.0f) / this.scale;
-        return worldPoint;
     }
 }

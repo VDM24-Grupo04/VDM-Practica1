@@ -1,14 +1,17 @@
 package com.grupo04.engine;
 
 import com.grupo04.engine.interfaces.IAudio;
+import com.grupo04.engine.interfaces.IEngine;
+import com.grupo04.engine.interfaces.IGraphics;
 import com.grupo04.engine.interfaces.ITouchEvent;
+import com.grupo04.engine.utilities.Vector;
 
 import java.util.List;
 import java.util.Stack;
 
 // La interfaz runnable se trata de una interfaz que cuenta con un solo metodo a implementar (run)
 // Cuando se pasa una instancia de esta clase a un nuevo hilo, el hilo ejecuta el metodo run
-public abstract class Engine implements Runnable {
+public abstract class Engine implements IEngine, Runnable {
     private static final int MAX_NUM_FIXED_UDPATES = 150;
     private static final double FIXED_DELTA_TIME = 1000.0 / 60.0;
 
@@ -18,7 +21,7 @@ public abstract class Engine implements Runnable {
 
     // Modulos
     private Graphics graphics;
-    private IAudio audio;
+    private Audio audio;
     private Input input;
 
     // Escenas
@@ -39,17 +42,20 @@ public abstract class Engine implements Runnable {
         this.input = input;
     }
 
+    @Override
     public void popScene() {
         if (!scenes.empty()) {
             scenes.peek().setAlive(false);
         }
     }
 
+    @Override
     public void pushScene(Scene newScene) {
         scenes.push(newScene);
         newScene.init();
     }
 
+    @Override
     public void changeScene(Scene newScene) {
         if (!scenes.empty()) {
             // Si la escena que se quiere insertar no es la misma que la activa...
@@ -220,9 +226,13 @@ public abstract class Engine implements Runnable {
         this.graphics.setWorldSize(worldWidth, worldHeight);
     }
 
-    public Graphics getGraphics() {
+    @Override
+    public IGraphics getGraphics() {
         return this.graphics;
     }
 
-    public IAudio getAudio() { return this.audio; }
+    @Override
+    public IAudio getAudio() {
+        return this.audio;
+    }
 }

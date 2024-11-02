@@ -1,6 +1,5 @@
 package com.grupo04.desktopengine;
 
-import com.grupo04.engine.Sound;
 import com.grupo04.engine.Audio;
 import com.grupo04.engine.interfaces.ISound;
 

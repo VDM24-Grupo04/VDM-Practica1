@@ -3,7 +3,7 @@ package com.grupo04.desktopengine;
 import com.grupo04.engine.Engine;
 import com.grupo04.engine.Input;
 import com.grupo04.engine.TouchEvent;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;

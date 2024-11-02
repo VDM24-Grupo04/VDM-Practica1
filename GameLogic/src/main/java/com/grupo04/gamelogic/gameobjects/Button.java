@@ -1,12 +1,12 @@
 package com.grupo04.gamelogic.gameobjects;
 
-import com.grupo04.engine.interfaces.Callback;
-import com.grupo04.engine.Color;
-import com.grupo04.engine.Engine;
-import com.grupo04.engine.Font;
+import com.grupo04.engine.interfaces.IEngine;
+import com.grupo04.engine.interfaces.IFont;
+import com.grupo04.engine.interfaces.IGraphics;
+import com.grupo04.engine.utilities.Callback;
+import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.GameObject;
-import com.grupo04.engine.Graphics;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.engine.interfaces.ITouchEvent;
@@ -22,7 +22,7 @@ public class Button extends GameObject {
     private Color pointerOverCol;
     private Color bgCol;
 
-    private Font font;
+    private IFont font;
     private String text;
     private String fontName;
     private Color fontColor;
@@ -41,6 +41,7 @@ public class Button extends GameObject {
                 pos.y > this.topLeft.y && pos.y < this.topLeft.y + height;
     }
 
+    // Se pide todo
     public Button(Vector pos,
                   float width, float height, float arc, Color baseCol, Color pointerOverCol,
                   String text, String fontName, Color fontColor, boolean bold, Callback onClick, String onClickSoundPath) {
@@ -59,26 +60,29 @@ public class Button extends GameObject {
         this.fontColor = fontColor;
         this.bold = bold;
 
-        this.onClick = onClick;
-
         this.topLeft = new Vector(pos.x - (float) width / 2, pos.y - (float) height / 2);
 
+        this.audio = null;
+        this.onClick = onClick;
         this.onClickSoundPath = onClickSoundPath;
     }
 
+    // Texto normal de color negro
     public Button(Vector pos,
                   float width, float height, float arc, Color baseCol, Color pointerOverCol,
                   String text, String fontName, Callback onClick, String onClickSoundPathName) {
         this(pos, width, height, arc, baseCol, pointerOverCol, text, fontName,
-                new Color(0,0,0), false, onClick, onClickSoundPathName);
+                new Color(0, 0, 0), false, onClick, onClickSoundPathName);
     }
 
+    // Sin sonido al pulsar
     public Button(Vector pos,
                   float width, float height, float arc, Color baseCol, Color pointerOverCol,
                   String text, String fontName, Color fontColor, boolean bold, Callback onClick) {
         this(pos, width, height, arc, baseCol, pointerOverCol, text, fontName, fontColor, bold, onClick, "");
     }
 
+    // Texto normal de color negro y sin sonido al pulsar
     public Button(Vector pos,
                   float width, float height, float arc, Color baseCol, Color pointerOverCol,
                   String text, String fontName, Callback onClick) {
@@ -87,10 +91,10 @@ public class Button extends GameObject {
 
     @Override
     public void init() {
-        Engine engine = this.scene.getEngine();
-        Graphics graphics = engine.getGraphics();
+        IEngine engine = this.scene.getEngine();
+        IGraphics graphics = engine.getGraphics();
         this.audio = engine.getAudio();
-        this.font = graphics.newFont(fontName, this.height / 1.7f, false, false);
+        this.font = graphics.newFont(fontName, this.height / 1.7f, this.bold, false);
         this.onClickSound = this.audio.newSound(this.onClickSoundPath);
     }
 
@@ -115,7 +119,7 @@ public class Button extends GameObject {
     }
 
     @Override
-    public void render(Graphics graphics) {
+    public void render(IGraphics graphics) {
         graphics.setColor(this.bgCol);
         graphics.fillRoundRectangle(this.pos, this.width, this.height, this.arc);
 

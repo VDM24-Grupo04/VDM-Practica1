@@ -1,8 +1,12 @@
 package com.grupo04.engine;
 
-import com.grupo04.engine.interfaces.Image;
+import com.grupo04.engine.interfaces.IFont;
+import com.grupo04.engine.interfaces.IGraphics;
+import com.grupo04.engine.interfaces.IImage;
+import com.grupo04.engine.utilities.Color;
+import com.grupo04.engine.utilities.Vector;
 
-public abstract class Graphics {
+public abstract class Graphics implements IGraphics {
     protected int worldWidth;
     protected int worldHeight;
     protected float scale;
@@ -16,18 +20,8 @@ public abstract class Graphics {
         this.scale = 1.0f;
         this.offsetX = 0.0f;
         this.offsetY = 0.0f;
-        this.bgColor = new Color(0, 0, 0, 255);
+        this.bgColor = new Color(255, 255, 255, 255);
     }
-
-    protected abstract void prepareFrame();
-
-    protected abstract boolean endFrame();
-
-    public abstract void render(Scene currentScene);
-
-    public abstract int getWindowWidth();
-
-    public abstract int getWindowHeight();
 
     protected abstract void calculateTransform();
 
@@ -35,56 +29,88 @@ public abstract class Graphics {
 
     protected abstract void translate(float offsetX, float offsetY);
 
-    protected void setWorldSize(int worldWidth, int worldHeight) {
-        this.worldWidth = worldWidth;
-        this.worldHeight = worldHeight;
-    }
+    protected abstract int getWindowWidth();
 
-    public void setBgColor(Color bgColor) { this.bgColor = bgColor; }
+    protected abstract int getWindowHeight();
 
-    public abstract void clear(com.grupo04.engine.Color color);
+    protected abstract void prepareFrame();
 
-    public abstract void setColor(Color color);
+    protected abstract boolean endFrame();
 
-    public abstract void drawCircle(Vector position, float radius, float strokeWidth);
-
-    public abstract void fillCircle(Vector position, float radius);
-
-    public abstract void drawRectangle(Vector position, float w, float h, float strokeWidth);
-
-    public abstract void fillRectangle(Vector position, float w, float h);
-
-    public abstract void drawRoundRectangle(Vector position, float w, float h, float arc, float strokeWidth);
-
-    public abstract void fillRoundRectangle(Vector position, float w, float h, float arc);
-
-    public abstract void drawLine(Vector initPos, Vector endPos, float strokeWidth);
-
-    public abstract void drawHexagon(Vector center, float radius, float rotInDegrees, float strokeWidth);
-
-    public void drawHexagon(Vector center, float radius, float strokeWidth) {
-        drawHexagon(center, radius, 0, strokeWidth);
-    }
+    public abstract void render(Scene currentScene);
 
     public boolean isWindowInitialized() {
         return this.getWindowWidth() != 0;
     }
 
-    public abstract Image newImage(String name);
+    public abstract Vector screenToWorldPoint(Vector point);
 
-    public abstract void drawImage(Image img, Vector position);
+    public void setWorldSize(int worldWidth, int worldHeight) {
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+    }
 
-    public abstract void drawImage(Image img, Vector position, int w, int h);
+    @Override
+    public void setClearColor(Color bgColor) {
+        this.bgColor = bgColor;
+    }
 
-    public abstract Font newFont(String name, float size, boolean bold, boolean italic);
+    @Override
+    public abstract void clear(Color color);
 
-    public abstract void setFont(Font font);
+    @Override
+    public abstract void setColor(Color color);
 
+    @Override
+    public abstract void drawCircle(Vector position, float radius, float strokeWidth);
+
+    @Override
+    public abstract void fillCircle(Vector position, float radius);
+
+    @Override
+    public abstract void drawRectangle(Vector position, float w, float h, float strokeWidth);
+
+    @Override
+    public abstract void fillRectangle(Vector position, float w, float h);
+
+    @Override
+    public abstract void drawRoundRectangle(Vector position, float w, float h, float arc, float strokeWidth);
+
+    @Override
+    public abstract void fillRoundRectangle(Vector position, float w, float h, float arc);
+
+    @Override
+    public abstract void drawLine(Vector initPos, Vector endPos, float strokeWidth);
+
+    @Override
+    public abstract void drawHexagon(Vector center, float radius, float rotInDegrees, float strokeWidth);
+
+    @Override
+    public void drawHexagon(Vector center, float radius, float strokeWidth) {
+        drawHexagon(center, radius, 0, strokeWidth);
+    }
+
+    @Override
+    public abstract IImage newImage(String name);
+
+    @Override
+    public abstract void drawImage(IImage img, Vector position);
+
+    @Override
+    public abstract void drawImage(IImage img, Vector position, int w, int h);
+
+    @Override
+    public abstract IFont newFont(String name, float size, boolean bold, boolean italic);
+
+    @Override
+    public abstract void setFont(IFont font);
+
+    @Override
     public abstract void drawText(String text, Vector position);
 
+    @Override
     public abstract int getTextWidth(String text);
 
+    @Override
     public abstract int getTextHeight(String text);
-
-    public abstract Vector screenToWorldPoint(Vector point);
 }

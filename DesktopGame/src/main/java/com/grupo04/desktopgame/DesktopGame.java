@@ -15,10 +15,12 @@ public class DesktopGame {
         window.setSize(500, 900);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setIgnoreRepaint(true);
+
         // Pantalla completa
-        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         // Sin bordes
-        window.setUndecorated(true);
+        //window.setUndecorated(true);
+
         window.setVisible(true);
 
         // Creacion del motor

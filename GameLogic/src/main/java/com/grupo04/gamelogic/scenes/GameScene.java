@@ -1,8 +1,7 @@
 package com.grupo04.gamelogic.scenes;
 
-import com.grupo04.engine.Color;
-import com.grupo04.engine.Engine;
 import com.grupo04.engine.Scene;
+import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.gamelogic.gameobjects.CurrentBubble;
 import com.grupo04.gamelogic.gameobjects.Grid;
 import com.grupo04.gamelogic.gameobjects.Walls;
@@ -16,7 +15,7 @@ public class GameScene extends Scene {
     private final int HEADER_WIDTH = 50;
     private final int WALL_THICKNESS = 20;
 
-    public GameScene(Engine engine) {
+    public GameScene(IEngine engine) {
         // En caso de dejar un color de fondo
         //super(engine, 400, 600, new Color(255, 255, 255));
         // En caso de dejar una imagen de fondo

@@ -1,5 +1,6 @@
 package com.grupo04.engine;
 
+import com.grupo04.engine.interfaces.IGraphics;
 import com.grupo04.engine.interfaces.ITouchEvent;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public abstract class GameObject {
     public void handleInput(List<ITouchEvent> touchEvents) {
     }
 
-    public void render(Graphics graphics) {
+    public void render(IGraphics graphics) {
     }
 
     public void update(double deltaTime) {
@@ -52,7 +53,9 @@ public abstract class GameObject {
         this.alive = alive;
     }
 
-    public boolean isAlive() { return this.alive; }
+    public boolean isAlive() {
+        return this.alive;
+    }
 
     public void setId(String id) {
         this.id = id;

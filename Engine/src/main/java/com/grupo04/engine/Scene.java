@@ -1,8 +1,12 @@
 package com.grupo04.engine;
 
-import com.grupo04.engine.interfaces.Callback;
+import com.grupo04.engine.interfaces.IEngine;
+import com.grupo04.engine.interfaces.IGraphics;
+import com.grupo04.engine.utilities.Callback;
 import com.grupo04.engine.interfaces.ITouchEvent;
-import com.grupo04.engine.interfaces.Image;
+import com.grupo04.engine.interfaces.IImage;
+import com.grupo04.engine.utilities.Color;
+import com.grupo04.engine.utilities.Vector;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +14,16 @@ import java.util.List;
 
 public abstract class Scene {
     public enum FADE {NONE, IN, OUT}
+
+    private boolean alive;
+    private HashSet<GameObject> gameObjects;
+    private HashMap<String, GameObject> handlers;
+    protected IEngine engine;
+    protected int worldWidth;
+    protected int worldHeight;
+
+    protected IImage bgImage;
+
     private FADE fade;
     private double fadeDuration;
     private double fadeTimer;
@@ -17,45 +31,54 @@ public abstract class Scene {
     private Vector fadePos;
     private Callback onFadeEnd;
 
-    private boolean alive;
-    private HashSet<GameObject> gameObjects;
-    private HashMap<String, GameObject> handlers;
-    protected Engine engine;
-    protected int worldWidth;
-    protected int worldHeight;
-    protected Color bgColor;
-    protected Image bgImage;
-
-    protected Scene(Engine engine, int worldWidth, int worldHeight, Color bgColor) {
+    // Color del fondo de la ventana
+    protected Scene(IEngine engine, int worldWidth, int worldHeight, Color bgColor) {
         this(engine, worldWidth, worldHeight);
-        this.bgColor = bgColor;
+        this.engine.getGraphics().setClearColor(bgColor);
     }
 
-    protected Scene(Engine engine, int worldWidth, int worldHeight, Image bgImage) {
+    // Fondo del juego (imagen)
+    protected Scene(IEngine engine, int worldWidth, int worldHeight, IImage bgImage) {
         this(engine, worldWidth, worldHeight);
         this.bgImage = bgImage;
     }
 
-    protected Scene(Engine engine, int worldWidth, int worldHeight, String bgImageFileName) {
+    // Fondo del juego (ruta de una imagen)
+    protected Scene(IEngine engine, int worldWidth, int worldHeight, String bgImageFileName) {
         this(engine, worldWidth, worldHeight);
         this.bgImage = this.engine.getGraphics().newImage(bgImageFileName);
     }
 
-    protected Scene(Engine engine, int worldWidth, int worldHeight) {
+    // Color del fondo de la ventana y fondo del juego (imagen)
+    protected Scene(IEngine engine, int worldWidth, int worldHeight, Color bgColor, IImage bgImage) {
+        this(engine, worldWidth, worldHeight);
+        this.engine.getGraphics().setClearColor(bgColor);
+        this.bgImage = bgImage;
+    }
+
+    // Color del fondo de la ventana y fondo del juego (ruta de una imagen)
+    protected Scene(IEngine engine, int worldWidth, int worldHeight, Color bgColor, String bgImageFileName) {
+        this(engine, worldWidth, worldHeight);
+        this.engine.getGraphics().setClearColor(bgColor);
+        this.bgImage = this.engine.getGraphics().newImage(bgImageFileName);
+    }
+
+    protected Scene(IEngine engine, int worldWidth, int worldHeight) {
         this.alive = true;
         this.gameObjects = new HashSet<GameObject>();
         this.handlers = new HashMap<String, GameObject>();
         this.engine = engine;
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
+
         this.engine.setWorldSize(this.worldWidth, this.worldHeight);
-        this.bgColor = new Color(255, 255, 255);
+        this.bgImage = null;
 
         this.fade = FADE.NONE;
         this.fadeDuration = 0;
         this.fadeTimer = 0;
         this.fadeColor = new Color(0, 0, 0, 255);
-        fadePos = new Vector(worldWidth / 2, worldHeight / 2);
+        fadePos = new Vector(worldWidth / 2.0f, worldHeight / 2.0f);
         this.onFadeEnd = null;
     }
 
@@ -68,22 +91,24 @@ public abstract class Scene {
         this.fadeDuration = 0.2;
         this.fadeTimer = 0;
     }
+
     public void setFade(FADE fade, double fadeDuration) {
         this.fade = fade;
         this.fadeDuration = fadeDuration;
         this.fadeTimer = 0;
     }
+
     public void setFade(FADE fade, double fadeDuration, Color fadeColor) {
         setFade(fade, fadeDuration);
         this.fadeColor = fadeColor;
 
         if (this.fade == FADE.IN) {
             fadeColor.alpha = 0;
-        } 
-        else if (this.fade == FADE.OUT) {
+        } else if (this.fade == FADE.OUT) {
             fadeColor.alpha = 0;
         }
     }
+
     public void setFade(FADE fade, Color fadeColor) {
         setFade(fade);
         this.fadeColor = fadeColor;
@@ -92,7 +117,6 @@ public abstract class Scene {
     public void setFadeCallback(Callback onFadeEnd) {
         this.onFadeEnd = onFadeEnd;
     }
-
 
     public void addGameObject(GameObject gameObject) {
         gameObjects.add(gameObject);
@@ -118,7 +142,6 @@ public abstract class Scene {
                 gameObject.handleInput(touchEvent);
             }
         }
-
     }
 
     public void update(double deltaTime) {
@@ -165,15 +188,15 @@ public abstract class Scene {
 
     }
 
-    public void render(Graphics graphics) {
-        graphics.setBgColor(this.bgColor);
+    public void render(IGraphics graphics) {
         if (this.bgImage != null) {
             float width = getWorldWidth();
             float height = getWorldHeight();
             float posX = width / 2;
             float posY = height / 2;
-            graphics.drawImage(this.bgImage, new Vector(posX, posY), (int)(width), (int)(height));
+            graphics.drawImage(this.bgImage, new Vector(posX, posY), (int) (width), (int) (height));
         }
+
         for (GameObject gameObject : this.gameObjects) {
             gameObject.render(graphics);
         }
@@ -229,13 +252,15 @@ public abstract class Scene {
         }
     }
 
-    public int getWorldWidth() { return this.worldWidth; }
+    public int getWorldWidth() {
+        return this.worldWidth;
+    }
 
     public int getWorldHeight() {
         return this.worldHeight;
     }
 
-    public Engine getEngine() {
+    public IEngine getEngine() {
         return this.engine;
     }
 }

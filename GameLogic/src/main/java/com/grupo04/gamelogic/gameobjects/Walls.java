@@ -1,9 +1,9 @@
 package com.grupo04.gamelogic.gameobjects;
 
-import com.grupo04.engine.Color;
+import com.grupo04.engine.interfaces.IGraphics;
+import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.GameObject;
-import com.grupo04.engine.Graphics;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 
 public class Walls extends GameObject {
     final Color color = new Color(60, 60, 60);
@@ -24,7 +24,7 @@ public class Walls extends GameObject {
     }
 
     @Override
-    public void render(Graphics graphics) {
+    public void render(IGraphics graphics) {
         super.render(graphics);
         graphics.setColor(color);
         graphics.fillRectangle(pos[0], sizes[0].x, sizes[0].y);

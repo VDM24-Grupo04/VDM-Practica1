@@ -1,9 +1,9 @@
 package com.grupo04.gamelogic.scenes;
 
-import com.grupo04.engine.Color;
-import com.grupo04.engine.Engine;
+import com.grupo04.engine.interfaces.IEngine;
+import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.Scene;
-import com.grupo04.engine.Vector;
+import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.gamelogic.gameobjects.Button;
 import com.grupo04.gamelogic.gameobjects.Text;
@@ -27,7 +27,7 @@ public class VictoryScene extends Scene {
 
     ISound winSound;
 
-    public VictoryScene(Engine engine, int score) {
+    public VictoryScene(IEngine engine, int score) {
         super(engine, 400, 600, new Color(255, 255, 255));
 
         Text title = new Text(new Vector(worldWidth / 2f, worldHeight / 6f), "Victory!",
