@@ -13,14 +13,14 @@ public class BallColors {
             new Color(245, 225, 85)     // Amarillo
     };
     private static final Random randomNumbers = new Random();
-    private static final HashMap<Integer, Color> availableColors = new HashMap<Integer, Color>();
+    private HashMap<Integer, Color> availableColors = new HashMap<Integer, Color>();
 
     public static int getColorCount() {
         return colors.length;
     }
 
     // Obtiene un color aleatorio de entre los que hay actualmente en el mapa
-    public static int getRandomColor() {
+    public int getRandomColor() {
         // Si esta vacio (no hay mas bolas) devuelve "sin color"
         if (availableColors.isEmpty()) {
             return -1;
@@ -31,23 +31,23 @@ public class BallColors {
     }
 
     // Genera un color aleatorio de entre todos los colores posibles
-    public static int generateRandomColor() {
+    public int generateRandomColor() {
         return randomNumbers.nextInt(colors.length);
     }
 
-    public static void reset() {
+    public void reset() {
         availableColors.clear();
     }
 
-    public static Color getColor(int i) {
+    public Color getColor(int i) {
         return colors[i];
     }
 
-    public static void removeColor(int i) {
+    public void removeColor(int i) {
         availableColors.remove(i);
     }
 
-    public static void addColor(int i) {
+    public void addColor(int i) {
         availableColors.put(i, colors[i]);
     }
 }

@@ -70,11 +70,13 @@ public class Grid extends GameObject {
     private ISound attachSound;
     private ISound explosionSound;
 
+    BallColors ballColors;
+
     // DEBUG DE LAS CELDAS
     private int currI = -1, currJ = -1;
 
     public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
-                int bubblesToExplode, int greatScore, int smallScore, float fallingSpeed) {
+                int bubblesToExplode, int greatScore, int smallScore, float fallingSpeed, BallColors ballColors) {
         super();
         this.cols = cols;
         this.rows = rows;
@@ -91,8 +93,8 @@ public class Grid extends GameObject {
 
         // Se generan initRows filas iniciales
         this.totalBubbles = 0;
-        this.colorCount = new int[BallColors.getColorCount()];
-        BallColors.reset();
+        this.colorCount = new int[ballColors.getColorCount()];
+        ballColors.reset();
         for (int i = 0; i < 2; i++) {
             // En las filas impares hay una bola menos
             int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
@@ -100,8 +102,8 @@ public class Grid extends GameObject {
 
             // Se generan las burbujas de la fila
             for (int j = 0; j < bPerRow; ++j) {
-                int color = BallColors.generateRandomColor();
-                BallColors.addColor(color);
+                int color = ballColors.generateRandomColor();
+                ballColors.addColor(color);
                 this.bubbles[i][j] = color;
                 this.colorCount[color]++;
             }
@@ -141,12 +143,14 @@ public class Grid extends GameObject {
         this.audio = null;
         this.attachSound = null;
         this.explosionSound = null;
+
+        this.ballColors = ballColors;
     }
 
     public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
-                int bubblesToExplode, int greatScore, int smallScore) {
+                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors) {
         this(width, wallThickness, headerOffset, r, bubbleOffset, rows, cols, initRows,
-                bubblesToExplode, greatScore, smallScore, 300.0f);
+                bubblesToExplode, greatScore, smallScore, 300.0f, ballColors);
     }
 
     @Override
@@ -167,7 +171,7 @@ public class Grid extends GameObject {
             for (int j = 0; j < bPerRow; ++j) {
                 if (this.bubbles[i][j] >= 0) {
                     Vector pos = gridToWorldPosition(i, j);
-                    graphics.setColor(BallColors.getColor(this.bubbles[i][j]));
+                    graphics.setColor(ballColors.getColor(this.bubbles[i][j]));
                     graphics.fillCircle(gridToWorldPosition(i, j), this.r);
                 }
             }
@@ -195,7 +199,7 @@ public class Grid extends GameObject {
         // Recorre las bolas caidas y las pinta
         if (!this.fallingBubbles.isEmpty()) {
             for (Pair<Vector, Integer> bubble : this.fallingBubbles) {
-                graphics.setColor(BallColors.getColor(bubble.getSecond()));
+                graphics.setColor(ballColors.getColor(bubble.getSecond()));
                 Vector bPos = bubble.getFirst();
                 graphics.fillCircle(bPos, this.r);
             }
@@ -235,27 +239,27 @@ public class Grid extends GameObject {
         if (this.currI >= 0 && this.currJ >= 0) {
             Vector pos = gridToWorldPosition(this.currI, this.currJ);
             pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(0));
+            graphics.setColor(ballColors.getColor(0));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
             pos = gridToWorldPosition(this.currI, this.currJ - 1);
             pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(1));
+            graphics.setColor(ballColors.getColor(1));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
             pos = gridToWorldPosition(this.currI, this.currJ + 1);
             pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(1));
+            graphics.setColor(ballColors.getColor(1));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
             pos = gridToWorldPosition(this.currI - 1, this.currJ);
             pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(1));
+            graphics.setColor(ballColors.getColor(1));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
 
             pos = gridToWorldPosition(this.currI - 1, (this.currI % 2 == 0) ? this.currJ - 1 : this.currJ + 1);
             pos.x += 0.5f;
-            graphics.setColor(BallColors.getColor(1));
+            graphics.setColor(ballColors.getColor(1));
             graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
         }
     }
@@ -379,7 +383,7 @@ public class Grid extends GameObject {
             // Se actualiza el numero de bolas que hay de cada color
             this.colorCount[color] -= bubblesToEraseSize;
             if (this.colorCount[color] <= 0) {
-                BallColors.removeColor(color);
+                ballColors.removeColor(color);
             }
             // Se actualiza el mapa
             for (Pair<Integer, Integer> bubble : bubblesToErase) {
@@ -421,7 +425,7 @@ public class Grid extends GameObject {
                         Vector worldPos = gridToWorldPosition(wX, wY);
                         int color = this.bubbles[wX][wY];
                         if (--this.colorCount[color] <= 0) {
-                            BallColors.removeColor(color);
+                            ballColors.removeColor(color);
                         }
                         this.fallingBubbles.add(new Pair<>(worldPos, color));
                         // Se quitan del grid

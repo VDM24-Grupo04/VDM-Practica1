@@ -2,6 +2,7 @@ package com.grupo04.gamelogic.scenes;
 
 import com.grupo04.engine.Scene;
 import com.grupo04.engine.interfaces.IEngine;
+import com.grupo04.gamelogic.BallColors;
 import com.grupo04.gamelogic.gameobjects.CurrentBubble;
 import com.grupo04.gamelogic.gameobjects.Grid;
 import com.grupo04.gamelogic.gameobjects.Walls;
@@ -32,12 +33,14 @@ public class GameScene extends Scene {
         Walls walls = new Walls(WALL_THICKNESS, HEADER_WIDTH, worldWidth, worldHeight);
         addGameObject(walls);
 
+        BallColors ballColors = new BallColors();
+
         Grid grid = new Grid(worldWidth, WALL_THICKNESS, HEADER_WIDTH, (int) r, bubbleOffset, rows, N_COLS,
-                INIT_ROWS, BUBBLES_TO_EXPLODE, GREAT_SCORE, SMALL_SCORE);
+                INIT_ROWS, BUBBLES_TO_EXPLODE, GREAT_SCORE, SMALL_SCORE, ballColors);
         addGameObject(grid, "grid");
 
         CurrentBubble currentBubble = new CurrentBubble(worldWidth, WALL_THICKNESS, HEADER_WIDTH,
-                (int) r, bubbleOffset, rows);
+                (int) r, bubbleOffset, rows, ballColors);
         addGameObject(currentBubble, "currentBubble");
     }
 }

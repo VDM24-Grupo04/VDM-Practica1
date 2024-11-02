@@ -28,7 +28,9 @@ public class CurrentBubble extends GameObject {
     ISound throwSound = null;
     ISound bounceSound = null;
 
-    public CurrentBubble(int w, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows) {
+    BallColors ballColors;
+
+    public CurrentBubble(int w, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, BallColors ballColors) {
         super();
         dir = new Vector(0, 0);
         worldWidth = w;
@@ -39,6 +41,7 @@ public class CurrentBubble extends GameObject {
         int initY = (int) ((this.r * 2 - bubbleOffset) * (rows + 2));
         initPos = new Vector(w / 2.0f, wallThickness + headerOffset + initY);
 
+        this.ballColors = ballColors;
         reset();
     }
 
@@ -61,7 +64,7 @@ public class CurrentBubble extends GameObject {
 
         // Se dibuja la bola
         if (color >= 0) {
-            graphics.setColor(BallColors.getColor(color));
+            graphics.setColor(ballColors.getColor(color));
             graphics.fillCircle(pos, r);
 
             // Si se esta manteniendo pulsado, se dibuja la linea en direccion al lugar que se pulsa
@@ -147,7 +150,7 @@ public class CurrentBubble extends GameObject {
         dir.x = 0;
         dir.y = 0;
         pos = initPos;
-        color = BallColors.getRandomColor();
+        color = ballColors.getRandomColor();
         dragging = false;
         shot = false;
     }
