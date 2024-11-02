@@ -13,6 +13,7 @@ import com.grupo04.gamelogic.BallColors;
 import com.grupo04.gamelogic.scenes.GameOverScene;
 import com.grupo04.gamelogic.scenes.VictoryScene;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,7 +50,7 @@ public class Grid extends GameObject {
     private Vector lineInit, lineEnd;
 
     // Posibles posiciones adyacentes a cada bola
-    private List<Pair<Integer, Integer>> unevenAdjacentCells;
+    private List<Pair<Integer, Integer>> oddAdjacentCells;
     private List<Pair<Integer, Integer>> evenAdjacentCells;
 
     // Bolas necesarias que esten juntas para que se produzca la explosion
@@ -65,175 +66,27 @@ public class Grid extends GameObject {
     private List<Pair<Vector, Integer>> fallingBubbles;
     private boolean won;
 
+    class AnimCollidedBubbles {
+        public Vector pos;
+        public int color;
+        public float radius;
+    }
+
+    private List<AnimCollidedBubbles> collidedBubbles;
+    private float shrinkSpeed;
+
     private IEngine engine;
     private IAudio audio;
     private ISound attachSound;
     private ISound explosionSound;
 
-    BallColors ballColors;
+    private BallColors ballColors;
+
+    private WeakReference<Text> scoreText;
+    private WeakReference<ImageToggleButton> showGridButton;
 
     // DEBUG DE LAS CELDAS
     private int currI = -1, currJ = -1;
-
-    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
-                int bubblesToExplode, int greatScore, int smallScore, float fallingSpeed, BallColors ballColors) {
-        super();
-        this.cols = cols;
-        this.rows = rows;
-        this.bubbles = new int[this.rows][this.cols];
-        for (int[] row : this.bubbles) {
-            Arrays.fill(row, -1);
-        }
-
-        this.r = r;
-        this.hexagonRadius = (float) Math.ceil((this.r / (Math.sqrt(3) / 2.0f)));
-        this.offsetX = wallThickness;
-        this.offsetY = wallThickness + headerOffset;
-        this.bubbleOffset = bubbleOffset;
-
-        // Se generan initRows filas iniciales
-        this.totalBubbles = 0;
-        this.colorCount = new int[ballColors.getColorCount()];
-        ballColors.reset();
-        for (int i = 0; i < 2; i++) {
-            // En las filas impares hay una bola menos
-            int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
-            this.totalBubbles += bPerRow;
-
-            // Se generan las burbujas de la fila
-            for (int j = 0; j < bPerRow; ++j) {
-                int color = ballColors.generateRandomColor();
-                ballColors.addColor(color);
-                this.bubbles[i][j] = color;
-                this.colorCount[color]++;
-            }
-        }
-
-        int lineY = (int) (this.r * 2 * (this.rows - 1)) - this.bubbleOffset * (this.rows - 2);
-        this.lineInit = new Vector(this.offsetX, this.offsetY + lineY);
-        this.lineEnd = new Vector(width - this.offsetX, this.offsetY + lineY);
-
-        // Creamos la lista de celdas adyacentes a cada posicion
-        this.unevenAdjacentCells = new ArrayList<>();
-        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));    // Arriba izquierda
-        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(-1, 1));    // Arriba derecha
-        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
-        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
-        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));     // Abajo izquierda
-        this.unevenAdjacentCells.add(new Pair<Integer, Integer>(1, 1));     // Abajo derecha
-
-        this.evenAdjacentCells = new ArrayList<>();
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, -1));     // Arriba izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));      // Arriba derecha
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));      // Izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));       // Derecha
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, -1));      // Abajo izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));       // Abajo derecha
-
-        this.bubblesToExplode = bubblesToExplode;
-        this.score = 0;
-        this.greatScore = greatScore;
-        this.smallScore = smallScore;
-
-        this.fallingSpeed = fallingSpeed;
-        this.fallingBubbles = new ArrayList<>();
-        this.won = false;
-
-        this.engine = null;
-        this.audio = null;
-        this.attachSound = null;
-        this.explosionSound = null;
-
-        this.ballColors = ballColors;
-    }
-
-    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
-                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors) {
-        this(width, wallThickness, headerOffset, r, bubbleOffset, rows, cols, initRows,
-                bubblesToExplode, greatScore, smallScore, 300.0f, ballColors);
-    }
-
-    @Override
-    public void init() {
-        this.engine = this.scene.getEngine();
-        this.audio = this.engine.getAudio();
-        this.attachSound = audio.newSound("ballAttach.wav");
-        this.explosionSound = audio.newSound("ballExplosion.wav");
-    }
-
-    @Override
-    public void render(IGraphics graphics) {
-        super.render(graphics);
-
-        // Recorre la matriz y pinta las bolas si el color en la posicion i,j de la matriz es >= 0
-        for (int i = 0; i < this.rows; i++) {
-            int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
-            for (int j = 0; j < bPerRow; ++j) {
-                if (this.bubbles[i][j] >= 0) {
-                    Vector pos = gridToWorldPosition(i, j);
-                    graphics.setColor(ballColors.getColor(this.bubbles[i][j]));
-                    graphics.fillCircle(gridToWorldPosition(i, j), this.r);
-                }
-            }
-        }
-
-        // Recorre la matriz pintando los hexagonos (hay que recorrerla de nuevo
-        // para que los hexagonos se pinten por encima de todas las bolas)
-        for (int i = 0; i < this.rows; i++) {
-            int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
-            for (int j = 0; j < bPerRow; ++j) {
-                Vector pos = gridToWorldPosition(i, j);
-                pos.x += 0.5f;
-                graphics.setColor(lineColor);
-                graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness);
-            }
-        }
-
-        // DEBUG
-        debugCollisions(graphics);
-
-        // Pinta la linea del limite inferior
-        graphics.setColor(lineColor);
-        graphics.drawLine(lineInit, lineEnd, lineThickness);
-
-        // Recorre las bolas caidas y las pinta
-        if (!this.fallingBubbles.isEmpty()) {
-            for (Pair<Vector, Integer> bubble : this.fallingBubbles) {
-                graphics.setColor(ballColors.getColor(bubble.getSecond()));
-                Vector bPos = bubble.getFirst();
-                graphics.fillCircle(bPos, this.r);
-            }
-        }
-    }
-
-    @Override
-    public void update(double deltaTime) {
-        if (!this.fallingBubbles.isEmpty()) {
-            // Para tener la posibilidad de eliminar elementos mientras se recorre,
-            // realizamos la actualizacion con iteradores
-            Iterator<Pair<Vector, Integer>> iterator = this.fallingBubbles.iterator();
-            while (iterator.hasNext()) {
-                Pair<Vector, Integer> bubble = iterator.next();
-                bubble.getFirst().y += this.fallingSpeed * (float) deltaTime;
-
-                // Si la posición de la bola ya se salió de la pantalla, eliminarla
-                if (bubble.getFirst().y + (float) this.r > this.scene.getWorldHeight()) {
-                    iterator.remove();
-                }
-            }
-        } else if (this.won) {
-            this.won = false;
-
-            // Se hace un fade in y cuando acaba la animacion se cambia a la escena de victoria
-            this.scene.setFade(Scene.FADE.IN, 0.25);
-            this.scene.setFadeCallback(() -> {
-                // Se paran los sonidos por si acaso
-                this.audio.stopSound(this.attachSound);
-                this.audio.stopSound(this.explosionSound);
-                this.engine.changeScene(new VictoryScene(this.engine, this.score));
-            });
-        }
-    }
 
     private void debugCollisions(IGraphics graphics) {
         if (this.currI >= 0 && this.currJ >= 0) {
@@ -290,6 +143,37 @@ public class Grid extends GameObject {
         return new Pair<>(i, j);
     }
 
+    private boolean cellWithinGrid(int i, int j) {
+        return i >= 0 && j >= 0 && i < this.rows && j < ((i % 2 == 0) ? this.cols : this.cols - 1);
+    }
+
+    private boolean cellOccupied(Vector pos, int i, int j) {
+        if (cellWithinGrid(i, j)) {
+            if (this.bubbles[i][j] >= 0) {
+                Vector laterals = gridToWorldPosition(i, j);
+                return (laterals.distance(pos) < this.r * 2);
+            }
+        }
+        return false;
+    }
+
+    private boolean roofCell(int i, int j) {
+        return i == 0 && cellWithinGrid(i, j);
+    }
+
+    private void updateScore(int bubblesToEraseSize) {
+        // Si el grupo es mayor que el limite establecido, aumenta la puntuacion
+        if (bubblesToEraseSize >= this.bubblesToExplode + 1) {
+            this.score += bubblesToEraseSize * this.greatScore;
+        } else {
+            this.score += bubblesToEraseSize * this.smallScore;
+        }
+        Text scoreTextRef = scoreText.get();
+        if (scoreTextRef != null) {
+            scoreTextRef.setTextLine("Score: " + Integer.toString(this.score));
+        }
+    }
+
     public boolean checkCollision(Vector pos, Vector dir, int color) {
         boolean hasCollided = false;
         Pair<Integer, Integer> rowCol = worldToGridPosition(pos);
@@ -335,26 +219,7 @@ public class Grid extends GameObject {
                 });
             }
         }
-
         return hasCollided;
-    }
-
-    private boolean cellWithinGrid(int i, int j) {
-        return i >= 0 && j >= 0 && i < this.rows && j < ((i % 2 == 0) ? this.cols : this.cols - 1);
-    }
-
-    private boolean cellOccupied(Vector pos, int i, int j) {
-        if (cellWithinGrid(i, j)) {
-            if (this.bubbles[i][j] >= 0) {
-                Vector laterals = gridToWorldPosition(i, j);
-                return (laterals.distance(pos) < this.r * 2);
-            }
-        }
-        return false;
-    }
-
-    private boolean roofCell(int i, int j) {
-        return i == 0 && cellWithinGrid(i, j);
     }
 
     private boolean manageCollision(int i, int j) {
@@ -372,12 +237,8 @@ public class Grid extends GameObject {
         if (bubblesToEraseSize >= this.bubblesToExplode) {
             this.audio.playSound(this.explosionSound);
 
-            // Si el grupo es mayor que el limite establecido, la puntuacion es mayor
-            if (bubblesToEraseSize >= this.bubblesToExplode + 1) {
-                this.score += bubblesToEraseSize * this.greatScore;
-            } else {
-                this.score += bubblesToEraseSize * this.smallScore;
-            }
+            updateScore(bubblesToEraseSize);
+
             // Se actualiza el numero de bolas totales
             this.totalBubbles -= bubblesToEraseSize;
             // Se actualiza el numero de bolas que hay de cada color
@@ -387,9 +248,17 @@ public class Grid extends GameObject {
             }
             // Se actualiza el mapa
             for (Pair<Integer, Integer> bubble : bubblesToErase) {
-                int bubbleI = bubble.getFirst();
-                int bubbleJ = bubble.getSecond();
-                this.bubbles[bubbleI][bubbleJ] = -1;
+                int bubbleX = bubble.getFirst();
+                int bubbleY = bubble.getSecond();
+
+                // Animacion de las bolas que se juntan
+                AnimCollidedBubbles anim = new AnimCollidedBubbles();
+                anim.color = this.bubbles[bubbleX][bubbleY];
+                anim.pos = gridToWorldPosition(bubbleX, bubbleY);
+                anim.radius = this.r;
+                this.collidedBubbles.add(anim);
+
+                this.bubbles[bubbleX][bubbleY] = -1;
             }
             // Si no quedan bolas, se ha ganado
             if (this.totalBubbles <= 0) {
@@ -458,7 +327,7 @@ public class Grid extends GameObject {
 
         if (color == currBubbleCol) {
             List<Pair<Integer, Integer>> adjacentCells = (i % 2 == 0) ?
-                    this.evenAdjacentCells : this.unevenAdjacentCells;
+                    this.evenAdjacentCells : this.oddAdjacentCells;
             for (Pair<Integer, Integer> dir : adjacentCells) {
                 int ni = i + dir.getFirst();
                 int nj = j + dir.getSecond();
@@ -479,7 +348,7 @@ public class Grid extends GameObject {
         if (isRoof) return true;
         bubbles.add(new Pair<>(i, j));
         List<Pair<Integer, Integer>> adjacentCells = (i % 2 == 0) ?
-                this.evenAdjacentCells : this.unevenAdjacentCells;
+                this.evenAdjacentCells : this.oddAdjacentCells;
         for (Pair<Integer, Integer> dir : adjacentCells) {
             int ni = i + dir.getFirst();
             int nj = j + dir.getSecond();
@@ -493,5 +362,201 @@ public class Grid extends GameObject {
             }
         }
         return false;
+    }
+
+    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
+                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors, float fallingSpeed, float shrinkSpeed) {
+        super();
+        this.cols = cols;
+        this.rows = rows;
+        this.bubbles = new int[this.rows][this.cols];
+        for (int[] row : this.bubbles) {
+            Arrays.fill(row, -1);
+        }
+
+        this.r = r;
+        this.hexagonRadius = (float) Math.ceil((this.r / (Math.sqrt(3) / 2.0f)));
+        this.offsetX = wallThickness;
+        this.offsetY = wallThickness + headerOffset;
+        this.bubbleOffset = bubbleOffset;
+
+        // Se generan initRows filas iniciales
+        this.totalBubbles = 0;
+        this.colorCount = new int[ballColors.getColorCount()];
+        ballColors.reset();
+        for (int i = 0; i < 2; i++) {
+            // En las filas impares hay una bola menos
+            int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
+            this.totalBubbles += bPerRow;
+
+            // Se generan las burbujas de la fila
+            for (int j = 0; j < bPerRow; ++j) {
+                int color = ballColors.generateRandomColor();
+                ballColors.addColor(color);
+                this.bubbles[i][j] = color;
+                this.colorCount[color]++;
+            }
+        }
+
+        int lineY = (int) (this.r * 2 * (this.rows - 1)) - this.bubbleOffset * (this.rows - 2);
+        this.lineInit = new Vector(this.offsetX, this.offsetY + lineY);
+        this.lineEnd = new Vector(width - this.offsetX, this.offsetY + lineY);
+
+        // Creamos la lista de celdas adyacentes a cada posicion
+        this.oddAdjacentCells = new ArrayList<>();
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));    // Arriba izquierda
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(-1, 1));    // Arriba derecha
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(1, 0));     // Abajo izquierda
+        this.oddAdjacentCells.add(new Pair<Integer, Integer>(1, 1));     // Abajo derecha
+
+        this.evenAdjacentCells = new ArrayList<>();
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, -1));     // Arriba izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));      // Arriba derecha
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));      // Izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));       // Derecha
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, -1));      // Abajo izquierda
+        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));       // Abajo derecha
+
+        this.bubblesToExplode = bubblesToExplode;
+        this.score = 0;
+        this.greatScore = greatScore;
+        this.smallScore = smallScore;
+
+        this.fallingSpeed = fallingSpeed;
+        this.fallingBubbles = new ArrayList<>();
+        this.won = false;
+
+        this.collidedBubbles = new ArrayList<>();
+        this.shrinkSpeed = shrinkSpeed;
+
+        this.engine = null;
+        this.audio = null;
+        this.attachSound = null;
+        this.explosionSound = null;
+
+        this.ballColors = ballColors;
+
+        this.scoreText = null;
+        this.showGridButton = null;
+    }
+
+    public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
+                int bubblesToExplode, int greatScore, int smallScore, BallColors ballColors) {
+        this(width, wallThickness, headerOffset, r, bubbleOffset, rows, cols, initRows,
+                bubblesToExplode, greatScore, smallScore, ballColors, 350f, 60f);
+    }
+
+    @Override
+    public void init() {
+        this.engine = this.scene.getEngine();
+        this.audio = this.engine.getAudio();
+        this.attachSound = audio.newSound("ballAttach.wav");
+        this.explosionSound = audio.newSound("ballExplosion.wav");
+        this.scoreText = new WeakReference<Text>((Text) this.scene.getHandler("scoreText"));
+        this.showGridButton = new WeakReference<ImageToggleButton>((ImageToggleButton) this.scene.getHandler("showGridButton"));
+    }
+
+    @Override
+    public void render(IGraphics graphics) {
+        super.render(graphics);
+
+        // Recorre la matriz y pinta las bolas si el color en la posicion i,j de la matriz es >= 0
+        for (int i = 0; i < this.rows; i++) {
+            int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
+            for (int j = 0; j < bPerRow; ++j) {
+                if (this.bubbles[i][j] >= 0) {
+                    Vector pos = gridToWorldPosition(i, j);
+                    graphics.setColor(ballColors.getColor(this.bubbles[i][j]));
+                    graphics.fillCircle(gridToWorldPosition(i, j), this.r);
+                }
+            }
+        }
+
+        // Recorre la matriz pintando los hexagonos (hay que recorrerla de nuevo
+        // para que los hexagonos se pinten por encima de todas las bolas)
+        ImageToggleButton showGridButtonRef = showGridButton.get();
+        if (showGridButtonRef != null) {
+            if (showGridButtonRef.isCheck()) {
+                for (int i = 0; i < this.rows; i++) {
+                    int bPerRow = (i % 2 == 0) ? this.cols : (this.cols - 1);
+                    for (int j = 0; j < bPerRow; ++j) {
+                        Vector pos = gridToWorldPosition(i, j);
+                        pos.x += 0.5f;
+                        graphics.setColor(lineColor);
+                        graphics.drawHexagon(pos, hexagonRadius, 90, lineThickness);
+                    }
+                }
+            }
+        }
+
+        // DEBUG
+        debugCollisions(graphics);
+
+        // Pinta la linea del limite inferior
+        graphics.setColor(lineColor);
+        graphics.drawLine(lineInit, lineEnd, lineThickness);
+
+        // Recorre las bolas que han colisionado y las pintas
+        if (!this.collidedBubbles.isEmpty()) {
+            for (AnimCollidedBubbles anim : this.collidedBubbles) {
+                graphics.setColor(ballColors.getColor(anim.color));
+                graphics.fillCircle(anim.pos, anim.radius);
+            }
+        }
+
+        // Recorre las bolas caidas y las pinta
+        if (!this.fallingBubbles.isEmpty()) {
+            for (Pair<Vector, Integer> bubble : this.fallingBubbles) {
+                graphics.setColor(ballColors.getColor(bubble.getSecond()));
+                Vector bPos = bubble.getFirst();
+                graphics.fillCircle(bPos, this.r);
+            }
+        }
+    }
+
+    @Override
+    public void update(double deltaTime) {
+        // Animacion para cuando colisionan un grupo de bolas
+        if (!this.collidedBubbles.isEmpty()) {
+            // Para tener la posibilidad de eliminar elementos mientras se recorre,
+            // realizamos la actualizacion con iteradores
+            Iterator<AnimCollidedBubbles> iterator = this.collidedBubbles.iterator();
+            while (iterator.hasNext()) {
+                AnimCollidedBubbles anim = iterator.next();
+                anim.radius -= shrinkSpeed * (float) deltaTime;
+                // Si el tamano de bola se se hizo demasiado pequeno, se elimina
+                if (anim.radius <= 0f) {
+                    iterator.remove();
+                }
+            }
+        }
+        // Animacion para bolas que caen
+        else if (!this.fallingBubbles.isEmpty()) {
+            // Para tener la posibilidad de eliminar elementos mientras se recorre,
+            // realizamos la actualizacion con iteradores
+            Iterator<Pair<Vector, Integer>> iterator = this.fallingBubbles.iterator();
+            while (iterator.hasNext()) {
+                Pair<Vector, Integer> bubble = iterator.next();
+                bubble.getFirst().y += this.fallingSpeed * (float) deltaTime;
+
+                // Si la posición de la bola ya se salió de la pantalla, eliminarla
+                if (bubble.getFirst().y + (float) this.r > this.scene.getWorldHeight()) {
+                    iterator.remove();
+                }
+            }
+        } else if (this.won) {
+            this.won = false;
+
+            // Se hace un fade in y cuando acaba la animacion se cambia a la escena de victoria
+            this.scene.setFade(Scene.FADE.IN, 0.25);
+            this.scene.setFadeCallback(() -> {
+                // Se paran los sonidos por si acaso
+                this.audio.stopSound(this.attachSound);
+                this.audio.stopSound(this.explosionSound);
+                this.engine.changeScene(new VictoryScene(this.engine, this.score));
+            });
+        }
     }
 }

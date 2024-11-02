@@ -4,7 +4,7 @@ import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.Scene;
 import com.grupo04.engine.utilities.Vector;
-import com.grupo04.gamelogic.gameobjects.Button;
+import com.grupo04.gamelogic.gameobjects.TextButton;
 import com.grupo04.gamelogic.gameobjects.Text;
 
 public class TitleScene extends Scene {
@@ -14,6 +14,7 @@ public class TitleScene extends Scene {
     final float[] TEXT_INDENTING = new float[]{-15f, 15f};
     final float TEXT_LINE_SPACING = -15f;
 
+    final String BUTTON_SOUND = "button.wav";
     final float BUTTON_WIDTH = 205f;
     final float BUTTON_HEIGHT = 55f;
     final float BUTTON_ARC = 25f;
@@ -29,9 +30,9 @@ public class TitleScene extends Scene {
                 TEXT_INDENTING, TEXT_LINE_SPACING);
         addGameObject(title);
 
-        Button playButton = new Button(new Vector(worldWidth / 2f, 3f * worldHeight / 5f),
+        TextButton playButton = new TextButton(new Vector(worldWidth / 2f, 3f * worldHeight / 5f),
                 BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_ARC, BUTTON_BASE_COLOR, BUTTON_OVER_COLOR,
-                "Play", BUTTON_FONT,
+                "Play", BUTTON_FONT, BUTTON_SOUND,
                 () -> {
                     // Al pulsar el boton se hace un fade in y cuando
                     // acaba la animacion se cambia a la escena de juego
@@ -39,7 +40,7 @@ public class TitleScene extends Scene {
                     this.setFadeCallback(() -> {
                         engine.changeScene(new GameScene(engine));
                     });
-                }, "button.wav");
+                });
         addGameObject(playButton);
     }
 }

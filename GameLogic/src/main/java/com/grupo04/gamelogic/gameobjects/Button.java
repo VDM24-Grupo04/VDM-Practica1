@@ -1,10 +1,7 @@
 package com.grupo04.gamelogic.gameobjects;
 
 import com.grupo04.engine.interfaces.IEngine;
-import com.grupo04.engine.interfaces.IFont;
-import com.grupo04.engine.interfaces.IGraphics;
 import com.grupo04.engine.utilities.Callback;
-import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.IAudio;
@@ -13,89 +10,56 @@ import com.grupo04.engine.interfaces.ITouchEvent;
 
 import java.util.List;
 
-public class Button extends GameObject {
-    private Vector pos;
-
-    private float width, height;
-    private float arc;
-    private Color baseCol;
-    private Color pointerOverCol;
-    private Color bgCol;
-
-    private IFont font;
-    private String text;
-    private String fontName;
-    private Color fontColor;
-    private boolean bold;
+public abstract class Button extends GameObject {
+    private IAudio audio;
+    private String onClickSoundPath;
+    private ISound onClickSound;
 
     private Callback onClick;
 
     private Vector topLeft;
 
-    private IAudio audio;
-    private String onClickSoundPath;
-    private ISound onClickSound;
+    protected Vector pos;
+    protected float width, height;
 
-    private boolean withinArea(Vector pos) {
+    private void playOnClickSound() {
+        if (this.onClickSound != null) {
+            this.audio.playSound(this.onClickSound);
+        }
+    }
+
+    protected void setOnClick(Callback callback) {
+        this.onClick = callback;
+    }
+
+    protected boolean withinArea(Vector pos) {
         return pos.x > this.topLeft.x && pos.x < this.topLeft.x + width &&
                 pos.y > this.topLeft.y && pos.y < this.topLeft.y + height;
     }
 
-    // Se pide todo
-    public Button(Vector pos,
-                  float width, float height, float arc, Color baseCol, Color pointerOverCol,
-                  String text, String fontName, Color fontColor, boolean bold, Callback onClick, String onClickSoundPath) {
+    protected Button(Vector pos, float width, float height, String onClickSoundPath, Callback onClick) {
+        super();
         this.pos = pos;
 
         this.width = width;
         this.height = height;
-        this.arc = arc;
-        this.baseCol = baseCol;
-        this.pointerOverCol = pointerOverCol;
-        this.bgCol = this.baseCol;
-
-        this.font = null;
-        this.text = text;
-        this.fontName = fontName;
-        this.fontColor = fontColor;
-        this.bold = bold;
-
+        // Punto superior izquierdo
         this.topLeft = new Vector(pos.x - (float) width / 2, pos.y - (float) height / 2);
 
         this.audio = null;
-        this.onClick = onClick;
         this.onClickSoundPath = onClickSoundPath;
-    }
+        this.onClickSound = null;
 
-    // Texto normal de color negro
-    public Button(Vector pos,
-                  float width, float height, float arc, Color baseCol, Color pointerOverCol,
-                  String text, String fontName, Callback onClick, String onClickSoundPathName) {
-        this(pos, width, height, arc, baseCol, pointerOverCol, text, fontName,
-                new Color(0, 0, 0), false, onClick, onClickSoundPathName);
-    }
-
-    // Sin sonido al pulsar
-    public Button(Vector pos,
-                  float width, float height, float arc, Color baseCol, Color pointerOverCol,
-                  String text, String fontName, Color fontColor, boolean bold, Callback onClick) {
-        this(pos, width, height, arc, baseCol, pointerOverCol, text, fontName, fontColor, bold, onClick, "");
-    }
-
-    // Texto normal de color negro y sin sonido al pulsar
-    public Button(Vector pos,
-                  float width, float height, float arc, Color baseCol, Color pointerOverCol,
-                  String text, String fontName, Callback onClick) {
-        this(pos, width, height, arc, baseCol, pointerOverCol, text, fontName, onClick, "");
+        this.onClick = onClick;
     }
 
     @Override
     public void init() {
         IEngine engine = this.scene.getEngine();
-        IGraphics graphics = engine.getGraphics();
         this.audio = engine.getAudio();
-        this.font = graphics.newFont(fontName, this.height / 1.7f, this.bold, false);
-        this.onClickSound = this.audio.newSound(this.onClickSoundPath);
+        if (this.onClickSoundPath != null) {
+            this.onClickSound = this.audio.newSound(this.onClickSoundPath);
+        }
     }
 
     @Override
@@ -103,28 +67,10 @@ public class Button extends GameObject {
         for (ITouchEvent touchEvent : touchEvents) {
             if (touchEvent.getType() == ITouchEvent.TouchEventType.PRESS) {
                 if (withinArea(touchEvent.getPos())) {
-                    this.audio.playSound(this.onClickSound);
+                    playOnClickSound();
                     this.onClick.call();
-                }
-            } else if (touchEvent.getType() == ITouchEvent.TouchEventType.MOTION) {
-                if (withinArea(touchEvent.getPos())) {
-                    // Se podria añadir un sonido cuando este encima
-                    this.bgCol = this.pointerOverCol;
-                } else {
-                    // Se podria añadir un sonido cuando no este encima
-                    this.bgCol = this.baseCol;
                 }
             }
         }
-    }
-
-    @Override
-    public void render(IGraphics graphics) {
-        graphics.setColor(this.bgCol);
-        graphics.fillRoundRectangle(this.pos, this.width, this.height, this.arc);
-
-        graphics.setColor(this.fontColor);
-        graphics.setFont(this.font);
-        graphics.drawText(this.text, this.pos);
     }
 }

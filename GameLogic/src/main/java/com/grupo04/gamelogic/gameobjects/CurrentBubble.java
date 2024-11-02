@@ -9,6 +9,7 @@ import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.engine.interfaces.ITouchEvent;
 import com.grupo04.gamelogic.BallColors;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class CurrentBubble extends GameObject {
@@ -22,7 +23,7 @@ public class CurrentBubble extends GameObject {
     Vector initPos, pos, dir;
     int color;
 
-    Grid grid;
+    WeakReference<Grid> grid;
 
     IAudio audio;
     ISound throwSound = null;
@@ -38,7 +39,7 @@ public class CurrentBubble extends GameObject {
         this.wallThickness = wallThickness;
 
         // La posicion inicial sera en el centro del mundo por debajo del limite vertical
-        int initY = (int) ((this.r * 2 - bubbleOffset) * (rows + 2));
+        int initY = (this.r * 2 - bubbleOffset) * (rows + 2);
         initPos = new Vector(w / 2.0f, wallThickness + headerOffset + initY);
 
         this.ballColors = ballColors;
@@ -47,15 +48,10 @@ public class CurrentBubble extends GameObject {
 
     @Override
     public void init() {
-        grid = (Grid) scene.getHandler("grid");
+        grid = new WeakReference<Grid>((Grid) scene.getHandler("grid"));
         this.audio = this.scene.getEngine().getAudio();
         this.throwSound = this.audio.newSound("ballThrow.wav");
         this.bounceSound = this.audio.newSound("ballBounce.wav");
-    }
-
-    @Override
-    public void dereference() {
-        grid.dereference();
     }
 
     @Override
@@ -107,8 +103,11 @@ public class CurrentBubble extends GameObject {
             pos = pos.plus(dir.times(spd * (float) deltaTime));
 
             // Comprobar colisiones. Si hay colision, se reinicia la bola
-            if (grid.checkCollision(pos, dir, color)) {
-                reset();
+            Grid gridPointer = grid.get();
+            if (gridPointer != null) {
+                if (gridPointer.checkCollision(pos, dir, color)) {
+                    reset();
+                }
             }
         }
     }

@@ -15,7 +15,7 @@ public class BallColors {
     private static final Random randomNumbers = new Random();
     private HashMap<Integer, Color> availableColors = new HashMap<Integer, Color>();
 
-    public static int getColorCount() {
+    public int getColorCount() {
         return colors.length;
     }
 

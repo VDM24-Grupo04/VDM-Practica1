@@ -5,7 +5,7 @@ import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.Scene;
 import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.ISound;
-import com.grupo04.gamelogic.gameobjects.Button;
+import com.grupo04.gamelogic.gameobjects.TextButton;
 import com.grupo04.gamelogic.gameobjects.Text;
 
 public class GameOverScene extends Scene {
@@ -15,6 +15,7 @@ public class GameOverScene extends Scene {
     final float[] TEXT_INDENTING = new float[]{3f, -10f};
     final float TEXT_LINE_SPACING = -30f;
 
+    final String BUTTON_SOUND = "button.wav";
     final float BUTTON_WIDTH = 205f;
     final float BUTTON_HEIGHT = 55f;
     final float BUTTON_ARC = 25f;
@@ -34,9 +35,9 @@ public class GameOverScene extends Scene {
         addGameObject(title);
 
         Vector tryAgainButtonPos = new Vector(worldWidth / 2f, 4f * worldHeight / 6f);
-        Button tryAgainButton = new Button(tryAgainButtonPos,
+        TextButton tryAgainButton = new TextButton(tryAgainButtonPos,
                 BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_ARC, BUTTON_BASE_COLOR, BUTTON_OVER_COLOR,
-                "Try again", BUTTON_FONT,
+                "Try again", BUTTON_FONT, BUTTON_SOUND,
                 () -> {
                     // Al pulsar el boton se hace un fade in y cuando
                     // acaba la animacion se cambia a la escena de juego
@@ -44,15 +45,14 @@ public class GameOverScene extends Scene {
                     this.setFadeCallback(() -> {
                         engine.changeScene(new GameScene(engine));
                     });
-                }
-        , "button.wav");
+                });
         addGameObject(tryAgainButton);
 
         Vector menuButtonPos = new Vector(tryAgainButtonPos);
         menuButtonPos.y += BUTTON_HEIGHT + BUTTON_OFFSET_Y;
-        Button menuButton = new Button(menuButtonPos,
+        TextButton menuButton = new TextButton(menuButtonPos,
                 BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_ARC, BUTTON_BASE_COLOR, BUTTON_OVER_COLOR,
-                "Menu", BUTTON_FONT,
+                "Menu", BUTTON_FONT, BUTTON_SOUND,
                 () -> {
                     // Al pulsar el boton se hace un fade in y cuando
                     // acaba la animacion se cambia al menu principal
@@ -63,11 +63,10 @@ public class GameOverScene extends Scene {
                         scene.setFade(FADE.OUT, 0.25);
                         engine.changeScene(scene);
                     });
-                }
-        , "button.wav");
+                });
         addGameObject(menuButton);
 
-        super.setFade(FADE.OUT, 0.0);
+        setFade(FADE.OUT, 0.0);
 
         // Se reproduce una vez cargado el sonido
         this.loseSound = engine.getAudio().newSound("lose.wav", true);

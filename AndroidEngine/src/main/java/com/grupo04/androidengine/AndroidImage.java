@@ -14,7 +14,7 @@ public class AndroidImage implements IImage {
 
     AndroidImage(String fileName, AssetManager assetManager) {
         try {
-            InputStream is = assetManager.open(fileName);
+            InputStream is = assetManager.open("images/" + fileName);
             this.img = BitmapFactory.decodeStream(is);
         } catch (IOException ex) {
             System.err.println("Error in the font with name " + fileName + ": " + ex.getMessage());
