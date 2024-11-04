@@ -177,32 +177,32 @@ public class Grid extends GameObject {
     }
 
     private void debugCollisions(IGraphics graphics) {
-        if (this.currI >= 0 && this.currJ >= 0) {
-            Vector pos = gridToWorldPosition(this.currI, this.currJ);
-            pos.x += 0.5f;
-            graphics.setColor(this.bubbleColors.getColor(0));
-            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
-
-            pos = gridToWorldPosition(this.currI, this.currJ - 1);
-            pos.x += 0.5f;
-            graphics.setColor(this.bubbleColors.getColor(1));
-            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
-
-            pos = gridToWorldPosition(this.currI, this.currJ + 1);
-            pos.x += 0.5f;
-            graphics.setColor(this.bubbleColors.getColor(1));
-            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
-
-            pos = gridToWorldPosition(this.currI - 1, this.currJ);
-            pos.x += 0.5f;
-            graphics.setColor(this.bubbleColors.getColor(1));
-            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
-
-            pos = gridToWorldPosition(this.currI - 1, (this.currI % 2 == 0) ? this.currJ - 1 : this.currJ + 1);
-            pos.x += 0.5f;
-            graphics.setColor(this.bubbleColors.getColor(1));
-            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
-        }
+//        if (this.currI >= 0 && this.currJ >= 0) {
+//            Vector pos = gridToWorldPosition(this.currI, this.currJ);
+//            pos.x += 0.5f;
+//            graphics.setColor(this.bubbleColors.getColor(0));
+//            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
+//
+//            pos = gridToWorldPosition(this.currI, this.currJ - 1);
+//            pos.x += 0.5f;
+//            graphics.setColor(this.bubbleColors.getColor(1));
+//            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
+//
+//            pos = gridToWorldPosition(this.currI, this.currJ + 1);
+//            pos.x += 0.5f;
+//            graphics.setColor(this.bubbleColors.getColor(1));
+//            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
+//
+//            pos = gridToWorldPosition(this.currI - 1, this.currJ);
+//            pos.x += 0.5f;
+//            graphics.setColor(this.bubbleColors.getColor(1));
+//            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
+//
+//            pos = gridToWorldPosition(this.currI - 1, (this.currI % 2 == 0) ? this.currJ - 1 : this.currJ + 1);
+//            pos.x += 0.5f;
+//            graphics.setColor(this.bubbleColors.getColor(1));
+//            graphics.drawHexagon(pos, this.hexagonRadius, 90, this.lineThickness * 2);
+//        }
     }
 
     // Convierte posiciones i,j de la matriz a coordenadas de mundo

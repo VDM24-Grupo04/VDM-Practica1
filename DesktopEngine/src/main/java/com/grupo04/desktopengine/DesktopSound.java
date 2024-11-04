@@ -7,32 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 
 public class DesktopSound extends Sound {
-    private File audioFile                      = null;
-    private long currentFrame                   = -1;   // Para el resume()
-    private AudioFormat audioFormat             = null;
-    private List<DesktopAudio.ClipEntry> clips  = null;
-
-    // Referencias
-    private PriorityQueue<DesktopAudio.ClipEntry> playingPool = null;
+    private File audioFile;
+    private long currentFrame;                  // Para el resume()
+    private final List<DesktopAudio.ClipEntry> clips;
+    private final PriorityQueue<DesktopAudio.ClipEntry> playingPool;
 
     DesktopSound(PriorityQueue<DesktopAudio.ClipEntry> playingPool, String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         super(fileName, priority, leftVolume, rightVolume, loop, rate);
 
         this.clips = new ArrayList<>();
         this.playingPool = playingPool;
+        this.currentFrame = -1;
 
         try {
             this.audioFile = new File("./assets/sounds/" + fileName);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(this.audioFile);
-            this.audioFormat = audioStream.getFormat();
         } catch (Exception e) {
             System.err.println("Could not load audio file (\"" + fileName + "\"): " + e.getMessage());
         }

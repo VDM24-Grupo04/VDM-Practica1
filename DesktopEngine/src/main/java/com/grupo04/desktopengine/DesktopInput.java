@@ -18,7 +18,7 @@ public class DesktopInput extends Input {
     DesktopInput(JFrame window, Engine engine) {
         super();
 
-        // Se anade al JFrame un listener de raton
+        // Se añade al JFrame un listener de raton
         window.addMouseListener(new MouseAdapter() {
             // Se sobrescribe el evento de pulsar el raton
             @Override
