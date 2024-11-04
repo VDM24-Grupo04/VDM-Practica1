@@ -33,6 +33,7 @@ public class CurrentBubble extends GameObject {
 
     public CurrentBubble(int w, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, BubbleColors bubbleColors) {
         super();
+
         this.dir = new Vector(0, 0);
         this.worldWidth = w;
         this.wallThickness = wallThickness;

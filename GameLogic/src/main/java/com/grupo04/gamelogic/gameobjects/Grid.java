@@ -94,6 +94,7 @@ public class Grid extends GameObject {
     public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
                 int bubblesToExplode, int greatScore, int smallScore, BubbleColors bubbleColors, float fallingSpeed, float shrinkSpeed) {
         super();
+
         this.cols = cols;
         this.rows = rows;
         this.bubbles = new int[this.rows][this.cols];

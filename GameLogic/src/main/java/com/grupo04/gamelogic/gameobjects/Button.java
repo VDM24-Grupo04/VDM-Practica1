@@ -41,6 +41,7 @@ public abstract class Button extends GameObject {
 
     protected Button(Vector pos, float width, float height, String onClickSoundPath, Callback onClick) {
         super();
+
         this.pos = pos;
 
         this.width = width;

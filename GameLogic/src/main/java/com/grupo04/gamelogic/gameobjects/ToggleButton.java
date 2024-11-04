@@ -11,6 +11,7 @@ public abstract class ToggleButton extends Button {
 
     protected ToggleButton(Vector pos, float width, float height, String onClickSoundPath) {
         super(pos, width, height, onClickSoundPath, null);
+
         this.setOnClick(this::toggle);
         this.checked = false;
     }

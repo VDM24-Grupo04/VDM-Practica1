@@ -10,7 +10,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class DesktopAudio extends Audio {
-    // Para gestionar la prioridad como el SoundPool de Android
+    // Para gestionar la prioridad
+    // como el SoundPool de Android
     public static class ClipEntry {
         private Clip clip;
         private int priority;
@@ -29,7 +30,8 @@ public class DesktopAudio extends Audio {
     final private HashSet<DesktopSound> pausedPool;
 
     public DesktopAudio(int maxStreams) {
-        // La condición de prioridad es el valor del entero de priority en ClipEntry
+        // La condición de prioridad es el valor
+        // del entero de priority en ClipEntry
         this.playingPool = new PriorityQueue<>(maxStreams, (c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority()));
         for (int i = 0; i < maxStreams; i++) {
             try {

@@ -9,18 +9,18 @@ import android.media.SoundPool;
 import java.io.IOException;
 
 public class AndroidSound extends Sound {
-    private int soundId         = 0; // returned by the load function (0 if failed)
-    private int streamId        = 0; // returned by the play function (0 if failed)
-    private boolean isLoaded    = false; // Para reproducir cuando cargue la escena
-
-    // Referencias
-    private SoundPool soundPool = null;
+    private int soundId;      // Devuelto por el load() (0 si falla)
+    private int streamId;     // Devuelto por play() (0 si falla)
+    private boolean isLoaded; // Para reproducir cuando cargue la escena
+    private final SoundPool soundPool;
 
     AndroidSound(AssetManager assetManager, SoundPool soundPool, String fileName, int priority,
                  float leftVolume, float rightVolume, int loop, float rate) {
         super(fileName, priority, leftVolume, rightVolume, loop, rate);
 
-        this.soundPool = soundPool;
+        this.soundPool  = soundPool;
+        this.isLoaded   = false;
+        this.streamId   = 0;
 
         try {
             AssetFileDescriptor audioFile = assetManager.openFd("sounds/" + fileName);

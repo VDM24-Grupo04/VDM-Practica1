@@ -33,8 +33,8 @@ public abstract class Scene {
 
     protected Scene(IEngine engine, int worldWidth, int worldHeight) {
         this.alive = true;
-        this.gameObjects = new HashSet<GameObject>();
-        this.handlers = new HashMap<String, GameObject>();
+        this.gameObjects = new HashSet<>();
+        this.handlers = new HashMap<>();
         this.engine = engine;
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;

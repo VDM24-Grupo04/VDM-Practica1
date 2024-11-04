@@ -8,13 +8,10 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 
 public class DesktopEngine extends Engine {
-    private Graphics2D graphics2D;
-    private BufferStrategy bufferStrategy;
-
     public DesktopEngine(JFrame window, int maxStreams) {
         super();
 
-        // Intentamos crear el buffer strategy con 2 buffers.
+        // Intentamos crear el buffer strategy con 2 buffers
         int attempts = 100;
         while (attempts-- > 0) {
             try {
@@ -31,10 +28,10 @@ public class DesktopEngine extends Engine {
             System.out.println("BufferStrategy after " + (100 - attempts) + " attempts");
         }
 
-        this.bufferStrategy = window.getBufferStrategy();
-        this.graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
+        BufferStrategy bufferStrategy = window.getBufferStrategy();
+        Graphics2D graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
 
-        DesktopGraphics desktopGraphics = new DesktopGraphics(window, this.graphics2D, this.bufferStrategy);
+        DesktopGraphics desktopGraphics = new DesktopGraphics(window, graphics2D, bufferStrategy);
         DesktopAudio desktopAudio = new DesktopAudio(maxStreams);
         DesktopInput desktopInput = new DesktopInput(window, this);
         this.initModules(desktopGraphics, desktopAudio, desktopInput);

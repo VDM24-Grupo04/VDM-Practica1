@@ -17,8 +17,9 @@ public class Text extends GameObject {
     private Color color;
     private IFont font;
     // Indentancion de las lineas de texto
-    // Hay que tener en cuenta que inicialmente todo el texto esta alineado a la izquierda
-    //  respecto a la primera linea de texto
+    // Hay que tener en cuenta que inicialmente
+    // todo el texto esta alineado a la izquierda
+    // respecto a la primera linea de texto
     private final float[] indentation;
     // Espacio entre las diferentes lineas
     private final float lineSpacing;
@@ -80,6 +81,7 @@ public class Text extends GameObject {
     public Text(Vector pos, String[] texts, String fontName, float size, boolean bold, boolean italic,
                 Color color, float[] indentation, float lineSpacing) {
         super();
+
         this.texts = texts;
         this.indentation = indentation;
         this.lineSpacing = lineSpacing;
@@ -91,6 +93,7 @@ public class Text extends GameObject {
     public Text(Vector pos, String[] texts, String fontName, float size, boolean bold, boolean italic,
                 Color color, float lineSpacing) {
         super();
+
         this.texts = texts;
         this.indentation = new float[0];
         this.lineSpacing = lineSpacing;
@@ -102,6 +105,7 @@ public class Text extends GameObject {
     public Text(Vector pos, String text, String fontName, float size, boolean bold, boolean italic,
                 Color color) {
         super();
+
         this.texts = new String[]{text};
         this.indentation = new float[0];
         this.lineSpacing = 0;

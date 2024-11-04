@@ -12,6 +12,7 @@ public class Walls extends GameObject {
 
     public Walls(int thickness, int headerOffset, int width, int height) {
         super();
+
         this.pos = new Vector[]{
                 new Vector(thickness / 2.0f, headerOffset + (height - headerOffset) / 2.0f),
                 new Vector(width / 2.0f, headerOffset + thickness / 2.0f),

@@ -7,8 +7,8 @@ import com.grupo04.engine.Audio;
 import com.grupo04.engine.interfaces.ISound;
 
 public class AndroidAudio extends Audio {
-    private AssetManager assetManager   = null;
-    private SoundPool soundPool         = null;
+    private final SoundPool soundPool;
+    private final AssetManager assetManager;
 
     public AndroidAudio(AssetManager assetManager, int maxStreams) {
         this.assetManager = assetManager;

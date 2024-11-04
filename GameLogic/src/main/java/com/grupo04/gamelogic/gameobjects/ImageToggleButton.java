@@ -24,6 +24,7 @@ public class ImageToggleButton extends ToggleButton {
     public ImageToggleButton(Vector pos, int width, int height, String uncheckedImagePath, String checkedImagePath,
                              String onClickSoundPath) {
         super(pos, width, height, onClickSoundPath);
+
         this.uncheckedImagePath = uncheckedImagePath;
         this.checkedImagePath = checkedImagePath;
     }

@@ -12,6 +12,7 @@ public class ImageButton extends Button {
 
     public ImageButton(Vector pos, float width, float height, String imagePath, String onClickSoundPath, Callback onClick) {
         super(pos, width, height, onClickSoundPath, onClick);
+
         this.imagePath = imagePath;
     }
 

@@ -10,6 +10,7 @@ public class AndroidFont extends Font {
 
     public AndroidFont(String name, float size, boolean bold, boolean italic, AssetManager assetManager) {
         super(size);
+
         try {
             this.typeface = Typeface.createFromAsset(assetManager, "fonts/" + name);
             if (bold && italic) {

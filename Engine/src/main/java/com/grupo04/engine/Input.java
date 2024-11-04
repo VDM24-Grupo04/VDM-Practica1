@@ -13,8 +13,8 @@ public class Input {
     // distintos, por lo que se puede estar recibiendo input a la vez que se esta gestionando,
 
     public Input() {
-        this.touchEvents = new ArrayList<ITouchEvent>();
-        this.sceneTouchEvents = new ArrayList<ITouchEvent>();
+        this.touchEvents = new ArrayList<>();
+        this.sceneTouchEvents = new ArrayList<>();
     }
 
     // Obtiene los TouchEvents que le va a mandar a la escena

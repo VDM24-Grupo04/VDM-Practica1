@@ -3,12 +3,12 @@ package com.grupo04.engine;
 import com.grupo04.engine.interfaces.ISound;
 
 public abstract class Sound implements ISound {
-    protected String soundName  = "";
-    protected int priority      = 0;
-    protected float leftVolume  = 1.0f;
-    protected float rightVolume = 1.0f;
-    protected int loop          = 0;    // 0 = no loop, -1 = loop infinito
-    protected float rate        = 1.0f; // 1.0 = normal
+    protected String soundName;
+    protected int priority;
+    protected float leftVolume;
+    protected float rightVolume;
+    protected int loop;    // 0 = no loop, -1 = loop infinito
+    protected float rate;  // 1.0 = normal
 
     public Sound(String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         this.soundName = fileName;

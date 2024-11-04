@@ -25,7 +25,7 @@ public abstract class Engine implements IEngine, Runnable {
     private Input input;
 
     // Escenas
-    private Stack<Scene> scenes;
+    private final Stack<Scene> scenes;
 
     protected Engine() {
         this.mainLoopThread = null;
@@ -33,7 +33,7 @@ public abstract class Engine implements IEngine, Runnable {
         this.graphics = null;
         this.audio = null;
         this.input = null;
-        this.scenes = new Stack<Scene>();
+        this.scenes = new Stack<>();
     }
 
     protected void initModules(Graphics graphics, Audio audio, Input input) {
@@ -117,8 +117,8 @@ public abstract class Engine implements IEngine, Runnable {
 
             update(deltaTime);
             // Informar sobre los FPS a los que corre el juego
-            if (currentTime - previousReport > 1000000000l) {
-                long fps = frames * 1000000000l / (currentTime - previousReport);
+            if (currentTime - previousReport > 1000000000L) {
+                long fps = frames * 1000000000L / (currentTime - previousReport);
                 //System.out.println(fps + " fps");
                 frames = 0;
                 previousReport = currentTime;

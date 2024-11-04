@@ -32,7 +32,6 @@ public class AndroidInput extends Input {
                 float x = event.getX();
                 float y = event.getY();
                 Vector pos = new Vector(x, y);
-                //Vector pos = engine.worldToScreenPoint(new Vector(x, y));
 
                 switch (action) {
                     // Se produce este evento cuando el primer dedo toca la pantalla
@@ -73,7 +72,6 @@ public class AndroidInput extends Input {
                 int action = event.getActionMasked();
                 float x = event.getX();
                 float y = event.getY();
-                int i = event.getActionIndex();
                 Vector pos = new Vector(x, y);
 
                 switch (action) {

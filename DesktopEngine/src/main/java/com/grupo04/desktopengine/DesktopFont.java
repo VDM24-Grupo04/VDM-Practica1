@@ -12,6 +12,7 @@ public class DesktopFont extends Font {
 
     public DesktopFont(String name, float size, boolean bold, boolean italic) {
         super(size);
+
         try {
             FileInputStream stream = new FileInputStream("./assets/fonts/" + name);
             // El primer parametro especifica el tipo de la fuente (TTF)
@@ -35,7 +36,5 @@ public class DesktopFont extends Font {
         }
     }
 
-    java.awt.Font getFont() {
-        return derivedFont;
-    }
+    java.awt.Font getFont() { return this.derivedFont; }
 }
