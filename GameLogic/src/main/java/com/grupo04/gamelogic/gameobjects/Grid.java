@@ -126,26 +126,26 @@ public class Grid extends GameObject {
             }
         }
 
-        int lineY = (int) (this.r * 2 * (this.rows - 1)) - this.bubbleOffset * (this.rows - 2);
+        int lineY = (this.r * 2 * (this.rows - 1)) - this.bubbleOffset * (this.rows - 2);
         this.lineInit = new Vector(this.offsetX, this.offsetY + lineY);
         this.lineEnd = new Vector(width - this.offsetX, this.offsetY + lineY);
 
         // Creamos la lista de celdas adyacentes a cada posicion
         this.oddAdjacentCells = new ArrayList<>();
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));    // Arriba izquierda
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(-1, 1));    // Arriba derecha
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(0, -1));    // Izquierda
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(0, 1));     // Derecha
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(1, 0));     // Abajo izquierda
-        this.oddAdjacentCells.add(new Pair<Integer, Integer>(1, 1));     // Abajo derecha
+        this.oddAdjacentCells.add(new Pair<>(-1, 0));    // Arriba izquierda
+        this.oddAdjacentCells.add(new Pair<>(-1, 1));    // Arriba derecha
+        this.oddAdjacentCells.add(new Pair<>(0, -1));    // Izquierda
+        this.oddAdjacentCells.add(new Pair<>(0, 1));     // Derecha
+        this.oddAdjacentCells.add(new Pair<>(1, 0));     // Abajo izquierda
+        this.oddAdjacentCells.add(new Pair<>(1, 1));     // Abajo derecha
 
         this.evenAdjacentCells = new ArrayList<>();
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, -1));     // Arriba izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(-1, 0));      // Arriba derecha
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, -1));      // Izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(0, 1));       // Derecha
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, -1));      // Abajo izquierda
-        this.evenAdjacentCells.add(new Pair<Integer, Integer>(1, 0));       // Abajo derecha
+        this.evenAdjacentCells.add(new Pair<>(-1, -1));     // Arriba izquierda
+        this.evenAdjacentCells.add(new Pair<>(-1, 0));      // Arriba derecha
+        this.evenAdjacentCells.add(new Pair<>(0, -1));      // Izquierda
+        this.evenAdjacentCells.add(new Pair<>(0, 1));       // Derecha
+        this.evenAdjacentCells.add(new Pair<>(1, -1));      // Abajo izquierda
+        this.evenAdjacentCells.add(new Pair<>(1, 0));       // Abajo derecha
 
         this.bubblesToExplode = bubblesToExplode;
         this.score = 0;
@@ -262,7 +262,7 @@ public class Grid extends GameObject {
         }
     }
 
-    public boolean checkCollision(Vector pos, Vector dir, int color) {
+    public boolean checkCollision(Vector pos, int color) {
         boolean hasCollided = false;
         Pair<Integer, Integer> rowCol = worldToGridPosition(pos);
 
@@ -302,7 +302,6 @@ public class Grid extends GameObject {
             else if (this.bubbles[i][j] >= 0 && gridToWorldPosition(i, j).y + this.r > this.lineEnd.y) {
                 this.audio.stopSound(this.attachSound);
                 this.audio.stopSound(this.explosionSound);
-
                 // Se hace un fade in y cuando acaba la animacion se cambia a la escena de game over
                 this.scene.setFade(Scene.FADE.IN, 0.25);
                 this.scene.setFadeCallback(() -> {

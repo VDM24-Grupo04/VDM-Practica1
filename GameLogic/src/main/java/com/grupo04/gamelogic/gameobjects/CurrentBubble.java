@@ -107,7 +107,7 @@ public class CurrentBubble extends GameObject {
             // Comprobar colisiones. Si hay colision, se reinicia la bola
             Grid gridPointer = this.grid.get();
             if (gridPointer != null) {
-                if (gridPointer.checkCollision(this.pos, this.dir, this.color)) {
+                if (gridPointer.checkCollision(this.pos, this.color)) {
                     reset();
                 }
             }

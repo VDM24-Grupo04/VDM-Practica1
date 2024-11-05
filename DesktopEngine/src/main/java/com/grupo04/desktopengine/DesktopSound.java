@@ -48,12 +48,11 @@ public class DesktopSound extends Sound {
                 clip.loop(this.loop);
                 clip.start();
 
-                // Si el clip terminó de reproducirse, se cierra y
+                // Si el clip terminó de reproducirse, se para y
                 // se elimina de la lista de clips
                 clip.addLineListener(event -> {
                     if (event.getType() == LineEvent.Type.STOP) {
                         clip.stop();
-                        clip.close();
                         this.clips.remove(clipEntry);
                     }
                 });
@@ -76,7 +75,6 @@ public class DesktopSound extends Sound {
                 if (clip.isRunning()) {
                     clip.stop();
                 }
-                clip.close();
             }
             this.clips.clear();
         } catch (Exception e) {

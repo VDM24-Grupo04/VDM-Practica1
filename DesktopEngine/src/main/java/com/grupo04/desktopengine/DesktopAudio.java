@@ -65,7 +65,12 @@ public class DesktopAudio extends Audio {
 
     private ClipEntry getAvailableClip() {
         for (ClipEntry clipEntry : this.playingPool) {
-            if (!clipEntry.getClip().isRunning()) {
+            Clip clip = clipEntry.getClip();
+            if (!clip.isOpen()) {
+                return clipEntry;
+            }
+            else if (!clip.isRunning()) {
+                clip.close();
                 return clipEntry;
             }
         }
