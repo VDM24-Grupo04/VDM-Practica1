@@ -5,6 +5,7 @@ import com.grupo04.engine.Sound;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.PriorityQueue;
 
 import javax.sound.sampled.AudioSystem;
@@ -41,6 +42,7 @@ public class DesktopSound extends Sound {
             for (int i = 0; i < this.clips.size(); ++i) {
                 DesktopAudio.ClipEntry clipEntry = this.clips.get(i);
                 Clip clip = clipEntry.getClip();
+                // Si no está abierto, abrimos
                 if (!clip.isOpen()) {
                     clip.open(AudioSystem.getAudioInputStream(this.audioFile));
                 }

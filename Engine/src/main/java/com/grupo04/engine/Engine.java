@@ -235,4 +235,7 @@ public abstract class Engine implements IEngine, Runnable {
     public IAudio getAudio() {
         return this.audio;
     }
+
+    public void shutdown() {
+    }
 }

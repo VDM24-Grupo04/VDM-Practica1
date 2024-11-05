@@ -8,6 +8,8 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 
 public class DesktopEngine extends Engine {
+    DesktopAudio desktopAudio;
+
     public DesktopEngine(JFrame window, int maxStreams) {
         super();
 
@@ -32,8 +34,16 @@ public class DesktopEngine extends Engine {
         Graphics2D graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
 
         DesktopGraphics desktopGraphics = new DesktopGraphics(window, graphics2D, bufferStrategy);
-        DesktopAudio desktopAudio = new DesktopAudio(maxStreams);
+        desktopAudio = new DesktopAudio(maxStreams);
         DesktopInput desktopInput = new DesktopInput(window, this);
         this.initModules(desktopGraphics, desktopAudio, desktopInput);
+    }
+
+    // Cierra todos los clips que estuvieran abiertos cuando se cierra el juego en Desktop
+    @Override
+    public void shutdown() {
+        if (desktopAudio != null) {
+            desktopAudio.closeAllClips();
+        }
     }
 }

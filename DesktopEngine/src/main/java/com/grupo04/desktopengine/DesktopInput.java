@@ -67,6 +67,7 @@ public class DesktopInput extends Input {
         // Al cerrar la ventana se realiza una salida adecuada del sistema
         window.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
+                engine.shutdown();
                 System.exit(0);
             }
         });
@@ -81,6 +82,7 @@ public class DesktopInput extends Input {
             public void keyPressed(KeyEvent keyEvent) {
                 // Si se pulsa el escape
                 if (keyEvent.getKeyCode() == 27) {
+                    engine.shutdown();
                     System.exit(0);
                 }
             }
