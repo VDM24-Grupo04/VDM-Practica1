@@ -39,7 +39,7 @@ public class GameScene extends Scene {
         super(engine, 400, 600, "background.jpg");
 
         // Al iniciar la escena se hace un fade out
-        setFade(FADE.OUT, 0.25);
+        setFade(Fade.OUT, 0.25);
 
         // Radio de las burbujas en el mapa
         float r = (((float) this.worldWidth - (WALL_THICKNESS * 2)) / N_COLS) / 2;
@@ -53,10 +53,10 @@ public class GameScene extends Scene {
                     // Al pulsar el boton se hace un fade in y cuando
                     // acaba la animacion se cambia al menu principal
                     // con animacion de fade out
-                    this.setFade(FADE.IN, 0.25);
+                    this.setFade(Fade.IN, 0.25);
                     this.setFadeCallback(() -> {
                         TitleScene scene = new TitleScene(this.engine);
-                        scene.setFade(FADE.OUT, 0.25);
+                        scene.setFade(Fade.OUT, 0.25);
                         this.engine.changeScene(scene);
                     });
                 });

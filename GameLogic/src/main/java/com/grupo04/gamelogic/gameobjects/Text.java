@@ -34,6 +34,9 @@ public class Text extends GameObject {
     private float firstTextHeight;
     // Alto total de todas las lineas
     private float fullHeight;
+    // Calcular la posicion de cada linea de texto
+    private Vector textPos;
+
 
     private boolean paramsToBeCalculated;
     private IGraphics graphics;
@@ -72,6 +75,7 @@ public class Text extends GameObject {
         this.textsWidths = new float[this.texts.length];
         this.textsHeights = new float[this.texts.length];
         this.fullHeight = 0f;
+        this.textPos = new Vector();
 
         this.paramsToBeCalculated = true;
         this.graphics = null;
@@ -130,8 +134,8 @@ public class Text extends GameObject {
         graphics.setColor(this.color);
         graphics.setFont(this.font);
 
-        Vector textPos = new Vector();
         // Centrar el texto horziontalmente
+        textPos.x = 0f;
         textPos.y = this.pos.y + this.firstTextHeight / 2f - this.fullHeight / 2f;
         for (int i = 0; i < this.texts.length; ++i) {
             String currentText = this.texts[i];

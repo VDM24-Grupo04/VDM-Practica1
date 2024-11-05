@@ -36,7 +36,7 @@ public class TitleScene extends Scene {
                 () -> {
                     // Al pulsar el boton se hace un fade in y cuando
                     // acaba la animacion se cambia a la escena de juego
-                    this.setFade(FADE.IN, 0.25);
+                    this.setFade(Fade.IN, 0.25);
                     this.setFadeCallback(() -> {
                         this.engine.changeScene(new GameScene(this.engine));
                     });

@@ -2,6 +2,7 @@ package com.grupo04.engine;
 
 import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.interfaces.IGraphics;
+import com.grupo04.engine.interfaces.IScene;
 import com.grupo04.engine.utilities.Callback;
 import com.grupo04.engine.interfaces.ITouchEvent;
 import com.grupo04.engine.interfaces.IImage;
@@ -12,9 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-public abstract class Scene {
-    public enum FADE {NONE, IN, OUT}
-
+public abstract class Scene implements IScene {
     private boolean alive;
     private final HashSet<GameObject> gameObjects;
     private final HashMap<String, GameObject> handlers;
@@ -24,7 +23,7 @@ public abstract class Scene {
 
     protected IImage bgImage;
 
-    private FADE fade;
+    private Fade fade;
     private double fadeDuration;
     private double fadeTimer;
     private Color fadeColor;
@@ -42,7 +41,7 @@ public abstract class Scene {
         this.engine.setWorldSize(this.worldWidth, this.worldHeight);
         this.bgImage = null;
 
-        this.fade = FADE.NONE;
+        this.fade = Fade.NONE;
         this.fadeDuration = 0;
         this.fadeTimer = 0;
         this.fadeColor = new Color(0, 0, 0, 255);
@@ -85,43 +84,50 @@ public abstract class Scene {
     // Hacer que la escena comience con un fade. Se le puede pasar solo el tipo de fade,
     // solo el tipo y la duracion, o el tipo, la duracion y el color del fade.
     // ** fadeDuration tiene que ir en segundos
-    public void setFade(FADE fade) {
+    @Override
+    public void setFade(Fade fade) {
         this.fade = fade;
         this.fadeDuration = 0.2;
         this.fadeTimer = 0;
     }
 
-    public void setFade(FADE fade, double fadeDuration) {
+    @Override
+    public void setFade(Fade fade, double fadeDuration) {
         this.fade = fade;
         this.fadeDuration = fadeDuration;
         this.fadeTimer = 0;
     }
 
-    public void setFade(FADE fade, double fadeDuration, Color fadeColor) {
+    @Override
+    public void setFade(Fade fade, double fadeDuration, Color fadeColor) {
         setFade(fade, fadeDuration);
         this.fadeColor = fadeColor;
 
-        if (this.fade == FADE.IN) {
+        if (this.fade == Fade.IN) {
             fadeColor.alpha = 0;
-        } else if (this.fade == FADE.OUT) {
+        } else if (this.fade == Fade.OUT) {
             fadeColor.alpha = 0;
         }
     }
 
-    public void setFade(FADE fade, Color fadeColor) {
+    @Override
+    public void setFade(Fade fade, Color fadeColor) {
         setFade(fade);
         this.fadeColor = fadeColor;
     }
 
+    @Override
     public void setFadeCallback(Callback onFadeEnd) {
         this.onFadeEnd = onFadeEnd;
     }
 
+    @Override
     public void addGameObject(GameObject gameObject) {
         this.gameObjects.add(gameObject);
         gameObject.setScene(this);
     }
 
+    @Override
     public void addGameObject(GameObject gameObject, String handler) {
         this.gameObjects.add(gameObject);
         if (!handlers.containsKey(handler)) {
@@ -131,6 +137,7 @@ public abstract class Scene {
         gameObject.setScene(this);
     }
 
+    @Override
     public GameObject getHandler(String handler) {
         return handlers.get(handler);
     }
@@ -205,7 +212,7 @@ public abstract class Scene {
             int alpha = (int) ((255.0f * this.fadeTimer) / this.fadeDuration);
 
             // Si es un fade out, se hace a la inversa
-            if (this.fade == FADE.OUT) {
+            if (this.fade == Fade.OUT) {
                 alpha = 255 - alpha;
             }
 
@@ -250,14 +257,17 @@ public abstract class Scene {
         }
     }
 
+    @Override
     public int getWorldWidth() {
         return this.worldWidth;
     }
 
+    @Override
     public int getWorldHeight() {
         return this.worldHeight;
     }
 
+    @Override
     public IEngine getEngine() {
         return this.engine;
     }

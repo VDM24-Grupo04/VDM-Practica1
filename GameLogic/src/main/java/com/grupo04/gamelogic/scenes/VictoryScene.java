@@ -46,7 +46,7 @@ public class VictoryScene extends Scene {
                 () -> {
                     // Al pulsar el boton se hace un fade in y cuando
                     // acaba la animacion se cambia a la escena de juego
-                    this.setFade(FADE.IN, 0.25);
+                    this.setFade(Fade.IN, 0.25);
                     this.setFadeCallback(() -> {
                         this.engine.getAudio().stopSound(this.winSound);
                         this.engine.changeScene(new GameScene(this.engine));
@@ -63,17 +63,17 @@ public class VictoryScene extends Scene {
                     // Al pulsar el boton se hace un fade in y cuando
                     // acaba la animacion se cambia al menu principal
                     // con animacion de fade out
-                    this.setFade(FADE.IN, 0.25);
+                    this.setFade(Fade.IN, 0.25);
                     this.setFadeCallback(() -> {
                         TitleScene scene = new TitleScene(this.engine);
-                        scene.setFade(FADE.OUT, 0.25);
+                        scene.setFade(Fade.OUT, 0.25);
                         this.engine.getAudio().stopSound(this.winSound);
                         this.engine.changeScene(scene);
                     });
                 });
         addGameObject(menuButton);
 
-        setFade(FADE.OUT, 0.25);
+        setFade(Fade.OUT, 0.25);
 
         // Se reproduce una vez cargado el sonido
         this.winSound = engine.getAudio().newSound("win.wav", true);

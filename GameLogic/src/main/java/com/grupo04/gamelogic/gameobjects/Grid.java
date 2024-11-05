@@ -2,6 +2,7 @@ package com.grupo04.gamelogic.gameobjects;
 
 import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.interfaces.IGraphics;
+import com.grupo04.engine.interfaces.IScene;
 import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.GameObject;
 import com.grupo04.engine.utilities.Pair;
@@ -77,6 +78,8 @@ public class Grid extends GameObject {
 
     private final List<AnimCollidedBubbles> collidedBubbles;
     private final float shrinkSpeed;
+
+    private boolean[][] visited;
 
     private IEngine engine;
     private IAudio audio;
@@ -159,6 +162,8 @@ public class Grid extends GameObject {
         this.collidedBubbles = new ArrayList<>();
         this.shrinkSpeed = shrinkSpeed;
 
+        this.visited = new boolean[this.rows][this.cols];
+
         this.engine = null;
         this.audio = null;
         this.attachSound = null;
@@ -174,6 +179,14 @@ public class Grid extends GameObject {
                 int bubblesToExplode, int greatScore, int smallScore, BubbleColors bubbleColors) {
         this(width, wallThickness, headerOffset, r, bubbleOffset, rows, cols, initRows,
                 bubblesToExplode, greatScore, smallScore, bubbleColors, 350f, 60f);
+    }
+
+    private void clearVisited() {
+        for (int i = 0; i < this.rows; ++i) {
+            for (int j = 0; j < this.cols; ++j) {
+                this.visited[i][j] = false;
+            }
+        }
     }
 
     private void debugCollisions(IGraphics graphics) {
@@ -303,7 +316,7 @@ public class Grid extends GameObject {
                 this.audio.stopSound(this.attachSound);
                 this.audio.stopSound(this.explosionSound);
                 // Se hace un fade in y cuando acaba la animacion se cambia a la escena de game over
-                this.scene.setFade(Scene.FADE.IN, 0.25);
+                this.scene.setFade(IScene.Fade.IN, 0.25);
                 this.scene.setFadeCallback(() -> {
                     this.engine.changeScene(new GameOverScene(this.engine));
                 });
@@ -313,13 +326,13 @@ public class Grid extends GameObject {
     }
 
     private boolean manageCollision(int i, int j) {
+        this.clearVisited();
         // El valor por defecto de un booleano es false
-        boolean[][] visited = new boolean[this.rows][this.cols];
         int color = this.bubbles[i][j];
         List<Pair<Integer, Integer>> bubblesToErase = new ArrayList<>();
         List<Pair<Integer, Integer>> bubblesToFall = new ArrayList<>();
 
-        dfs(visited, i, j, color, bubblesToErase, bubblesToFall);
+        dfs(i, j, color, bubblesToErase, bubblesToFall);
 
         // Numero de bolas del grupo
         int bubblesToEraseSize = bubblesToErase.size();
@@ -374,9 +387,9 @@ public class Grid extends GameObject {
             // mismo conjunto y se puede haber eliminado ya la coordenada
             if (this.bubbles[vX][vY] >= 0) {
                 List<Pair<Integer, Integer>> bubbles = new ArrayList<>();
-                boolean[][] visited = new boolean[this.rows][this.cols];
+                this.clearVisited();
                 // Si no hay ninguna bola del conjunto que toque el techo, se eliminan
-                if (!dfs(visited, vX, vY, bubbles) && !bubbles.isEmpty()) {
+                if (!dfs(vX, vY, bubbles) && !bubbles.isEmpty()) {
                     for (Pair<Integer, Integer> w : bubbles) {
                         // Se guardan en una lista de bolas en movimiento simulando la caida
                         int wX = w.getFirst();
@@ -399,9 +412,9 @@ public class Grid extends GameObject {
         return this.totalBubbles <= 0;
     }
 
-    private void dfs(boolean[][] visited, int i, int j, int color, List<Pair<Integer, Integer>> bubblesToErase,
+    private void dfs(int i, int j, int color, List<Pair<Integer, Integer>> bubblesToErase,
                      List<Pair<Integer, Integer>> bubblesToFall) {
-        visited[i][j] = true;
+        this.visited[i][j] = true;
 
         int currBubbleCol = this.bubbles[i][j];
         // Si son del mismo color que la bola lanzada, se anade para eliminar
@@ -424,16 +437,16 @@ public class Grid extends GameObject {
                 // Si es una posicion correcta dentro del mapa...
                 if (cellWithinGrid(ni, nj)) {
                     // Si hay bola y no esta visitada...
-                    if (this.bubbles[ni][nj] >= 0 && !visited[ni][nj]) {
-                        dfs(visited, ni, nj, color, bubblesToErase, bubblesToFall);
+                    if (this.bubbles[ni][nj] >= 0 && !this.visited[ni][nj]) {
+                        dfs(ni, nj, color, bubblesToErase, bubblesToFall);
                     }
                 }
             }
         }
     }
 
-    private boolean dfs(boolean[][] visited, int i, int j, List<Pair<Integer, Integer>> bubbles) {
-        visited[i][j] = true;
+    private boolean dfs(int i, int j, List<Pair<Integer, Integer>> bubbles) {
+        this.visited[i][j] = true;
         boolean isRoof = roofCell(i, j);
         if (isRoof) return true;
         bubbles.add(new Pair<>(i, j));
@@ -444,9 +457,9 @@ public class Grid extends GameObject {
             int nj = j + dir.getSecond();
             // Si es una posicion correcta dentro del mapa...
             if (cellWithinGrid(ni, nj)) {
-                if (this.bubbles[ni][nj] >= 0 && !visited[ni][nj]) {
+                if (this.bubbles[ni][nj] >= 0 && !this.visited[ni][nj]) {
                     // Si se devuelve true, es que el conjunto calculado tras la recursion esta pegado al techo
-                    if (dfs(visited, ni, nj, bubbles))
+                    if (dfs(ni, nj, bubbles))
                         return true;
                 }
             }
@@ -557,7 +570,7 @@ public class Grid extends GameObject {
             this.audio.stopSound(this.explosionSound);
 
             // Se hace un fade in y cuando acaba la animacion se cambia a la escena de victoria
-            this.scene.setFade(Scene.FADE.IN, 0.25);
+            this.scene.setFade(IScene.Fade.IN, 0.25);
             this.scene.setFadeCallback(() -> {
                 this.engine.changeScene(new VictoryScene(this.engine, this.score));
             });
