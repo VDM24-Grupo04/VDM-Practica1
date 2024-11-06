@@ -22,6 +22,7 @@ public abstract class Scene implements IScene {
     protected int worldHeight;
 
     protected IImage bgImage;
+    private final Vector bgImagePos;
 
     private Fade fade;
     private double fadeDuration;
@@ -40,12 +41,13 @@ public abstract class Scene implements IScene {
 
         this.engine.setWorldSize(this.worldWidth, this.worldHeight);
         this.bgImage = null;
+        this.bgImagePos = new Vector((float) this.worldWidth / 2, (float) this.worldHeight / 2);
 
         this.fade = Fade.NONE;
         this.fadeDuration = 0;
         this.fadeTimer = 0;
         this.fadeColor = new Color(0, 0, 0, 255);
-        this.fadePos = new Vector(worldWidth / 2.0f, worldHeight / 2.0f);
+        this.fadePos = new Vector(this.worldWidth / 2.0f, this.worldHeight / 2.0f);
         this.onFadeEnd = null;
     }
 
@@ -130,8 +132,8 @@ public abstract class Scene implements IScene {
     @Override
     public void addGameObject(GameObject gameObject, String handler) {
         this.gameObjects.add(gameObject);
-        if (!handlers.containsKey(handler)) {
-            handlers.put(handler, gameObject);
+        if (!this.handlers.containsKey(handler)) {
+            this.handlers.put(handler, gameObject);
             gameObject.setId(handler);
         }
         gameObject.setScene(this);
@@ -139,7 +141,7 @@ public abstract class Scene implements IScene {
 
     @Override
     public GameObject getHandler(String handler) {
-        return handlers.get(handler);
+        return this.handlers.get(handler);
     }
 
     public void handleInput(List<ITouchEvent> touchEvent) {
@@ -169,7 +171,7 @@ public abstract class Scene implements IScene {
     }
 
     public void refresh() {
-        HashSet<GameObject> deadGameObjects = new HashSet<GameObject>();
+        HashSet<GameObject> deadGameObjects = new HashSet<>();
         for (GameObject gameObject : this.gameObjects) {
             if (!gameObject.isAlive()) {
                 deadGameObjects.add(gameObject);
@@ -194,12 +196,8 @@ public abstract class Scene implements IScene {
     }
 
     public void render(IGraphics graphics) {
-        if (this.bgImage != null) {
-            float width = getWorldWidth();
-            float height = getWorldHeight();
-            float posX = width / 2;
-            float posY = height / 2;
-            graphics.drawImage(this.bgImage, new Vector(posX, posY), (int) (width), (int) (height));
+        if (this.bgImage != null && this.bgImagePos != null) {
+            graphics.drawImage(this.bgImage, this.bgImagePos, this.worldWidth, this.worldHeight);
         }
 
         for (GameObject gameObject : this.gameObjects) {
@@ -242,13 +240,9 @@ public abstract class Scene implements IScene {
         this.handlers.clear();
     }
 
-    public void setAlive(boolean alive) {
-        this.alive = alive;
-    }
+    public void setAlive(boolean alive) { this.alive = alive; }
 
-    public boolean isAlive() {
-        return this.alive;
-    }
+    public boolean isAlive() { return this.alive; }
 
     // Coger las diferentes referencias
     public void init() {
@@ -258,17 +252,11 @@ public abstract class Scene implements IScene {
     }
 
     @Override
-    public int getWorldWidth() {
-        return this.worldWidth;
-    }
+    public int getWorldWidth() { return this.worldWidth; }
 
     @Override
-    public int getWorldHeight() {
-        return this.worldHeight;
-    }
+    public int getWorldHeight() { return this.worldHeight; }
 
     @Override
-    public IEngine getEngine() {
-        return this.engine;
-    }
+    public IEngine getEngine() { return this.engine; }
 }
