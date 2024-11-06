@@ -26,6 +26,7 @@ public abstract class Engine implements IEngine, Runnable {
 
     // Escenas
     private final Stack<Scene> scenes;
+    private final Stack<Scene> aliveScenes;
 
     protected Engine() {
         this.mainLoopThread = null;
@@ -34,6 +35,7 @@ public abstract class Engine implements IEngine, Runnable {
         this.audio = null;
         this.input = null;
         this.scenes = new Stack<>();
+        this.aliveScenes = new Stack<>();
     }
 
     protected void initModules(Graphics graphics, Audio audio, Input input) {
@@ -133,7 +135,7 @@ public abstract class Engine implements IEngine, Runnable {
 
     private void handleInput() {
         List<ITouchEvent> sceneTouchEvents = this.input.getTouchEvents();
-        if (!this.scenes.empty()) {
+        if (!this.scenes.empty() && !sceneTouchEvents.isEmpty()) {
             for (ITouchEvent event : sceneTouchEvents) {
                 Vector worldPoint = this.graphics.screenToWorldPoint(event.getPos());
                 event.setPos(worldPoint);
@@ -160,14 +162,13 @@ public abstract class Engine implements IEngine, Runnable {
 
             boolean hasDeadScenes = false;
 
-            Stack<Scene> aliveScenes = new Stack<Scene>();
             while (!this.scenes.empty()) {
                 Scene scene = this.scenes.peek();
                 if (!scene.isAlive()) {
                     scene.dereference();
                     hasDeadScenes = true;
                 } else {
-                    aliveScenes.push(scene);
+                    this.aliveScenes.push(scene);
                 }
                 this.scenes.pop();
             }
@@ -175,12 +176,13 @@ public abstract class Engine implements IEngine, Runnable {
             while (!aliveScenes.empty()) {
                 Scene scene = aliveScenes.peek();
                 this.scenes.push(scene);
-                aliveScenes.pop();
+                this.aliveScenes.pop();
             }
 
             // Si se ha eliminado una escena, quiere decir que se vuelve a la anterior y, por lo tanto,
             // hay que actualizar el tam del mundo
             if (!this.scenes.empty() && hasDeadScenes) {
+                this.aliveScenes.clear();
                 Scene currentScene = this.scenes.peek();
                 this.setWorldSize(currentScene.getWorldWidth(), currentScene.getWorldHeight());
             }

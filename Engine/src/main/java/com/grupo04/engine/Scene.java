@@ -146,8 +146,10 @@ public abstract class Scene implements IScene {
 
     public void handleInput(List<ITouchEvent> touchEvent) {
         if (this.fadeTimer >= this.fadeDuration) {
-            for (GameObject gameObject : this.gameObjects) {
-                gameObject.handleInput(touchEvent);
+            if (!this.gameObjects.isEmpty()) {
+                for (GameObject gameObject : this.gameObjects) {
+                    gameObject.handleInput(touchEvent);
+                }
             }
         }
     }
@@ -155,8 +157,10 @@ public abstract class Scene implements IScene {
     public void update(double deltaTime) {
         // Si ya se ha terminado de reproducir el fade, permite que se actualicen los objetos
         if (this.fadeTimer >= this.fadeDuration) {
-            for (GameObject gameObject : this.gameObjects) {
-                gameObject.update(deltaTime);
+            if (!this.gameObjects.isEmpty()) {
+                for (GameObject gameObject : this.gameObjects) {
+                    gameObject.update(deltaTime);
+                }
             }
         }
         // Si no, actualiza el contador del fade
@@ -171,26 +175,30 @@ public abstract class Scene implements IScene {
     }
 
     public void refresh() {
-        HashSet<GameObject> deadGameObjects = new HashSet<>();
-        for (GameObject gameObject : this.gameObjects) {
-            if (!gameObject.isAlive()) {
-                deadGameObjects.add(gameObject);
+        if (!this.gameObjects.isEmpty()) {
+            HashSet<GameObject> deadGameObjects = new HashSet<>();
+            for (GameObject gameObject : this.gameObjects) {
+                if (!gameObject.isAlive()) {
+                    deadGameObjects.add(gameObject);
+                }
             }
+            for (GameObject deletedGameObject : deadGameObjects) {
+                this.gameObjects.remove(deletedGameObject);
+                // Elimina el objeto que corresponde con la clave y además,
+                // devuelve true o false si existe o no, respectivamente
+                this.handlers.remove(deletedGameObject.getId());
+                deletedGameObject.dereference();
+            }
+            deadGameObjects.clear();
         }
-        for (GameObject deletedGameObject : deadGameObjects) {
-            this.gameObjects.remove(deletedGameObject);
-            // Elimina el objeto que corresponde con la clave y además,
-            // devuelve true o false si existe o no, respectivamente
-            this.handlers.remove(deletedGameObject.getId());
-            deletedGameObject.dereference();
-        }
-        deadGameObjects.clear();
     }
 
     public void fixedUpdate(double fixedDeltaTime) {
         if (this.fadeTimer >= this.fadeDuration) {
-            for (GameObject gameObject : this.gameObjects) {
-                gameObject.fixedUpdate(fixedDeltaTime);
+            if (!this.gameObjects.isEmpty()) {
+                for (GameObject gameObject : this.gameObjects) {
+                    gameObject.fixedUpdate(fixedDeltaTime);
+                }
             }
         }
     }
@@ -200,8 +208,10 @@ public abstract class Scene implements IScene {
             graphics.drawImage(this.bgImage, this.bgImagePos, this.worldWidth, this.worldHeight);
         }
 
-        for (GameObject gameObject : this.gameObjects) {
-            gameObject.render(graphics);
+        if (!this.gameObjects.isEmpty()) {
+            for (GameObject gameObject : this.gameObjects) {
+                gameObject.render(graphics);
+            }
         }
 
         // Si no se ha terminado de reproducir el fade
@@ -232,8 +242,10 @@ public abstract class Scene implements IScene {
     // Si la escena o el gameobject hijos tienen mas referencias a otros objetos, debe hacerse override
     // de este metodo y poner esas referencias tambien a null
     public void dereference() {
-        for (GameObject gameObject : this.gameObjects) {
-            gameObject.dereference();
+        if (!this.gameObjects.isEmpty()) {
+            for (GameObject gameObject : this.gameObjects) {
+                gameObject.dereference();
+            }
         }
         this.engine = null;
         this.gameObjects.clear();
@@ -246,8 +258,10 @@ public abstract class Scene implements IScene {
 
     // Coger las diferentes referencias
     public void init() {
-        for (GameObject gameObject : this.gameObjects) {
-            gameObject.init();
+        if (!this.gameObjects.isEmpty()) {
+            for (GameObject gameObject : this.gameObjects) {
+                gameObject.init();
+            }
         }
     }
 
