@@ -8,7 +8,7 @@ public class Input {
     protected List<ITouchEvent> touchEvents;             // Todos los TouchEvents que se reciben en el tick
     protected List<ITouchEvent> sceneTouchEvents;        // TouchEvents que se van a mandar a la escena
 
-    protected final int MAX_EVENTS = 10;                // Tamano de la pool de eventos
+    protected final int MAX_EVENTS;                     // Tamano de la pool de eventos
     protected int oldestEvent;                          // Indice del evento mas antiguo en la pool
     protected TouchEvent[] eventPool;                   // Pool de eventos reutilizables
 
@@ -19,10 +19,11 @@ public class Input {
         this.touchEvents = new ArrayList<>();
         this.sceneTouchEvents = new ArrayList<>();
 
-        oldestEvent = 0;
-        eventPool = new TouchEvent[MAX_EVENTS];
-        for(int i = 0; i < MAX_EVENTS; i++) {
-            eventPool[i] = new TouchEvent(ITouchEvent.TouchEventType.NONE, 0, 0);
+        this.MAX_EVENTS = 10;
+        this.oldestEvent = 0;
+        this.eventPool = new TouchEvent[this.MAX_EVENTS];
+        for(int i = 0; i < this.MAX_EVENTS; i++) {
+            this.eventPool[i] = new TouchEvent(ITouchEvent.TouchEventType.NONE, 0, 0);
         }
     }
 
@@ -50,14 +51,14 @@ public class Input {
     // Anade un evento a la lista de eventos
     protected synchronized void addEvent(ITouchEvent.TouchEventType type, int posX, int posY) {
         // Coge el evento mas antiguo y lo sobreescribe
-        TouchEvent evt = eventPool[oldestEvent];
+        TouchEvent evt = this.eventPool[this.oldestEvent];
         evt.setType(type);
         evt.setPos(posX, posY);
 
         // Actualiza el evento para que el mas antiguo sea el siguiente (como se van sobreescribiendo
         // de 0 a MAX_EVENTS, cuando vuelva a llegar a 0, ese sera el evento mas antiguo)
-        oldestEvent++;
-        oldestEvent %= MAX_EVENTS;
+        this.oldestEvent++;
+        this.oldestEvent %= this.MAX_EVENTS;
 
         // Anade el evento a la lista
         this.touchEvents.add(evt);
