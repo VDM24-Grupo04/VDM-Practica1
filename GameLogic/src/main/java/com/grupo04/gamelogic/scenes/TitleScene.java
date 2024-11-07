@@ -23,7 +23,7 @@ public class TitleScene extends Scene {
     final String BUTTON_FONT = "kimberley.ttf";
 
     public TitleScene(IEngine engine) {
-        super(engine, 400, 600, new Color(255, 255, 255));
+        super(engine, 400, 600);
 
         Text title = new Text(new Vector(this.worldWidth / 2f, 2f * this.worldHeight / 7f), new String[]{"Puzzle", "Booble"},
                 TEXT_FONT, TEXT_SIZE, false, false, TEXT_COLOR,
