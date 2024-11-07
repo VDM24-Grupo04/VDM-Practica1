@@ -1,7 +1,6 @@
 package com.grupo04.engine;
 
 import com.grupo04.engine.interfaces.ITouchEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,12 +8,22 @@ public class Input {
     protected List<ITouchEvent> touchEvents;             // Todos los TouchEvents que se reciben en el tick
     protected List<ITouchEvent> sceneTouchEvents;        // TouchEvents que se van a mandar a la escena
 
+    protected final int MAX_EVENTS = 10;                // Tamano de la pool de eventos
+    protected int oldestEvent;                          // Indice del evento mas antiguo en la pool
+    protected TouchEvent[] eventPool;                   // Pool de eventos reutilizables
+
     // Se usan 2 listas porque la deteccion del input y la ejecucion del juego se hacen en hilos
     // distintos, por lo que se puede estar recibiendo input a la vez que se esta gestionando,
 
     public Input() {
         this.touchEvents = new ArrayList<>();
         this.sceneTouchEvents = new ArrayList<>();
+
+        oldestEvent = 0;
+        eventPool = new TouchEvent[MAX_EVENTS];
+        for(int i = 0; i < MAX_EVENTS; i++) {
+            eventPool[i] = new TouchEvent(ITouchEvent.TouchEventType.NONE, 0, 0);
+        }
     }
 
     // Obtiene los TouchEvents que le va a mandar a la escena
@@ -38,7 +47,19 @@ public class Input {
         return this.sceneTouchEvents;
     }
 
-    protected synchronized void addEvent(ITouchEvent e) {
-        this.touchEvents.add(e);
+    // Anade un evento a la lista de eventos
+    protected synchronized void addEvent(ITouchEvent.TouchEventType type, int posX, int posY) {
+        // Coge el evento mas antiguo y lo sobreescribe
+        TouchEvent evt = eventPool[oldestEvent];
+        evt.setType(type);
+        evt.setPos(posX, posY);
+
+        // Actualiza el evento para que el mas antiguo sea el siguiente (como se van sobreescribiendo
+        // de 0 a MAX_EVENTS, cuando vuelva a llegar a 0, ese sera el evento mas antiguo)
+        oldestEvent++;
+        oldestEvent %= MAX_EVENTS;
+
+        // Anade el evento a la lista
+        this.touchEvents.add(evt);
     }
 }

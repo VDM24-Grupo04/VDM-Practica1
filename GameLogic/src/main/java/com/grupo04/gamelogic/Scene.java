@@ -69,6 +69,7 @@ public abstract class Scene implements IScene {
     // Fondo del juego (ruta de una imagen)
     protected Scene(IEngine engine, int worldWidth, int worldHeight, String bgImageFileName) {
         this(engine, worldWidth, worldHeight);
+        this.engine.getGraphics().setClearColor(new Color(255, 255, 255));
         this.bgImage = this.engine.getGraphics().newImage(bgImageFileName);
     }
 

@@ -9,7 +9,7 @@ import com.grupo04.gamelogic.gameobjects.Text;
 
 public class TitleScene extends Scene {
     public TitleScene(IEngine engine) {
-        super(engine, 400, 600, new Color(255, 255, 255));
+        super(engine, 400, 600);
 
         String TEXT_FONT = "TheMeshroomRegular.ttf";
         Color TEXT_COLOR = new Color(0, 0, 0);
