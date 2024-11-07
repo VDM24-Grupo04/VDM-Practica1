@@ -96,4 +96,10 @@ public class TextButton extends Button {
         graphics.setFont(this.font);
         graphics.drawText(this.text, this.pos);
     }
+
+    @Override
+    public void dereference() {
+        super.dereference();
+        this.font = null;
+    }
 }

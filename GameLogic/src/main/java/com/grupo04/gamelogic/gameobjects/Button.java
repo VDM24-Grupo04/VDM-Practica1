@@ -76,4 +76,10 @@ public abstract class Button extends GameObject {
             }
         }
     }
+
+    @Override
+    public void dereference() {
+        super.dereference();
+        this.onClickSound = null;
+    }
 }

@@ -34,4 +34,10 @@ public class ImageButton extends Button {
     public void render(IGraphics graphics) {
         graphics.drawImage(this.image, this.pos, (int) this.width, (int) this.height);
     }
+
+    @Override
+    public void dereference() {
+        super.dereference();
+        this.image = null;
+    }
 }

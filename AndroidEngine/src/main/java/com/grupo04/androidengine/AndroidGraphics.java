@@ -233,8 +233,8 @@ public class AndroidGraphics extends Graphics {
     public void drawImage(IImage img, Vector position, int w, int h) {
         AndroidImage androidImg = (AndroidImage) img;
 
-        src = new Rect(0, 0, androidImg.getWidth(), androidImg.getHeight());
-        dest = new Rect((int) (position.x - w / 2f), (int) (position.y - h / 2f),
+        src.set(0,0, androidImg.getWidth(), androidImg.getHeight());
+        dest.set((int) (position.x - w / 2f), (int) (position.y - h / 2f),
                 (int) (position.x + w - w / 2f),
                 (int) (position.y + h - h / 2f));
         this.canvas.drawBitmap(androidImg.getImg(), src, dest, this.paint);

@@ -167,4 +167,10 @@ public class Text extends GameObject {
     public void setTextLine(String text) {
         setTextLine(text, 0);
     }
+
+    @Override
+    public void dereference() {
+        super.dereference();
+        this.font = null;
+    }
 }

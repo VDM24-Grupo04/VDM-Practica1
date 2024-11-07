@@ -161,4 +161,11 @@ public class CurrentBubble extends GameObject {
         this.dragging = false;
         this.shot = false;
     }
+
+    @Override
+    public void dereference() {
+        super.dereference();
+        this.throwSound = null;
+        this.bounceSound = null;
+    }
 }

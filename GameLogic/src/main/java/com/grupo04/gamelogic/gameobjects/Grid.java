@@ -40,7 +40,7 @@ public class Grid extends GameObject {
     // 5 puntos por cada burbuja en un grupo de 3 y 10 puntos por cada burbuja en un grupo de 10 o mas
 
     // Radio de las burbujas
-    private int r;
+    private final int r;
     // Radio de los hexagonos de la cuadricula
     private final float hexagonRadius;
     // Offsets para las paredes y la cabecera
@@ -474,8 +474,8 @@ public class Grid extends GameObject {
         this.audio = this.engine.getAudio();
         this.attachSound = this.audio.newSound("ballAttach.wav");
         this.explosionSound = this.audio.newSound("ballExplosion.wav");
-        this.scoreText = new WeakReference<Text>((Text) this.scene.getHandler("scoreText"));
-        this.showGridButton = new WeakReference<ImageToggleButton>((ImageToggleButton) this.scene.getHandler("showGridButton"));
+        this.scoreText = new WeakReference<>((Text) this.scene.getHandler("scoreText"));
+        this.showGridButton = new WeakReference<>((ImageToggleButton) this.scene.getHandler("showGridButton"));
     }
 
     @Override
@@ -576,5 +576,12 @@ public class Grid extends GameObject {
                 this.engine.changeScene(new VictoryScene(this.engine, this.score));
             });
         }
+    }
+
+    @Override
+    public void dereference() {
+        super.dereference();
+        this.attachSound = null;
+        this.explosionSound = null;
     }
 }
