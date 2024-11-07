@@ -2,15 +2,15 @@ package com.grupo04.gamelogic.gameobjects;
 
 import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.interfaces.IGraphics;
-import com.grupo04.engine.interfaces.IScene;
 import com.grupo04.engine.utilities.Color;
-import com.grupo04.engine.GameObject;
+import com.grupo04.gamelogic.GameObject;
 import com.grupo04.engine.utilities.Pair;
-import com.grupo04.engine.Scene;
 import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.gamelogic.BubbleColors;
+import com.grupo04.gamelogic.Scene;
+import com.grupo04.gamelogic.SceneManager;
 import com.grupo04.gamelogic.scenes.GameOverScene;
 import com.grupo04.gamelogic.scenes.VictoryScene;
 
@@ -317,9 +317,12 @@ public class Grid extends GameObject {
                 this.audio.stopSound(this.attachSound);
                 this.audio.stopSound(this.explosionSound);
                 // Se hace un fade in y cuando acaba la animacion se cambia a la escena de game over
-                this.scene.setFade(IScene.Fade.IN, 0.25);
+                this.scene.setFade(Scene.Fade.IN, 0.25);
                 this.scene.setFadeCallback(() -> {
-                    this.engine.changeScene(new GameOverScene(this.engine));
+                    SceneManager sceneManager = this.scene.getSceneManager();
+                    if (sceneManager != null) {
+                        sceneManager.changeScene(new GameOverScene(this.engine));
+                    }
                 });
             }
         }
@@ -571,9 +574,12 @@ public class Grid extends GameObject {
             this.audio.stopSound(this.explosionSound);
 
             // Se hace un fade in y cuando acaba la animacion se cambia a la escena de victoria
-            this.scene.setFade(IScene.Fade.IN, 0.25);
+            this.scene.setFade(Scene.Fade.IN, 0.25);
             this.scene.setFadeCallback(() -> {
-                this.engine.changeScene(new VictoryScene(this.engine, this.score));
+                SceneManager sceneManager = this.scene.getSceneManager();
+                if (sceneManager != null) {
+                    sceneManager.changeScene(new VictoryScene(this.engine, this.score));
+                }
             });
         }
     }

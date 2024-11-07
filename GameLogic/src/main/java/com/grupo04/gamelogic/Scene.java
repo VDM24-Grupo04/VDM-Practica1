@@ -1,4 +1,4 @@
-package com.grupo04.engine;
+package com.grupo04.gamelogic;
 
 import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.interfaces.IGraphics;
@@ -14,14 +14,13 @@ import java.util.HashSet;
 import java.util.List;
 
 public abstract class Scene implements IScene {
+    public enum Fade {NONE, IN, OUT}
+
     private boolean alive;
     private final HashSet<GameObject> gameObjects;
     private final HashMap<String, GameObject> handlers;
-    protected IEngine engine;
-    protected int worldWidth;
-    protected int worldHeight;
 
-    protected IImage bgImage;
+    private IImage bgImage;
     private final Vector bgImagePos;
 
     private Fade fade;
@@ -31,24 +30,34 @@ public abstract class Scene implements IScene {
     private final Vector fadePos;
     private Callback onFadeEnd;
 
+    protected IEngine engine;
+    protected int worldWidth;
+    protected int worldHeight;
+
+    protected SceneManager sceneManager;
+
     protected Scene(IEngine engine, int worldWidth, int worldHeight) {
         this.alive = true;
         this.gameObjects = new HashSet<>();
         this.handlers = new HashMap<>();
-        this.engine = engine;
-        this.worldWidth = worldWidth;
-        this.worldHeight = worldHeight;
 
-        this.engine.setWorldSize(this.worldWidth, this.worldHeight);
         this.bgImage = null;
-        this.bgImagePos = new Vector((float) this.worldWidth / 2, (float) this.worldHeight / 2);
 
         this.fade = Fade.NONE;
         this.fadeDuration = 0;
         this.fadeTimer = 0;
         this.fadeColor = new Color(0, 0, 0, 255);
-        this.fadePos = new Vector(this.worldWidth / 2.0f, this.worldHeight / 2.0f);
         this.onFadeEnd = null;
+
+        this.engine = engine;
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+        this.engine.setWorldSize(this.worldWidth, this.worldHeight);
+
+        this.fadePos = new Vector(this.worldWidth / 2.0f, this.worldHeight / 2.0f);
+        this.bgImagePos = new Vector(this.worldWidth / 2.0f, this.worldHeight / 2.0f);
+
+        this.sceneManager = null;
     }
 
     // Color del fondo de la ventana
@@ -57,23 +66,10 @@ public abstract class Scene implements IScene {
         this.engine.getGraphics().setClearColor(bgColor);
     }
 
-    // Fondo del juego (imagen)
-    protected Scene(IEngine engine, int worldWidth, int worldHeight, IImage bgImage) {
-        this(engine, worldWidth, worldHeight);
-        this.bgImage = bgImage;
-    }
-
     // Fondo del juego (ruta de una imagen)
     protected Scene(IEngine engine, int worldWidth, int worldHeight, String bgImageFileName) {
         this(engine, worldWidth, worldHeight);
         this.bgImage = this.engine.getGraphics().newImage(bgImageFileName);
-    }
-
-    // Color del fondo de la ventana y fondo del juego (imagen)
-    protected Scene(IEngine engine, int worldWidth, int worldHeight, Color bgColor, IImage bgImage) {
-        this(engine, worldWidth, worldHeight);
-        this.engine.getGraphics().setClearColor(bgColor);
-        this.bgImage = bgImage;
     }
 
     // Color del fondo de la ventana y fondo del juego (ruta de una imagen)
@@ -86,21 +82,18 @@ public abstract class Scene implements IScene {
     // Hacer que la escena comience con un fade. Se le puede pasar solo el tipo de fade,
     // solo el tipo y la duracion, o el tipo, la duracion y el color del fade.
     // ** fadeDuration tiene que ir en segundos
-    @Override
     public void setFade(Fade fade) {
         this.fade = fade;
         this.fadeDuration = 0.2;
         this.fadeTimer = 0;
     }
 
-    @Override
     public void setFade(Fade fade, double fadeDuration) {
         this.fade = fade;
         this.fadeDuration = fadeDuration;
         this.fadeTimer = 0;
     }
 
-    @Override
     public void setFade(Fade fade, double fadeDuration, Color fadeColor) {
         setFade(fade, fadeDuration);
         this.fadeColor = fadeColor;
@@ -112,24 +105,20 @@ public abstract class Scene implements IScene {
         }
     }
 
-    @Override
     public void setFade(Fade fade, Color fadeColor) {
         setFade(fade);
         this.fadeColor = fadeColor;
     }
 
-    @Override
     public void setFadeCallback(Callback onFadeEnd) {
         this.onFadeEnd = onFadeEnd;
     }
 
-    @Override
     public void addGameObject(GameObject gameObject) {
         this.gameObjects.add(gameObject);
         gameObject.setScene(this);
     }
 
-    @Override
     public void addGameObject(GameObject gameObject, String handler) {
         this.gameObjects.add(gameObject);
         if (!this.handlers.containsKey(handler)) {
@@ -139,21 +128,22 @@ public abstract class Scene implements IScene {
         gameObject.setScene(this);
     }
 
-    @Override
     public GameObject getHandler(String handler) {
         return this.handlers.get(handler);
     }
 
-    public void handleInput(List<ITouchEvent> touchEvent) {
+    @Override
+    public void handleInput(List<ITouchEvent> touchEvents) {
         if (this.fadeTimer >= this.fadeDuration) {
             if (!this.gameObjects.isEmpty()) {
                 for (GameObject gameObject : this.gameObjects) {
-                    gameObject.handleInput(touchEvent);
+                    gameObject.handleInput(touchEvents);
                 }
             }
         }
     }
 
+    @Override
     public void update(double deltaTime) {
         // Si ya se ha terminado de reproducir el fade, permite que se actualicen los objetos
         if (this.fadeTimer >= this.fadeDuration) {
@@ -193,6 +183,7 @@ public abstract class Scene implements IScene {
         }
     }
 
+    @Override
     public void fixedUpdate(double fixedDeltaTime) {
         if (this.fadeTimer >= this.fadeDuration) {
             if (!this.gameObjects.isEmpty()) {
@@ -203,6 +194,7 @@ public abstract class Scene implements IScene {
         }
     }
 
+    @Override
     public void render(IGraphics graphics) {
         if (this.bgImage != null && this.bgImagePos != null) {
             graphics.drawImage(this.bgImage, this.bgImagePos, this.worldWidth, this.worldHeight);
@@ -252,9 +244,13 @@ public abstract class Scene implements IScene {
         this.handlers.clear();
     }
 
-    public void setAlive(boolean alive) { this.alive = alive; }
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
 
-    public boolean isAlive() { return this.alive; }
+    public boolean isAlive() {
+        return this.alive;
+    }
 
     // Coger las diferentes referencias
     public void init() {
@@ -265,12 +261,23 @@ public abstract class Scene implements IScene {
         }
     }
 
-    @Override
-    public int getWorldWidth() { return this.worldWidth; }
+    public int getWorldWidth() {
+        return this.worldWidth;
+    }
 
-    @Override
-    public int getWorldHeight() { return this.worldHeight; }
+    public int getWorldHeight() {
+        return this.worldHeight;
+    }
 
-    @Override
-    public IEngine getEngine() { return this.engine; }
+    public IEngine getEngine() {
+        return this.engine;
+    }
+
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+    }
+
+    public SceneManager getSceneManager() {
+        return this.sceneManager;
+    }
 }

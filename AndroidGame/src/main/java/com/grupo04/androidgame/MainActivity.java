@@ -8,6 +8,7 @@ import android.view.SurfaceView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.grupo04.androidengine.AndroidEngine;
+import com.grupo04.gamelogic.SceneManager;
 import com.grupo04.gamelogic.scenes.TitleScene;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,7 +29,10 @@ public class MainActivity extends AppCompatActivity {
         this.androidEngine = new AndroidEngine(window, assetManager, 5);
 
         // Creacion de la escena
-        this.androidEngine.pushScene(new TitleScene(this.androidEngine));
+        SceneManager sceneManager = new SceneManager(this.androidEngine);
+        this.androidEngine.setScene(sceneManager);
+        TitleScene titleScene = new TitleScene(this.androidEngine);
+        sceneManager.pushScene(titleScene);
 
         // Bloquear la orientacion
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

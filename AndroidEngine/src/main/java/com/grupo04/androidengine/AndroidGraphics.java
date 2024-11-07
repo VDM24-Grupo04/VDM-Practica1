@@ -12,7 +12,7 @@ import android.view.SurfaceView;
 import com.grupo04.engine.Graphics;
 import com.grupo04.engine.interfaces.IFont;
 import com.grupo04.engine.interfaces.IImage;
-import com.grupo04.engine.Scene;
+import com.grupo04.engine.interfaces.IScene;
 import com.grupo04.engine.utilities.Vector;
 
 public class AndroidGraphics extends Graphics {
@@ -91,11 +91,11 @@ public class AndroidGraphics extends Graphics {
     }
 
     @Override
-    public void render(Scene currentScene) {
+    public void render(IScene scene) {
         // Se indica al gestor de renderizado que prepare el frame
         this.prepareFrame();
         // Se pinta la escena
-        currentScene.render(this);
+        scene.render(this);
         // Se indica al gestor de renderizado que lo muestre
         this.endFrame();
     }

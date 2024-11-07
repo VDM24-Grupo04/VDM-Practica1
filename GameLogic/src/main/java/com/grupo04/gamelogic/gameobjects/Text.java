@@ -4,7 +4,7 @@ import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.interfaces.IFont;
 import com.grupo04.engine.interfaces.IGraphics;
 import com.grupo04.engine.utilities.Color;
-import com.grupo04.engine.GameObject;
+import com.grupo04.gamelogic.GameObject;
 import com.grupo04.engine.utilities.Vector;
 
 public class Text extends GameObject {

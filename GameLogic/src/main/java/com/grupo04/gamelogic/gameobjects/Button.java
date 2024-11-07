@@ -2,7 +2,7 @@ package com.grupo04.gamelogic.gameobjects;
 
 import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.utilities.Callback;
-import com.grupo04.engine.GameObject;
+import com.grupo04.gamelogic.GameObject;
 import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ISound;
@@ -28,7 +28,9 @@ public abstract class Button extends GameObject {
         }
     }
 
-    public ISound getOnClickSound() { return this.onClickSound; }
+    public ISound getOnClickSound() {
+        return this.onClickSound;
+    }
 
     protected void setOnClick(Callback callback) {
         this.onClick = callback;

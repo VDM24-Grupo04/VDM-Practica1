@@ -1,7 +1,6 @@
-package com.grupo04.engine;
+package com.grupo04.gamelogic;
 
 import com.grupo04.engine.interfaces.IGraphics;
-import com.grupo04.engine.interfaces.IScene;
 import com.grupo04.engine.interfaces.ITouchEvent;
 
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.List;
 public abstract class GameObject {
     private String id;
     private boolean alive;
-    protected IScene scene;
+    protected Scene scene;
 
     protected GameObject() {
         this.id = null;
@@ -66,7 +65,7 @@ public abstract class GameObject {
         return this.id;
     }
 
-    public void setScene(IScene scene) {
+    public void setScene(Scene scene) {
         this.scene = scene;
     }
 }

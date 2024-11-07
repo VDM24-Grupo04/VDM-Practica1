@@ -2,7 +2,7 @@ package com.grupo04.gamelogic.gameobjects;
 
 import com.grupo04.engine.interfaces.IGraphics;
 import com.grupo04.engine.utilities.Color;
-import com.grupo04.engine.GameObject;
+import com.grupo04.gamelogic.GameObject;
 import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.IAudio;
 import com.grupo04.engine.interfaces.ISound;

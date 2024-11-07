@@ -2,7 +2,7 @@ package com.grupo04.gamelogic.scenes;
 
 import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.utilities.Color;
-import com.grupo04.engine.Scene;
+import com.grupo04.gamelogic.Scene;
 import com.grupo04.engine.utilities.Vector;
 import com.grupo04.gamelogic.gameobjects.TextButton;
 import com.grupo04.gamelogic.gameobjects.Text;
@@ -38,7 +38,9 @@ public class TitleScene extends Scene {
                     // acaba la animacion se cambia a la escena de juego
                     this.setFade(Fade.IN, 0.25);
                     this.setFadeCallback(() -> {
-                        this.engine.changeScene(new GameScene(this.engine));
+                        if (this.sceneManager != null) {
+                            this.sceneManager.changeScene(new GameScene(this.engine));
+                        }
                     });
                 });
         addGameObject(playButton);

@@ -3,6 +3,7 @@ package com.grupo04.engine;
 import com.grupo04.engine.interfaces.IFont;
 import com.grupo04.engine.interfaces.IGraphics;
 import com.grupo04.engine.interfaces.IImage;
+import com.grupo04.engine.interfaces.IScene;
 import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.utilities.Vector;
 
@@ -37,7 +38,7 @@ public abstract class Graphics implements IGraphics {
 
     protected abstract boolean endFrame();
 
-    public abstract void render(Scene currentScene);
+    public abstract void render(IScene currentScene);
 
     public boolean isWindowInitialized() {
         return this.getWindowWidth() != 0;

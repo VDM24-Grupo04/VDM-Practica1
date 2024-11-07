@@ -1,6 +1,7 @@
 package com.grupo04.desktopgame;
 
 import com.grupo04.desktopengine.DesktopEngine;
+import com.grupo04.gamelogic.SceneManager;
 import com.grupo04.gamelogic.scenes.TitleScene;
 
 import javax.swing.ImageIcon;
@@ -27,8 +28,10 @@ public class DesktopGame {
         DesktopEngine engine = new DesktopEngine(window, 5);
 
         // Creacion de la escena
-        TitleScene scene = new TitleScene(engine);
-        engine.pushScene(scene);
+        SceneManager sceneManager = new SceneManager(engine);
+        engine.setScene(sceneManager);
+        TitleScene titleScene = new TitleScene(engine);
+        sceneManager.pushScene(titleScene);
 
         engine.onResume();
     }

@@ -1,6 +1,6 @@
 package com.grupo04.gamelogic.scenes;
 
-import com.grupo04.engine.Scene;
+import com.grupo04.gamelogic.Scene;
 import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.utilities.Color;
 import com.grupo04.engine.utilities.Vector;
@@ -57,7 +57,9 @@ public class GameScene extends Scene {
                     this.setFadeCallback(() -> {
                         TitleScene scene = new TitleScene(this.engine);
                         scene.setFade(Fade.OUT, 0.25);
-                        this.engine.changeScene(scene);
+                        if (this.sceneManager != null) {
+                            this.sceneManager.changeScene(scene);
+                        }
                     });
                 });
         addGameObject(menuButton);

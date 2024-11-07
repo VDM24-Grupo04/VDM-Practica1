@@ -2,7 +2,7 @@ package com.grupo04.gamelogic.scenes;
 
 import com.grupo04.engine.interfaces.IEngine;
 import com.grupo04.engine.utilities.Color;
-import com.grupo04.engine.Scene;
+import com.grupo04.gamelogic.Scene;
 import com.grupo04.engine.utilities.Vector;
 import com.grupo04.engine.interfaces.ISound;
 import com.grupo04.gamelogic.gameobjects.TextButton;
@@ -44,7 +44,9 @@ public class GameOverScene extends Scene {
                     this.setFade(Fade.IN, 0.25);
                     this.setFadeCallback(() -> {
                         this.engine.getAudio().stopSound(this.loseSound);
-                        this.engine.changeScene(new GameScene(this.engine));
+                        if (this.sceneManager != null) {
+                            this.sceneManager.changeScene(new GameScene(this.engine));
+                        }
                     });
                 });
         addGameObject(tryAgainButton);
@@ -63,7 +65,9 @@ public class GameOverScene extends Scene {
                         TitleScene scene = new TitleScene(this.engine);
                         scene.setFade(Fade.OUT, 0.25);
                         this.engine.getAudio().stopSound(this.loseSound);
-                        this.engine.changeScene(scene);
+                        if (this.sceneManager != null) {
+                            this.sceneManager.changeScene(scene);
+                        }
                     });
                 });
         addGameObject(menuButton);
