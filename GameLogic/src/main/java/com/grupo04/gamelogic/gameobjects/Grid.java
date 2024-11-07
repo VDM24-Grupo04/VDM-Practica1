@@ -79,7 +79,7 @@ public class Grid extends GameObject {
     private final List<AnimCollidedBubbles> collidedBubbles;
     private final float shrinkSpeed;
 
-    private boolean[][] visited;
+    private final boolean[][] visited;
 
     private IEngine engine;
     private IAudio audio;

@@ -21,6 +21,9 @@ public class AndroidGraphics extends Graphics {
     private final Paint paint;
     private Canvas canvas;
     private final AssetManager assetManager;
+    private final Rect rect;
+    private Rect src;
+    private Rect dest;
 
     public AndroidGraphics(SurfaceView window, AssetManager assetManager) {
         this.window = window;
@@ -28,6 +31,9 @@ public class AndroidGraphics extends Graphics {
         this.paint = new Paint();
         this.canvas = null;
         this.assetManager = assetManager;
+        this.rect = new Rect();
+        this.src = new Rect();
+        this.dest = new Rect();
     }
 
     @Override
@@ -227,8 +233,8 @@ public class AndroidGraphics extends Graphics {
     public void drawImage(IImage img, Vector position, int w, int h) {
         AndroidImage androidImg = (AndroidImage) img;
 
-        Rect src = new Rect(0, 0, androidImg.getWidth(), androidImg.getHeight());
-        Rect dest = new Rect((int) (position.x - w / 2f), (int) (position.y - h / 2f),
+        src = new Rect(0, 0, androidImg.getWidth(), androidImg.getHeight());
+        dest = new Rect((int) (position.x - w / 2f), (int) (position.y - h / 2f),
                 (int) (position.x + w - w / 2f),
                 (int) (position.y + h - h / 2f));
         this.canvas.drawBitmap(androidImg.getImg(), src, dest, this.paint);
@@ -252,7 +258,6 @@ public class AndroidGraphics extends Graphics {
     // Al contrario que en desktop, en android si se puede conseguir el alto del texto actual que se va a pintar.
     @Override
     public void drawText(String text, Vector position) {
-        Rect rect = new Rect();
         this.paint.getTextBounds(text, 0, text.length(), rect);
         this.paint.setTextAlign(Paint.Align.CENTER);
         float y = position.y - rect.centerY();
@@ -261,7 +266,6 @@ public class AndroidGraphics extends Graphics {
 
     @Override
     public int getTextWidth(String text) {
-        Rect rect = new Rect();
         this.paint.getTextBounds(text, 0, text.length(), rect);
         return rect.width();
     }

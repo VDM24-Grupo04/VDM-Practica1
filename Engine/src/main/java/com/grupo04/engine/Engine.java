@@ -173,8 +173,8 @@ public abstract class Engine implements IEngine, Runnable {
                 this.scenes.pop();
             }
 
-            while (!aliveScenes.empty()) {
-                Scene scene = aliveScenes.peek();
+            while (!this.aliveScenes.empty()) {
+                Scene scene = this.aliveScenes.peek();
                 this.scenes.push(scene);
                 this.aliveScenes.pop();
             }

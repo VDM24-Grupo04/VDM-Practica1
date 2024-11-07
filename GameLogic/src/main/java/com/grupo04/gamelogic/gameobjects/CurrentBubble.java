@@ -50,7 +50,7 @@ public class CurrentBubble extends GameObject {
 
     @Override
     public void init() {
-        this.grid = new WeakReference<Grid>((Grid) scene.getHandler("grid"));
+        this.grid = new WeakReference<>((Grid) this.scene.getHandler("grid"));
         this.audio = this.scene.getEngine().getAudio();
         this.throwSound = this.audio.newSound("ballThrow.wav");
         this.bounceSound = this.audio.newSound("ballBounce.wav");
