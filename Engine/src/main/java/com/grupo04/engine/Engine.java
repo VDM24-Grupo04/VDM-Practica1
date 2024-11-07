@@ -25,8 +25,8 @@ public abstract class Engine implements IEngine, Runnable {
     private Input input;
 
     // Escenas
-    private final Stack<Scene> scenes;
-    private final Stack<Scene> aliveScenes;
+    private Stack<Scene> scenes;
+    private Stack<Scene> aliveScenes;
 
     protected Engine() {
         this.mainLoopThread = null;
