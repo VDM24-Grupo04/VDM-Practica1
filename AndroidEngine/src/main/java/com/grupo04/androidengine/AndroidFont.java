@@ -3,14 +3,14 @@ package com.grupo04.androidengine;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 
-import com.grupo04.engine.Font;
+import com.grupo04.engine.interfaces.IFont;
 
-public class AndroidFont extends Font {
+public class AndroidFont implements IFont {
     private Typeface typeface;
+    private float size;
 
     public AndroidFont(String name, float size, boolean bold, boolean italic, AssetManager assetManager) {
-        super(size);
-
+        this.size = size;
         try {
             this.typeface = Typeface.createFromAsset(assetManager, "fonts/" + name);
             if (bold && italic) {
@@ -27,5 +27,9 @@ public class AndroidFont extends Font {
 
     public Typeface getFont() {
         return this.typeface;
+    }
+
+    public float getSize() {
+        return size;
     }
 }

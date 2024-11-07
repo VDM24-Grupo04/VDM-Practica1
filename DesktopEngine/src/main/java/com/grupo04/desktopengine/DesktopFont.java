@@ -1,18 +1,16 @@
 package com.grupo04.desktopengine;
 
-import com.grupo04.engine.Font;
+import com.grupo04.engine.interfaces.IFont;
 
 import java.awt.FontFormatException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class DesktopFont extends Font {
+public class DesktopFont implements IFont {
     private java.awt.Font derivedFont;
 
     public DesktopFont(String name, float size, boolean bold, boolean italic) {
-        super(size);
-
         try {
             FileInputStream stream = new FileInputStream("./assets/fonts/" + name);
             // El primer parametro especifica el tipo de la fuente (TTF)
@@ -36,5 +34,7 @@ public class DesktopFont extends Font {
         }
     }
 
-    java.awt.Font getFont() { return this.derivedFont; }
+    java.awt.Font getFont() {
+        return this.derivedFont;
+    }
 }

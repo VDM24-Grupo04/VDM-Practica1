@@ -233,7 +233,7 @@ public class AndroidGraphics extends Graphics {
     public void drawImage(IImage img, Vector position, int w, int h) {
         AndroidImage androidImg = (AndroidImage) img;
 
-        src.set(0,0, androidImg.getWidth(), androidImg.getHeight());
+        src.set(0, 0, androidImg.getWidth(), androidImg.getHeight());
         dest.set((int) (position.x - w / 2f), (int) (position.y - h / 2f),
                 (int) (position.x + w - w / 2f),
                 (int) (position.y + h - h / 2f));
@@ -244,7 +244,7 @@ public class AndroidGraphics extends Graphics {
     public void setFont(IFont font) {
         AndroidFont androidFont = (AndroidFont) font;
         // Se establece el tamano de letra
-        this.paint.setTextSize(font.getSize());
+        this.paint.setTextSize(androidFont.getSize());
         this.paint.setStyle(Paint.Style.FILL);
         // Se establece el tipo de letra
         this.paint.setTypeface(androidFont.getFont());
