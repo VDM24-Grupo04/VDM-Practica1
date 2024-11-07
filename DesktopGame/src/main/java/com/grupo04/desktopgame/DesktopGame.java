@@ -30,8 +30,7 @@ public class DesktopGame {
         // Creacion de la escena
         SceneManager sceneManager = new SceneManager(engine);
         engine.setScene(sceneManager);
-        TitleScene titleScene = new TitleScene(engine);
-        sceneManager.pushScene(titleScene);
+        sceneManager.pushScene(new TitleScene(engine));
 
         engine.onResume();
     }
