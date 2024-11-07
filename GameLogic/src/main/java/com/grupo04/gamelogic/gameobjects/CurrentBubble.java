@@ -13,36 +13,53 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class CurrentBubble extends GameObject {
-    final int lineLength = 100, lineThickness = 1;
-    final Color lineColor = new Color(0, 0, 0, 255);
+    private final int lineLength;
+    private final int lineThickness;
+    private final Color lineColor;
 
-    final float spd = 300, minDirY = 0.01f;
+    private final float spd;
+    private final float minDirY;
 
-    private boolean shot = false, dragging = false;
-    int worldWidth, wallThickness, headerOffset, r;
-    Vector initPos, pos, dir;
-    int color;
+    private boolean shot;
+    private boolean dragging;
+    private final int worldWidth;
+    private final int wallThickness;
+    private final int headerOffset;
+    private final int r;
+    private final Vector initPos;
+    private Vector pos;
+    private Vector dir;
+    private int color;
 
-    WeakReference<Grid> grid;
+    private WeakReference<Grid> grid;
+    private IAudio audio;
+    private ISound throwSound;
+    private ISound bounceSound;
 
-    IAudio audio;
-    ISound throwSound = null;
-    ISound bounceSound = null;
-
-    BubbleColors bubbleColors;
+    private BubbleColors bubbleColors;
 
     public CurrentBubble(int w, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, BubbleColors bubbleColors) {
         super();
 
-        this.dir = new Vector(0, 0);
+        this.lineLength = 100;
+        this.lineThickness = 1;
+        this.lineColor = new Color(0, 0, 0, 255);
+
+        this.spd = 300;
+        this.minDirY = 0.01f;
+
+        this.shot = false;
+        this.dragging = false;
+
         this.worldWidth = w;
         this.wallThickness = wallThickness;
         this.headerOffset = headerOffset;
         this.r = r;
-
         // La posicion inicial sera en el centro del mundo por debajo del limite vertical
         int initY = (this.r * 2 - bubbleOffset) * (rows + 2);
         this.initPos = new Vector(w / 2.0f, wallThickness + headerOffset + initY);
+        this.pos = this.initPos;
+        this.dir = new Vector(0, 0);
 
         this.bubbleColors = bubbleColors;
         reset();
@@ -165,6 +182,9 @@ public class CurrentBubble extends GameObject {
     @Override
     public void dereference() {
         super.dereference();
+
+        this.bubbleColors = null;
+        this.audio = null;
         this.throwSound = null;
         this.bounceSound = null;
     }

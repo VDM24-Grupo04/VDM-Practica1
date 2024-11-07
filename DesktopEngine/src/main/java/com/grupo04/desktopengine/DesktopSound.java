@@ -5,7 +5,6 @@ import com.grupo04.engine.Sound;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.PriorityQueue;
 
 import javax.sound.sampled.AudioSystem;
@@ -15,16 +14,20 @@ import javax.sound.sampled.LineEvent;
 
 public class DesktopSound extends Sound {
     private File audioFile;
-    private long currentFrame;                  // Para el resume()
+    private long currentFrame; // Para el resume()
     private final List<DesktopAudio.ClipEntry> clips;
     private final PriorityQueue<DesktopAudio.ClipEntry> playingPool;
+    private final List<DesktopAudio.ClipEntry> updatedEntries;
+    private final List<DesktopAudio.ClipEntry> otherEntries;
 
     DesktopSound(PriorityQueue<DesktopAudio.ClipEntry> playingPool, String fileName, int priority, float leftVolume, float rightVolume, int loop, float rate) {
         super(fileName, priority, leftVolume, rightVolume, loop, rate);
 
+        this.currentFrame = -1;
         this.clips = new ArrayList<>();
         this.playingPool = playingPool;
-        this.currentFrame = -1;
+        this.updatedEntries = new ArrayList<>();
+        this.otherEntries = new ArrayList<>();
 
         try {
             this.audioFile = new File("./assets/sounds/" + fileName);
@@ -133,19 +136,19 @@ public class DesktopSound extends Sound {
         // Si no, no hace nada
         // Al final, se reinserta todos los clips con la prioridad
         // modificada para el mismo sonido
-        List<DesktopAudio.ClipEntry> updatedEntries = new ArrayList<>();
-        List<DesktopAudio.ClipEntry> otherEntries = new ArrayList<>();
         while (!this.playingPool.isEmpty()) {
             DesktopAudio.ClipEntry clipEntry = this.playingPool.poll();
             if (this.clips.contains(clipEntry)) {
                 clipEntry.setPriority(priority);
-                updatedEntries.add(clipEntry);
+                this.updatedEntries.add(clipEntry);
             } else {
-                otherEntries.add(clipEntry);
+                this.otherEntries.add(clipEntry);
             }
         }
-        this.playingPool.addAll(updatedEntries);
-        this.playingPool.addAll(otherEntries);
+        this.playingPool.addAll(this.updatedEntries);
+        this.playingPool.addAll(this.otherEntries);
+        this.updatedEntries.clear();
+        this.otherEntries.clear();
     }
 
     private boolean setClipVolume(Clip clip) {

@@ -13,7 +13,7 @@ public class BubbleColors {
             new Color(245, 225, 85)     // Amarillo
     };
     private static final Random randomNumbers = new Random();
-    private HashMap<Integer, Color> availableColors = new HashMap<Integer, Color>();
+    private final HashMap<Integer, Color> availableColors = new HashMap<>();
 
     public int getColorCount() {
         return colors.length;

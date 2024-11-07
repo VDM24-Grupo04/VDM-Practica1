@@ -31,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
         // Creacion de la escena
         SceneManager sceneManager = new SceneManager(this.androidEngine);
         this.androidEngine.setScene(sceneManager);
-        TitleScene titleScene = new TitleScene(this.androidEngine);
-        sceneManager.pushScene(titleScene);
+        sceneManager.pushScene(new TitleScene(this.androidEngine));
 
         // Bloquear la orientacion
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

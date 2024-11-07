@@ -37,7 +37,6 @@ public class Text extends GameObject {
     // Calcular la posicion de cada linea de texto
     private Vector textPos;
 
-
     private boolean paramsToBeCalculated;
     private IGraphics graphics;
 

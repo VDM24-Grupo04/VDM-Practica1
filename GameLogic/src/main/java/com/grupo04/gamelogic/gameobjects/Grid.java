@@ -22,11 +22,11 @@ import java.util.List;
 
 public class Grid extends GameObject {
     // Linea del final del nivel
-    final int lineThickness = 1;
-    final Color lineColor = new Color(0, 0, 0, 255);
+    private final int lineThickness;
+    private final Color lineColor;
 
     // Matriz de burbujas con los colores de las mismas
-    private final int[][] bubbles;
+    private int[][] bubbles;
     // Numero de filas y columnas
     private final int rows;
     private final int cols;
@@ -36,7 +36,7 @@ public class Grid extends GameObject {
     private int totalBubbles;
     // Indica cuantas bolas hay de cada color en el mapa
     // Se usa para saber de que color puede ser la bola que se lanza
-    private final int[] colorCount;
+    private int[] colorCount;
     // 5 puntos por cada burbuja en un grupo de 3 y 10 puntos por cada burbuja en un grupo de 10 o mas
 
     // Radio de las burbujas
@@ -79,24 +79,28 @@ public class Grid extends GameObject {
     private final List<AnimCollidedBubbles> collidedBubbles;
     private final float shrinkSpeed;
 
-    private final boolean[][] visited;
+    private boolean[][] visited;
 
     private IEngine engine;
     private IAudio audio;
     private ISound attachSound;
     private ISound explosionSound;
 
-    private final BubbleColors bubbleColors;
+    private BubbleColors bubbleColors;
 
     private WeakReference<Text> scoreText;
     private WeakReference<ImageToggleButton> showGridButton;
 
     // DEBUG DE LAS CELDAS
-    private int currI = -1, currJ = -1;
+    private int currI;
+    private int currJ;
 
     public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
                 int bubblesToExplode, int greatScore, int smallScore, BubbleColors bubbleColors, float fallingSpeed, float shrinkSpeed) {
         super();
+
+        this.lineThickness = 1;
+        this.lineColor = new Color(0, 0, 0, 255);
 
         this.cols = cols;
         this.rows = rows;
@@ -173,6 +177,10 @@ public class Grid extends GameObject {
 
         this.scoreText = null;
         this.showGridButton = null;
+
+        // DEBUG
+        this.currI = -1;
+        this.currJ = -1;
     }
 
     public Grid(int width, int wallThickness, int headerOffset, int r, int bubbleOffset, int rows, int cols, int initRows,
@@ -587,6 +595,14 @@ public class Grid extends GameObject {
     @Override
     public void dereference() {
         super.dereference();
+
+        this.bubbleColors = null;
+        this.bubbles = null;
+        this.colorCount = null;
+        this.fallingBubbles.clear();
+        this.visited = null;
+        this.collidedBubbles.clear();
+        this.showGridButton = null;
         this.attachSound = null;
         this.explosionSound = null;
     }

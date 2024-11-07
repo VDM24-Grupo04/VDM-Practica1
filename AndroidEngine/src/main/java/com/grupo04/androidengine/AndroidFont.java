@@ -7,7 +7,7 @@ import com.grupo04.engine.interfaces.IFont;
 
 public class AndroidFont implements IFont {
     private Typeface typeface;
-    private float size;
+    private final float size;
 
     public AndroidFont(String name, float size, boolean bold, boolean italic, AssetManager assetManager) {
         this.size = size;

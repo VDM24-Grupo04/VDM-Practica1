@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class AndroidImage implements IImage {
-    Bitmap img;
+    private Bitmap img;
 
     AndroidImage(String fileName, AssetManager assetManager) {
         try {

@@ -22,8 +22,8 @@ public class AndroidGraphics extends Graphics {
     private Canvas canvas;
     private final AssetManager assetManager;
     private final Rect rect;
-    private Rect src;
-    private Rect dest;
+    private final Rect src;
+    private final Rect dest;
 
     public AndroidGraphics(SurfaceView window, AssetManager assetManager) {
         this.window = window;
@@ -233,11 +233,11 @@ public class AndroidGraphics extends Graphics {
     public void drawImage(IImage img, Vector position, int w, int h) {
         AndroidImage androidImg = (AndroidImage) img;
 
-        src.set(0, 0, androidImg.getWidth(), androidImg.getHeight());
-        dest.set((int) (position.x - w / 2f), (int) (position.y - h / 2f),
+        this.src.set(0, 0, androidImg.getWidth(), androidImg.getHeight());
+        this.dest.set((int) (position.x - w / 2f), (int) (position.y - h / 2f),
                 (int) (position.x + w - w / 2f),
                 (int) (position.y + h - h / 2f));
-        this.canvas.drawBitmap(androidImg.getImg(), src, dest, this.paint);
+        this.canvas.drawBitmap(androidImg.getImg(), this.src, this.dest, this.paint);
     }
 
     @Override
@@ -258,16 +258,16 @@ public class AndroidGraphics extends Graphics {
     // Al contrario que en desktop, en android si se puede conseguir el alto del texto actual que se va a pintar.
     @Override
     public void drawText(String text, Vector position) {
-        this.paint.getTextBounds(text, 0, text.length(), rect);
+        this.paint.getTextBounds(text, 0, text.length(), this.rect);
         this.paint.setTextAlign(Paint.Align.CENTER);
-        float y = position.y - rect.centerY();
+        float y = position.y - this.rect.centerY();
         this.canvas.drawText(text, position.x, y, this.paint);
     }
 
     @Override
     public int getTextWidth(String text) {
-        this.paint.getTextBounds(text, 0, text.length(), rect);
-        return rect.width();
+        this.paint.getTextBounds(text, 0, text.length(), this.rect);
+        return this.rect.width();
     }
 
     @Override

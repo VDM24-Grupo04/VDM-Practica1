@@ -10,9 +10,9 @@ import java.util.Stack;
 
 public class SceneManager implements IScene {
     // Escenas
-    private IEngine engine;
-    private Stack<Scene> scenes;
-    private Stack<Scene> aliveScenes;
+    private final IEngine engine;
+    private final Stack<Scene> scenes;
+    private final Stack<Scene> aliveScenes;
 
     public SceneManager(IEngine engine) {
         this.engine = engine;

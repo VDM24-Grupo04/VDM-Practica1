@@ -6,12 +6,14 @@ import com.grupo04.gamelogic.GameObject;
 import com.grupo04.engine.utilities.Vector;
 
 public class Walls extends GameObject {
-    final Color color = new Color(60, 60, 60);
-    Vector[] pos;
-    Vector[] sizes;
+    private final Color color;
+    private final Vector[] pos;
+    private final Vector[] sizes;
 
     public Walls(int thickness, int headerOffset, int width, int height) {
         super();
+
+        this.color = new Color(60, 60, 60);
 
         this.pos = new Vector[]{
                 new Vector(thickness / 2.0f, headerOffset + (height - headerOffset) / 2.0f),

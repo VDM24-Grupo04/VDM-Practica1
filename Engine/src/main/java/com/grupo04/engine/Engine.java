@@ -8,7 +8,6 @@ import com.grupo04.engine.interfaces.ITouchEvent;
 import com.grupo04.engine.utilities.Vector;
 
 import java.util.List;
-import java.util.Stack;
 
 // La interfaz runnable se trata de una interfaz que cuenta con un solo metodo a implementar (run)
 // Cuando se pasa una instancia de esta clase a un nuevo hilo, el hilo ejecuta el metodo run
@@ -169,14 +168,13 @@ public abstract class Engine implements IEngine, Runnable {
         }
     }
 
+    @Override
     public void setWorldSize(int worldWidth, int worldHeight) {
         this.graphics.setWorldSize(worldWidth, worldHeight);
     }
 
     @Override
-    public void setScene(IScene scene) {
-        this.scene = scene;
-    }
+    public void setScene(IScene scene) { this.scene = scene; }
 
     @Override
     public IGraphics getGraphics() {
