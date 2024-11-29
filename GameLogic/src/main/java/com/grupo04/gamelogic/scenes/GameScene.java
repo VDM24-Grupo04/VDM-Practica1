@@ -13,6 +13,9 @@ import com.grupo04.gamelogic.gameobjects.Text;
 import com.grupo04.gamelogic.gameobjects.Walls;
 
 public class GameScene extends Scene {
+    private final Grid grid;
+    boolean checkEnded;
+
     public GameScene(IEngine engine) {
         super(engine, 400, 600, "background.jpg");
 
@@ -37,6 +40,8 @@ public class GameScene extends Scene {
         Color TEXT_COLOR = new Color(0, 0, 0);
         String SCORE_TEXT_FONT = "kimberley.ttf";
         float SCORE_TEXT_SIZE = 35;
+
+        this.checkEnded = true;
 
         // Al iniciar la escena se hace un fade out
         setFade(Fade.OUT, 0.25);
@@ -81,12 +86,35 @@ public class GameScene extends Scene {
         Walls walls = new Walls(WALL_THICKNESS, HEADER_WIDTH, this.worldWidth, this.worldHeight);
         addGameObject(walls);
 
-        Grid grid = new Grid(this.worldWidth, WALL_THICKNESS, HEADER_WIDTH, (int) r, bubbleOffset, rows, n_COLS,
+        this.grid = new Grid(this.worldWidth, WALL_THICKNESS, HEADER_WIDTH, (int) r, bubbleOffset, rows, n_COLS,
                 INIT_ROWS, BUBBLES_TO_EXPLODE, GREAT_SCORE, SMALL_SCORE, bubbleColors);
         addGameObject(grid, "grid");
 
         CurrentBubble currentBubble = new CurrentBubble(this.worldWidth, WALL_THICKNESS, HEADER_WIDTH,
                 (int) r, bubbleOffset, rows, bubbleColors);
         addGameObject(currentBubble);
+    }
+
+    @Override
+    public void update(double deltaTime) {
+        super.update(deltaTime);
+
+        if (this.checkEnded && this.grid.hasEnded()) {
+            if (this.grid.hasWon()) {
+                // Se hace un fade in y cuando acaba la animacion se cambia a la escena de victoria
+                this.setFade(Scene.Fade.IN, 0.25);
+                this.setFadeCallback(() -> {
+                    sceneManager.changeScene(new VictoryScene(this.engine, this.grid.getScore()));
+                });
+            } else {
+                // Se hace un fade in y cuando acaba la animacion se cambia a la escena de game over
+                this.setFade(Scene.Fade.IN, 0.25);
+                this.setFadeCallback(() -> {
+                    sceneManager.changeScene(new GameOverScene(this.engine));
+                });
+            }
+
+            this.checkEnded = false;
+        }
     }
 }
