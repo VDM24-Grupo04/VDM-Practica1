@@ -182,7 +182,6 @@ public class AndroidGraphics extends Graphics {
         // Numero de lados del poligono
         int nSides = 6;
         Path hexagon = new Path();
-        Vector initPoint = new Vector();
 
         // Rotacion del hexagano en radianes y en sentido antihorario
         double rotInRadians = rotInDegrees * Math.PI / 180;
@@ -195,19 +194,16 @@ public class AndroidGraphics extends Graphics {
             // Rotar el hexagono respecto a su posicion inicial
             pointRot += rotInRadians;
 
-            Vector point = new Vector();
-            point.x = (float) (center.x + radius * Math.cos(pointRot));
-            point.y = (float) (center.y + radius * Math.sin(pointRot));
+            float x = (float) (center.x + radius * Math.cos(pointRot));
+            float y = (float) (center.y + radius * Math.sin(pointRot));
 
             if (i == 0) {
-                initPoint.x = point.x;
-                initPoint.y = point.y;
-                hexagon.moveTo(point.x, point.y);
+                hexagon.moveTo(x, y);
             } else {
-                hexagon.lineTo(point.x, point.y);
+                hexagon.lineTo(x, y);
             }
         }
-        hexagon.lineTo(initPoint.x, initPoint.y);
+        hexagon.close();
 
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeWidth(strokeWidth);
